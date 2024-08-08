@@ -1,0 +1,156 @@
+{
+  "attributes": [
+    {
+      "name": "username",
+      "displayName": "${username}",
+      "validations": {
+        "length": {
+          "min": 3,
+          "max": 255
+        },
+        "username-prohibited-characters": {},
+        "up-username-not-idn-homograph": {}
+      },
+      "permissions": {
+        "view": ["admin", "user"],
+        "edit": ["admin", "user"]
+      },
+      "multivalued": false
+    },
+    {
+      "name": "email",
+      "displayName": "${email}",
+      "validations": {
+        "email": {},
+        "length": {
+          "max": 255
+        }
+      },
+      "required": {
+        "roles": ["user"]
+      },
+      "permissions": {
+        "view": ["admin", "user"],
+        "edit": ["admin", "user"]
+      },
+      "multivalued": false
+    },
+    {
+      "name": "firstName",
+      "displayName": "${firstName}",
+      "validations": {
+        "length": {
+          "max": 255
+        },
+        "person-name-prohibited-characters": {}
+      },
+      "required": {
+        "roles": ["user"]
+      },
+      "permissions": {
+        "view": ["admin", "user"],
+        "edit": ["admin", "user"]
+      },
+      "multivalued": false
+    },
+    {
+      "name": "lastName",
+      "displayName": "${lastName}",
+      "validations": {
+        "length": {
+          "max": 255
+        },
+        "person-name-prohibited-characters": {}
+      },
+      "required": {
+        "roles": ["user"]
+      },
+      "permissions": {
+        "view": ["admin", "user"],
+        "edit": ["admin", "user"]
+      },
+      "multivalued": false
+    },
+    {
+      "name": "phone",
+      "displayName": "Phone Number",
+      "validations": {
+        "pattern": {
+          "pattern": "^\\d{8}$",
+          "error-message": "Phone number must be exactly 8 digits."
+        }
+      },
+      "annotations": {},
+      "permissions": {
+        "view": ["admin", "user"],
+        "edit": ["admin", "user"]
+      },
+      "multivalued": false
+    },
+    {
+      "name": "cardNumber",
+      "displayName": "Card Number",
+      "validations": {
+        "pattern": {
+          "pattern": "^\\d{9}$",
+          "error-message": "Card number must be exactly 9 digits."
+        }
+      },
+      "annotations": {
+        "inputTypePlaceholder": "### ### ###",
+        "inputHelperTextAfter": "Enter your loyalty Card Number."
+      },
+      "required": {
+        "roles": ["user"]
+      },
+      "permissions": {
+        "view": ["admin", "user"],
+        "edit": ["admin", "user"]
+      },
+      "multivalued": false
+    },
+    {
+      "name": "totalBalance",
+      "displayName": "Total Balance",
+      "validations": {
+        "integer": {
+          "min": "0",
+          "max": "999999"
+        }
+      },
+      "annotations": {
+        "inputType": "html5-number"
+      },
+      "permissions": {
+        "view": ["admin", "user"],
+        "edit": ["admin"]
+      },
+      "multivalued": false
+    },
+    {
+      "name": "actualBalance",
+      "displayName": "Actual Balance",
+      "validations": {
+        "integer": {
+          "min": "0",
+          "max": "999999"
+        }
+      },
+      "annotations": {
+        "inputType": "html5-number"
+      },
+      "permissions": {
+        "view": ["admin", "user"],
+        "edit": ["admin"]
+      },
+      "multivalued": false
+    }
+  ],
+  "groups": [
+    {
+      "name": "user-metadata",
+      "displayHeader": "User metadata",
+      "displayDescription": "Attributes, which refer to user metadata"
+    }
+  ]
+}

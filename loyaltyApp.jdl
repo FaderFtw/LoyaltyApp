@@ -1,0 +1,72 @@
+entity User {
+    cardNumber String required,
+    totalBalance Long required,
+    actualBalance Long required,
+    firstname String required,
+    lastname String required,
+    email String required,
+    password String required,
+    phone String
+}
+
+entity LoyaltyLevel {
+    title LoyaltyType required,
+    description String,
+    minBalance Long,
+    maxBalance Long
+}
+
+enum LoyaltyType{
+    DIAMOND, GOLD, SILVER, BASIC
+}
+
+entity Reward {
+    createdAt ZonedDateTime required,
+    fromDate ZonedDateTime required,
+    toDate ZonedDateTime required,
+    code String required
+}
+
+entity RewardConfig {
+    title RewardType required,
+    description String,
+    balanceValue Integer,
+    convertedValue Float,
+    daysToExpire Integer
+}
+
+enum RewardType{
+    DISCOUNT, DONATION, PHONETOPUP
+}
+
+entity Offer {
+    fromDate ZonedDateTime required,
+    toDate ZonedDateTime required,
+    title String required,
+    description String,
+    rewardPoints Integer,
+    itemQty Float,
+    itemSku String,
+    grandTotal Float
+}
+
+relationship OneToMany{
+    User{loyaltyLevel} to LoyaltyLevel,
+    Reward{rewardConfig} to RewardConfig
+}
+
+relationship ManyToMany{
+    User{rewards} to Reward{users},
+    Offer{loyaltyLevels} to LoyaltyLevel{offers},
+    RewardConfig{loyaltyLevels} to LoyaltyLevel{rewards}
+}
+
+// Set pagination options
+dto * with mapstruct
+paginate User,LoyaltyLevel,Reward,RewardConfig,Offer with pagination
+
+// Set service options to all except few
+service all with servicelml
+
+// Set an angular suffix
+angularSuffix * with mySuffix
