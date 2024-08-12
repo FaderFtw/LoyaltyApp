@@ -13,9 +13,8 @@
         <div class="alert alert-success">
           @if (account()) {
             <span id="home-logged-message"
-              >You are logged in as user &quot;{{ account()!.login }}&quot; with a card number &quot;{{
-                account()!.cardNumber
-              }}&quot;.</span
+              >You are logged in as user &quot;{{ account()!.login }}&quot; with a card number &quot;{{ account()!.cardNumber }}&quot; and
+              his total balance is : {{ account()!.totalBalance }} .</span
             >
           }
         </div>

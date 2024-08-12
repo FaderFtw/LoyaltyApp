@@ -50,10 +50,10 @@ public class User extends AbstractAuditingEntity<String> implements Serializable
     private String cardNumber;
 
     @Column(name = "total_balance")
-    private Long totalBalance;
+    private Long totalBalance = 0L;
 
     @Column(name = "actual_balance")
-    private Long actualBalance;
+    private Long actualBalance = 0L;
 
     @Size(max = 20)
     @Column(name = "phone", length = 20)

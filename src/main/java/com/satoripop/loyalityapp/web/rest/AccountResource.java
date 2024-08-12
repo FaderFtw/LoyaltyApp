@@ -47,7 +47,6 @@ public class AccountResource {
     @SuppressWarnings("unchecked")
     public AdminUserDTO getAccount(Principal principal) {
         if (principal instanceof AbstractAuthenticationToken) {
-            System.out.println("IAM HEREEE ACCOUNT RESSOURCE   " + ((OAuth2AuthenticationToken) principal).getPrincipal().getAttributes());
             return userService.getUserFromAuthentication((AbstractAuthenticationToken) principal);
         } else {
             throw new AccountResourceException("User could not be found");

@@ -10,11 +10,13 @@ import { ProfileService } from 'app/layouts/profiles/profile.service';
 import { EntityNavbarItems } from 'app/entities/entity-navbar-items';
 import NavbarItem from './navbar-item.model';
 
+import Keycloak from 'keycloak-js';
+
 @Component({
   standalone: true,
   selector: 'jhi-navbar',
   templateUrl: './navbar.component.html',
-  styleUrl: './navbar.component.scss',
+  styleUrls: ['./navbar.component.scss'],
   imports: [RouterModule, SharedModule, HasAnyAuthorityDirective],
 })
 export default class NavbarComponent implements OnInit {
@@ -29,6 +31,12 @@ export default class NavbarComponent implements OnInit {
   private profileService = inject(ProfileService);
   private router = inject(Router);
 
+  private keycloak = new Keycloak({
+    url: 'http://localhost:9080',
+    realm: 'loyaltyApp',
+    clientId: 'web_app',
+  });
+
   constructor() {
     if (VERSION) {
       this.version = VERSION.toLowerCase().startsWith('v') ? VERSION : `v${VERSION}`;
@@ -40,6 +48,15 @@ export default class NavbarComponent implements OnInit {
     this.profileService.getProfileInfo().subscribe(profileInfo => {
       this.inProduction = profileInfo.inProduction;
       this.openAPIEnabled = profileInfo.openAPIEnabled;
+    });
+
+    // Initialize Keycloak
+    this.keycloak.init({ onLoad: 'check-sso' }).then((authenticated: any) => {
+      if (authenticated) {
+        console.info('User is authenticated');
+      } else {
+        console.error('User is not authenticated');
+      }
     });
   }
 
@@ -54,10 +71,16 @@ export default class NavbarComponent implements OnInit {
   logout(): void {
     this.collapseNavbar();
     this.loginService.logout();
+    this.keycloak.logout();
     this.router.navigate(['']);
   }
 
   toggleNavbar(): void {
     this.isNavbarCollapsed.update(isNavbarCollapsed => !isNavbarCollapsed);
+  }
+
+  viewProfile(): void {
+    this.collapseNavbar();
+    this.keycloak.accountManagement();
   }
 }

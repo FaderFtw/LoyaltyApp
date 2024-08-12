@@ -1,0 +1,13 @@
+.pf-v5-c-menu,
+.pf-v5-c-menu-toggle__controls {
+  display: none;
+}
+
+pf-v5-c-page__header-tools-item {
+  margin-right: 10px;
+}
+
+.pf-v5-c-menu-toggle {
+  border: none;
+  cursor: default;
+}

@@ -182,7 +182,6 @@ public class UserService {
             throw new IllegalArgumentException("AuthenticationToken is not OAuth2 or JWT!");
         }
         User user = getUser(attributes);
-        System.out.println("User IN USER SERVICE FADY: " + user);
         user.setAuthorities(
             authToken
                 .getAuthorities()
