@@ -74,7 +74,6 @@ public class UserService {
                 }
                 user.setLangKey(langKey);
                 user.setImageUrl(imageUrl);
-                // Set new fields
                 user.setCardNumber(cardNumber);
                 user.setTotalBalance(totalBalance);
                 user.setActualBalance(actualBalance);

@@ -1,0 +1,12 @@
+.login-pf-page {
+  padding-bottom: 50px;
+}
+
+@media (max-width: 767px) {
+  #kc-header-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-right: 0;
+  }
+}
