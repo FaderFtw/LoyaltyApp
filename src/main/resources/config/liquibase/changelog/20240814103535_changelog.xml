@@ -1,21 +1,18 @@
-<?xml version="1.1" encoding="UTF-8" standalone="no"?>
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
-    <changeSet author="Fady (generated)" id="1723631743470-1">
-        <dropUniqueConstraint constraintName="uc_jhi_usercard_number_col" tableName="jhi_user"/>
+    <changeSet author="Fady (generated)" id="1723638621818-1">
+        <addColumn tableName="jhi_user">
+            <column name="card_number" type="varchar(50)"/>
+        </addColumn>
     </changeSet>
-    <changeSet author="Fady (generated)" id="1723631743470-2">
-        <dropTable tableName="jhi_date_time_wrapper"/>
+    <changeSet author="Fady (generated)" id="1723638621818-2">
+        <addColumn tableName="jhi_user">
+            <column name="phone" type="varchar(20)"/>
+        </addColumn>
     </changeSet>
-    <changeSet author="Fady (generated)" id="1723631743470-3">
-        <dropColumn columnName="actual_balance" tableName="jhi_user"/>
+    <changeSet author="Fady (generated)" id="1723638621818-3">
+        <addUniqueConstraint columnNames="card_number" constraintName="UC_JHI_USERCARD_NUMBER_COL" tableName="jhi_user"/>
     </changeSet>
-    <changeSet author="Fady (generated)" id="1723631743470-4">
-        <dropColumn columnName="card_number" tableName="jhi_user"/>
-    </changeSet>
-    <changeSet author="Fady (generated)" id="1723631743470-5">
-        <dropColumn columnName="phone" tableName="jhi_user"/>
-    </changeSet>
-    <changeSet author="Fady (generated)" id="1723631743470-6">
-        <dropColumn columnName="total_balance" tableName="jhi_user"/>
+    <changeSet author="Fady (generated)" id="1723638621818-4">
+        <addUniqueConstraint columnNames="phone" constraintName="UC_JHI_USERPHONE_COL" tableName="jhi_user"/>
     </changeSet>
 </databaseChangeLog>

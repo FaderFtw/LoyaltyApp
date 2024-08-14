@@ -45,6 +45,14 @@ public class User extends AbstractAuditingEntity<String> implements Serializable
     @Column(length = 254, unique = true)
     private String email;
 
+    @Size(min = 1, max = 50)
+    @Column(name = "card_number", length = 50, unique = true)
+    private String cardNumber;
+
+    @Size(max = 20)
+    @Column(name = "phone", length = 20, unique = true)
+    private String phone;
+
     @NotNull
     @Column(nullable = false)
     private boolean activated = false;
@@ -168,6 +176,24 @@ public class User extends AbstractAuditingEntity<String> implements Serializable
             ", imageUrl='" + imageUrl + '\'' +
             ", activated='" + activated + '\'' +
             ", langKey='" + langKey + '\'' +
+            ", cardNumber='" + cardNumber + '\'' +
+            ", phone='" + phone + '\'' +
             "}";
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getCardNumber() {
+        return cardNumber;
+    }
+
+    public void setCardNumber(String cardNumber) {
+        this.cardNumber = cardNumber;
     }
 }
