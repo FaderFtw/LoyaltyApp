@@ -3,8 +3,8 @@
   display: none;
 }
 
-pf-v5-c-page__header-tools-item {
-  margin-right: 10px;
+.pf-v5-c-page__header-tools-item {
+  margin-right: 20px;
 }
 
 .pf-v5-c-menu-toggle {
