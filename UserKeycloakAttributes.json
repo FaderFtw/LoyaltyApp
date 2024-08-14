@@ -73,7 +73,7 @@
     },
     {
       "name": "phone",
-      "displayName": "Phone Number",
+      "displayName": "${phone}",
       "validations": {
         "pattern": {
           "pattern": "^\\d{8}$",
@@ -89,7 +89,7 @@
     },
     {
       "name": "cardNumber",
-      "displayName": "Card Number",
+      "displayName": "${cardNumber}",
       "validations": {
         "pattern": {
           "pattern": "^\\d{9}$",
@@ -98,7 +98,7 @@
       },
       "annotations": {
         "inputTypePlaceholder": "### ### ###",
-        "inputHelperTextAfter": "Enter your loyalty Card Number."
+        "inputHelperTextAfter": "${helpText}"
       },
       "required": {
         "roles": ["user"]
@@ -111,7 +111,7 @@
     },
     {
       "name": "totalBalance",
-      "displayName": "Total Balance",
+      "displayName": "${totalBalance}",
       "validations": {
         "integer": {
           "min": "0",
@@ -129,7 +129,7 @@
     },
     {
       "name": "actualBalance",
-      "displayName": "Actual Balance",
+      "displayName": "${actualBalance}",
       "validations": {
         "integer": {
           "min": "0",

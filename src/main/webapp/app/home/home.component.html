@@ -4,7 +4,7 @@
   </div>
 
   <div class="col-md-9">
-    <h1 class="display-4"><span>Welcome, Java Hipster!</span> ()</h1>
+    <h1 class="display-4"><span>Welcome!</span></h1>
 
     <p class="lead">This is your homepage</p>
 
@@ -12,10 +12,7 @@
       @if (account() !== null) {
         <div class="alert alert-success">
           @if (account()) {
-            <span id="home-logged-message"
-              >You are logged in as user &quot;{{ account()!.login }}&quot; with a card number &quot;{{ account()!.cardNumber }}&quot; and
-              his total balance is : {{ account()!.totalBalance }} .</span
-            >
+            <span id="home-logged-message">You are logged in as user &quot;{{ account()!.login }}&quot;</span>
           }
         </div>
       } @else {

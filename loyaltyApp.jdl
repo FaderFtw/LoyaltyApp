@@ -12,8 +12,8 @@ entity User {
 entity LoyaltyLevel {
     title LoyaltyType required,
     description String,
-    minBalance Long,
-    maxBalance Long
+    minBalance Long required,
+    maxBalance Long required
 }
 
 enum LoyaltyType{
@@ -63,7 +63,12 @@ relationship ManyToMany{
 
 // Set pagination options
 dto * with mapstruct
-paginate User,LoyaltyLevel,Reward,RewardConfig,Offer with pagination
+paginate User,
+LoyaltyLevel,
+Reward,
+RewardConfig,
+Offer
+with pagination
 
 // Set service options to all except few
 service all with servicelml

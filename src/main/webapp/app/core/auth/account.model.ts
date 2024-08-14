@@ -8,9 +8,5 @@ export class Account {
     public lastName: string | null,
     public login: string,
     public imageUrl: string | null,
-    public cardNumber: string | null, // New attribute
-    public totalBalance: number | null, // New attribute
-    public actualBalance: number | null, // New attribute
-    public phone: string | null, // New attribute
   ) {}
 }

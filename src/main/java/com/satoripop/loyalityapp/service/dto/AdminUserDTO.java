@@ -51,19 +51,6 @@ public class AdminUserDTO implements Serializable {
 
     private Set<String> authorities;
 
-    // New fields
-    @Size(min = 9, max = 9)
-    private String cardNumber;
-
-    @NotNull
-    private Long totalBalance;
-
-    @NotNull
-    private Long actualBalance;
-
-    @Size(max = 20)
-    private String phone;
-
     public AdminUserDTO() {
         // Empty constructor needed for Jackson.
     }
@@ -82,10 +69,6 @@ public class AdminUserDTO implements Serializable {
         this.lastModifiedBy = user.getLastModifiedBy();
         this.lastModifiedDate = user.getLastModifiedDate();
         this.authorities = user.getAuthorities().stream().map(Authority::getName).collect(Collectors.toSet());
-        this.cardNumber = user.getCardNumber();
-        this.totalBalance = user.getTotalBalance();
-        this.actualBalance = user.getActualBalance();
-        this.phone = user.getPhone();
     }
 
     public String getId() {
@@ -192,60 +175,22 @@ public class AdminUserDTO implements Serializable {
         this.authorities = authorities;
     }
 
-    public String getCardNumber() {
-        return cardNumber;
-    }
-
-    public void setCardNumber(String cardNumber) {
-        this.cardNumber = cardNumber;
-    }
-
-    public Long getTotalBalance() {
-        return totalBalance;
-    }
-
-    public void setTotalBalance(Long totalBalance) {
-        this.totalBalance = totalBalance;
-    }
-
-    public Long getActualBalance() {
-        return actualBalance;
-    }
-
-    public void setActualBalance(Long actualBalance) {
-        this.actualBalance = actualBalance;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
     // prettier-ignore
-
     @Override
     public String toString() {
         return "AdminUserDTO{" +
-            "id='" + id + '\'' +
-            ", login='" + login + '\'' +
+            "login='" + login + '\'' +
             ", firstName='" + firstName + '\'' +
             ", lastName='" + lastName + '\'' +
             ", email='" + email + '\'' +
             ", imageUrl='" + imageUrl + '\'' +
             ", activated=" + activated +
             ", langKey='" + langKey + '\'' +
-            ", createdBy='" + createdBy + '\'' +
+            ", createdBy=" + createdBy +
             ", createdDate=" + createdDate +
             ", lastModifiedBy='" + lastModifiedBy + '\'' +
             ", lastModifiedDate=" + lastModifiedDate +
             ", authorities=" + authorities +
-            ", cardNumber='" + cardNumber + '\'' +
-            ", totalBalance=" + totalBalance +
-            ", actualBalance=" + actualBalance +
-            ", phone='" + phone + '\'' +
             "}";
     }
 }

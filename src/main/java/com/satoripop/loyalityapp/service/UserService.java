@@ -48,22 +48,8 @@ public class UserService {
      * @param email     email id of user.
      * @param langKey   language key.
      * @param imageUrl  image URL of user.
-     * @param cardNumber card number of user.
-     * @param totalBalance total balance of user.
-     * @param actualBalance actual balance of user.
-     * @param phone phone number of user.
      */
-    public void updateUser(
-        String firstName,
-        String lastName,
-        String email,
-        String langKey,
-        String imageUrl,
-        String cardNumber,
-        Long totalBalance,
-        Long actualBalance,
-        String phone
-    ) {
+    public void updateUser(String firstName, String lastName, String email, String langKey, String imageUrl) {
         SecurityUtils.getCurrentUserLogin()
             .flatMap(userRepository::findOneByLogin)
             .ifPresent(user -> {
@@ -74,10 +60,6 @@ public class UserService {
                 }
                 user.setLangKey(langKey);
                 user.setImageUrl(imageUrl);
-                user.setCardNumber(cardNumber);
-                user.setTotalBalance(totalBalance);
-                user.setActualBalance(actualBalance);
-                user.setPhone(phone);
                 userRepository.save(user);
                 log.debug("Changed Information for User: {}", user);
             });
@@ -108,6 +90,7 @@ public class UserService {
     }
 
     private User syncUserWithIdP(Map<String, Object> details, User user) {
+        // save authorities in to sync user roles/groups between IdP and JHipster's local database
         Collection<String> dbAuthorities = getAuthorities();
         Collection<String> userAuthorities = user.getAuthorities().stream().map(Authority::getName).toList();
         for (String authority : userAuthorities) {
@@ -118,8 +101,10 @@ public class UserService {
                 authorityRepository.save(authorityToSave);
             }
         }
+        // save account in to sync users between IdP and JHipster's local database
         Optional<User> existingUser = userRepository.findOneByLogin(user.getLogin());
         if (existingUser.isPresent()) {
+            // if IdP sends last updated information, use it to determine if an update should happen
             if (details.get("updated_at") != null) {
                 Instant dbModifiedDate = existingUser.orElseThrow().getLastModifiedDate();
                 Instant idpModifiedDate;
@@ -130,31 +115,12 @@ public class UserService {
                 }
                 if (idpModifiedDate.isAfter(dbModifiedDate)) {
                     log.debug("Updating user '{}' in local database", user.getLogin());
-                    updateUser(
-                        user.getFirstName(),
-                        user.getLastName(),
-                        user.getEmail(),
-                        user.getLangKey(),
-                        user.getImageUrl(),
-                        user.getCardNumber(),
-                        user.getTotalBalance(),
-                        user.getActualBalance(),
-                        user.getPhone()
-                    );
+                    updateUser(user.getFirstName(), user.getLastName(), user.getEmail(), user.getLangKey(), user.getImageUrl());
                 }
+                // no last updated info, blindly update
             } else {
                 log.debug("Updating user '{}' in local database", user.getLogin());
-                updateUser(
-                    user.getFirstName(),
-                    user.getLastName(),
-                    user.getEmail(),
-                    user.getLangKey(),
-                    user.getImageUrl(),
-                    user.getCardNumber(),
-                    user.getTotalBalance(),
-                    user.getActualBalance(),
-                    user.getPhone()
-                );
+                updateUser(user.getFirstName(), user.getLastName(), user.getEmail(), user.getLangKey(), user.getImageUrl());
             }
         } else {
             log.debug("Saving user '{}' in local database", user.getLogin());
@@ -205,6 +171,7 @@ public class UserService {
         if (details.get("preferred_username") != null) {
             username = ((String) details.get("preferred_username")).toLowerCase();
         }
+        // handle resource server JWT, where sub claim is email and uid is ID
         if (details.get("uid") != null) {
             user.setId((String) details.get("uid"));
             user.setLogin(sub);
@@ -230,6 +197,7 @@ public class UserService {
         if (details.get("email") != null) {
             user.setEmail(((String) details.get("email")).toLowerCase());
         } else if (sub.contains("|") && (username != null && username.contains("@"))) {
+            // special handling for Auth0
             user.setEmail(username);
         } else {
             user.setEmail(sub);
@@ -237,6 +205,7 @@ public class UserService {
         if (details.get("langKey") != null) {
             user.setLangKey((String) details.get("langKey"));
         } else if (details.get("locale") != null) {
+            // trim off country code if it exists
             String locale = (String) details.get("locale");
             if (locale.contains("_")) {
                 locale = locale.substring(0, locale.indexOf('_'));
@@ -245,30 +214,13 @@ public class UserService {
             }
             user.setLangKey(locale.toLowerCase());
         } else {
+            // set langKey to default if not specified by IdP
             user.setLangKey(Constants.DEFAULT_LANGUAGE);
         }
 
-        if (details.get("picture") != null) {
-            user.setImageUrl((String) details.get("picture"));
-        }
-
-        // Set new fields
-        if (details.get("cardNumber") != null) {
-            user.setCardNumber((String) details.get("cardNumber"));
-        }
-
-        if (details.get("totalBalance") != null) {
-            user.setTotalBalance((Long) details.get("totalBalance"));
-        }
-
-        if (details.get("actualBalance") != null) {
-            user.setActualBalance((Long) details.get("actualBalance"));
-        }
-
-        if (details.get("phone") != null) {
-            user.setPhone((String) details.get("phone"));
-        }
-
+        // if (details.get("picture") != null) {
+        //     user.setImageUrl((String) details.get("picture"));
+        // }
         user.setActivated(activated);
         return user;
     }

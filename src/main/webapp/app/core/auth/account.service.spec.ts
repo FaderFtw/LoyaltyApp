@@ -21,10 +21,6 @@ function accountWithAuthorities(authorities: string[]): Account {
     lastName: '',
     login: '',
     imageUrl: '',
-    cardNumber: '',
-    phone: '',
-    totalBalance: 0,
-    actualBalance: 0,
   };
 }
 

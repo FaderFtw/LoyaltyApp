@@ -45,20 +45,6 @@ public class User extends AbstractAuditingEntity<String> implements Serializable
     @Column(length = 254, unique = true)
     private String email;
 
-    @Size(min = 1, max = 50)
-    @Column(name = "card_number", length = 50, unique = true)
-    private String cardNumber;
-
-    @Column(name = "total_balance")
-    private Long totalBalance = 0L;
-
-    @Column(name = "actual_balance")
-    private Long actualBalance = 0L;
-
-    @Size(max = 20)
-    @Column(name = "phone", length = 20)
-    private String phone;
-
     @NotNull
     @Column(nullable = false)
     private boolean activated = false;
@@ -122,38 +108,6 @@ public class User extends AbstractAuditingEntity<String> implements Serializable
         this.email = email;
     }
 
-    public String getCardNumber() {
-        return cardNumber;
-    }
-
-    public void setCardNumber(String cardNumber) {
-        this.cardNumber = cardNumber;
-    }
-
-    public Long getTotalBalance() {
-        return totalBalance;
-    }
-
-    public void setTotalBalance(Long totalBalance) {
-        this.totalBalance = totalBalance;
-    }
-
-    public Long getActualBalance() {
-        return actualBalance;
-    }
-
-    public void setActualBalance(Long actualBalance) {
-        this.actualBalance = actualBalance;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
     public String getImageUrl() {
         return imageUrl;
     }
@@ -212,10 +166,6 @@ public class User extends AbstractAuditingEntity<String> implements Serializable
             ", lastName='" + lastName + '\'' +
             ", email='" + email + '\'' +
             ", imageUrl='" + imageUrl + '\'' +
-            ", cardNumber='" + cardNumber + '\'' +
-            ", phone='" + phone + '\'' +
-            ", totalBalance=" + totalBalance +
-            ", actualBalance=" + actualBalance +
             ", activated='" + activated + '\'' +
             ", langKey='" + langKey + '\'' +
             "}";
