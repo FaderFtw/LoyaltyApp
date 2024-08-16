@@ -3,6 +3,7 @@ package com.satoripop.loyalityapp.domain;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import java.io.Serializable;
+import java.util.Optional;
 
 /**
  * A UserExtra.

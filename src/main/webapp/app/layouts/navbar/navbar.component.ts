@@ -10,6 +10,7 @@ import { LoginService } from 'app/login/login.service';
 import { ProfileService } from 'app/layouts/profiles/profile.service';
 import { EntityNavbarItems } from 'app/entities/entity-navbar-items';
 import NavbarItem from './navbar-item.model';
+import { KeycloakConstants } from '../../keycloak/KeycloakConstants';
 
 @Component({
   standalone: true,
@@ -70,8 +71,7 @@ export default class NavbarComponent implements OnInit {
 
   viewProfile(): void {
     this.collapseNavbar();
-
-    const profileUrl = `${this.keycloakAccountConsoleUrl}?referrer=${encodeURIComponent(this.referrer)}&referrer_uri=${encodeURIComponent(this.referrerUri)}`;
+    const profileUrl = `${KeycloakConstants.KEYCLOAK_ACCOUNT_CONSOLE_URL}?referrer=${encodeURIComponent(this.referrer)}&referrer_uri=${encodeURIComponent(this.referrerUri)}`;
     window.location.href = profileUrl;
   }
 

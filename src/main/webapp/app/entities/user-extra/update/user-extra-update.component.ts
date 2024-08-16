@@ -46,6 +46,11 @@ export class UserExtraUpdateComponent implements OnInit {
     });
   }
 
+  protected getUserFullName(): string {
+    const user = this.editForm.get('user')?.value;
+    return user ? `${user.firstName} ${user.lastName}` : '';
+  }
+
   previousState(): void {
     window.history.back();
   }

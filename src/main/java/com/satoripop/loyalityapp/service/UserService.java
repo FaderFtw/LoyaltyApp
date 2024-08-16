@@ -3,7 +3,9 @@ package com.satoripop.loyalityapp.service;
 import com.satoripop.loyalityapp.config.Constants;
 import com.satoripop.loyalityapp.domain.Authority;
 import com.satoripop.loyalityapp.domain.User;
+import com.satoripop.loyalityapp.domain.UserExtra;
 import com.satoripop.loyalityapp.repository.AuthorityRepository;
+import com.satoripop.loyalityapp.repository.UserExtraRepository;
 import com.satoripop.loyalityapp.repository.UserRepository;
 import com.satoripop.loyalityapp.security.SecurityUtils;
 import com.satoripop.loyalityapp.service.dto.AdminUserDTO;
@@ -33,11 +35,18 @@ public class UserService {
 
     private final UserRepository userRepository;
 
+    private final UserExtraRepository userExtraRepository;
+
     private final AuthorityRepository authorityRepository;
 
-    public UserService(UserRepository userRepository, AuthorityRepository authorityRepository) {
+    public UserService(UserRepository userRepository, UserExtraRepository userExtraRepository, AuthorityRepository authorityRepository) {
         this.userRepository = userRepository;
+        this.userExtraRepository = userExtraRepository;
         this.authorityRepository = authorityRepository;
+    }
+
+    public Optional<UserDTO> findUserById(String id) {
+        return userRepository.findById(id).map(UserDTO::new);
     }
 
     /**
@@ -148,9 +157,24 @@ public class UserService {
             }
         } else {
             log.debug("Saving user '{}' in local database", user.getLogin());
-            userRepository.save(user);
+            saveUserWithExtra(user);
         }
         return user;
+    }
+
+    @Transactional
+    public void saveUserWithExtra(User user) {
+        // Save or update the user first
+        User existingUser = userRepository.findById(user.getId()).orElse(userRepository.save(user)); // Save new or retrieve existing
+
+        // Create UserExtra for the user
+        UserExtra userExtra = new UserExtra();
+        userExtra.setUser(existingUser); // Link UserExtra to the saved user
+        userExtra.setTotalBalance(0L);
+        userExtra.setActualBalance(0L);
+
+        // Save UserExtra (should not be a problem if user is properly managed)
+        userExtraRepository.save(userExtra);
     }
 
     /**

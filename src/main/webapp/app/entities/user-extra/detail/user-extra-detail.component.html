@@ -2,7 +2,7 @@
   <div class="col-8">
     @if (userExtra()) {
       <div>
-        <h2 data-cy="userExtraDetailsHeading"><span>User Extra</span></h2>
+        <h2 data-cy="userExtraDetailsHeading"><span>User Points</span></h2>
 
         <hr />
 
@@ -11,9 +11,9 @@
         <jhi-alert></jhi-alert>
 
         <dl class="row-md jh-entity-details">
-          <dt><span>Id</span></dt>
+          <dt><fa-icon icon="user"></fa-icon>&nbsp;<span>User</span></dt>
           <dd>
-            <span>{{ userExtra()!.id }}</span>
+            <span>{{ userExtra()!.user?.firstName }} {{ userExtra()!.user?.lastName }}</span>
           </dd>
           <dt><span>Total Balance</span></dt>
           <dd>
@@ -22,10 +22,6 @@
           <dt><span>Actual Balance</span></dt>
           <dd>
             <span>{{ userExtra()!.actualBalance }}</span>
-          </dd>
-          <dt><span>User</span></dt>
-          <dd>
-            <span>{{ userExtra()!.user?.id }}</span>
           </dd>
         </dl>
 

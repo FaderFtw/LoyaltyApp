@@ -1,7 +1,7 @@
 package com.satoripop.loyalityapp.security;
 
 /**
- * Constants for Spring Security authorities.
+ * KeycloakConstants.ts for Spring Security authorities.
  */
 public final class AuthoritiesConstants {
 

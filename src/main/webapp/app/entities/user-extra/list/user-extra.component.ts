@@ -11,6 +11,11 @@ import { SORT, ITEM_DELETED_EVENT, DEFAULT_SORT_DATA } from 'app/config/navigati
 import { IUserExtra } from '../user-extra.model';
 import { EntityArrayResponseType, UserExtraService } from '../service/user-extra.service';
 import { UserExtraDeleteDialogComponent } from '../delete/user-extra-delete-dialog.component';
+import { UserService } from '../../user/service/user.service';
+import { KeycloakConstants } from '../../../keycloak/KeycloakConstants';
+import ItemCountComponent from '../../../shared/pagination/item-count.component';
+import { ITEMS_PER_PAGE, TOTAL_COUNT_RESPONSE_HEADER } from '../../../config/pagination.constants';
+import PageRibbonComponent from '../../../layouts/profiles/page-ribbon.component';
 
 @Component({
   standalone: true,
@@ -25,6 +30,8 @@ import { UserExtraDeleteDialogComponent } from '../delete/user-extra-delete-dial
     DurationPipe,
     FormatMediumDatetimePipe,
     FormatMediumDatePipe,
+    ItemCountComponent,
+    PageRibbonComponent,
   ],
 })
 export class UserExtraComponent implements OnInit {
@@ -36,10 +43,15 @@ export class UserExtraComponent implements OnInit {
 
   public router = inject(Router);
   protected userExtraService = inject(UserExtraService);
+  protected userService = inject(UserService);
   protected activatedRoute = inject(ActivatedRoute);
   protected sortService = inject(SortService);
   protected modalService = inject(NgbModal);
   protected ngZone = inject(NgZone);
+
+  currentPage = 1;
+  totalItems = 0;
+  itemsPerPage = ITEMS_PER_PAGE;
 
   trackId = (_index: number, item: IUserExtra): string => this.userExtraService.getUserExtraIdentifier(item);
 
@@ -48,9 +60,8 @@ export class UserExtraComponent implements OnInit {
       .pipe(
         tap(([params, data]) => this.fillComponentAttributeFromRoute(params, data)),
         tap(() => {
-          if (!this.userExtras || this.userExtras.length === 0) {
-            this.load();
-          }
+          this.currentPage = parseInt(this.activatedRoute.snapshot.queryParams['page']) || 1;
+          this.load();
         }),
       )
       .subscribe();
@@ -87,6 +98,8 @@ export class UserExtraComponent implements OnInit {
   protected onResponseSuccess(response: EntityArrayResponseType): void {
     const dataFromBody = this.fillComponentAttributesFromResponseBody(response.body);
     this.userExtras = this.refineData(dataFromBody);
+    this.totalItems = Number(response.headers.get(TOTAL_COUNT_RESPONSE_HEADER));
+    console.log(this.totalItems, this.currentPage, this.itemsPerPage);
   }
 
   protected refineData(data: IUserExtra[]): IUserExtra[] {
@@ -101,8 +114,10 @@ export class UserExtraComponent implements OnInit {
   protected queryBackend(): Observable<EntityArrayResponseType> {
     this.isLoading = true;
     const queryObject: any = {
+      page: this.currentPage - 1,
       sort: this.sortService.buildSortParam(this.sortState()),
     };
+
     return this.userExtraService.query(queryObject).pipe(tap(() => (this.isLoading = false)));
   }
 
@@ -117,5 +132,10 @@ export class UserExtraComponent implements OnInit {
         queryParams: queryParamsObj,
       });
     });
+  }
+
+  protected getUserInfos(id: string): void {
+    const userInfoUrl = `${KeycloakConstants.KEYCLOAK_USER_INFO_URL}/${id}/settings`;
+    window.location.href = userInfoUrl;
   }
 }

@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { HttpClient, HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import { isPresent } from 'app/core/util/operators';
@@ -35,9 +35,14 @@ export class UserExtraService {
     return this.http.get<IUserExtra>(`${this.resourceUrl}/${id}`, { observe: 'response' });
   }
 
-  query(req?: any): Observable<EntityArrayResponseType> {
-    const options = createRequestOption(req);
-    return this.http.get<IUserExtra[]>(this.resourceUrl, { params: options, observe: 'response' });
+  query(params: any): Observable<EntityArrayResponseType> {
+    let queryParams = new HttpParams();
+    queryParams = queryParams.append('page', params.page);
+    if (params.sort) {
+      queryParams = queryParams.append('sort', params.sort);
+    }
+
+    return this.http.get<IUserExtra[]>(this.resourceUrl, { params: queryParams, observe: 'response' });
   }
 
   delete(id: string): Observable<HttpResponse<{}>> {
