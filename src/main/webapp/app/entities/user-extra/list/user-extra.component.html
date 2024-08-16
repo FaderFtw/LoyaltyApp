@@ -74,6 +74,7 @@
         </tbody>
       </table>
     </div>
-    <jhi-item-count [params]="{ page: currentPage, totalItems: totalItems, itemsPerPage: itemsPerPage }"></jhi-item-count>
+
+    <mat-paginator [length]="totalItems" [pageSize]="itemsPerPage" (page)="onPaginateChange($event)"></mat-paginator>
   }
 </div>
