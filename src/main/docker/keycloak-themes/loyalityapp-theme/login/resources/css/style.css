@@ -1,3 +1,17 @@
+@import url(http://fonts.googleapis.com/earlyaccess/droidarabickufi.css);
+
+body {
+  font-family: 'Droid Arabic Kufi', 'Roboto Light', serif !important;
+}
+
+.pf-c-form__label-text {
+  margin-bottom: 3px;
+}
+
+.pf-c-form__helper-text {
+  margin-top: 3px;
+}
+
 .login-pf-page {
   padding-bottom: 50px;
 }

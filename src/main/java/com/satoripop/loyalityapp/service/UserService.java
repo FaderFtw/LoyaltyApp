@@ -167,6 +167,10 @@ public class UserService {
         // Save or update the user first
         User existingUser = userRepository.findById(user.getId()).orElse(userRepository.save(user)); // Save new or retrieve existing
 
+        if (existingUser.getAuthorities().stream().anyMatch(authority -> authority.getName().equals("ROLE_ADMIN"))) {
+            return;
+        }
+
         // Create UserExtra for the user
         UserExtra userExtra = new UserExtra();
         userExtra.setUser(existingUser); // Link UserExtra to the saved user

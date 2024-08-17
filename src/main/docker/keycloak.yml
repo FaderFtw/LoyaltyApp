@@ -8,6 +8,7 @@ services:
       - ./realm-config:/opt/keycloak/data/import
       - ./realm-config/keycloak-health-check.sh:/opt/keycloak/health-check.sh
       - ./keycloak-themes:/opt/keycloak/themes
+      - ./providers:/opt/keycloak/providers
     environment:
       - KC_DB=dev-file
       - KEYCLOAK_ADMIN=admin
