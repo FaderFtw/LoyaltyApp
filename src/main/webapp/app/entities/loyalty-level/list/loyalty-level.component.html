@@ -1,0 +1,129 @@
+<div>
+  <h2 id="page-heading" data-cy="LoyaltyLevelHeading">
+    <span>Loyalty Levels</span>
+
+    <div class="d-flex justify-content-end">
+      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading">
+        <fa-icon icon="sync" [animation]="isLoading ? 'spin' : undefined"></fa-icon>
+        <span>Refresh list</span>
+      </button>
+
+      <button
+        id="jh-create-entity"
+        data-cy="entityCreateButton"
+        class="btn btn-primary jh-create-entity create-loyalty-level"
+        [routerLink]="['/loyalty-level/new']"
+      >
+        <fa-icon icon="plus"></fa-icon>
+        <span>Create a new Loyalty Level</span>
+      </button>
+    </div>
+  </h2>
+
+  <jhi-alert-error></jhi-alert-error>
+
+  <jhi-alert></jhi-alert>
+
+  @if (loyaltyLevels?.length === 0) {
+    <div class="alert alert-warning" id="no-result">
+      <span>No Loyalty Levels found</span>
+    </div>
+  }
+
+  @if (loyaltyLevels && loyaltyLevels.length > 0) {
+    <div class="table-responsive table-entities" id="entities">
+      <table class="table table-striped" aria-describedby="page-heading">
+        <thead>
+          <tr jhiSort [sortState]="sortState" (sortChange)="navigateToWithComponentValues($event)">
+            <th scope="col" jhiSortBy="id">
+              <div class="d-flex">
+                <span>ID</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="title">
+              <div class="d-flex">
+                <span>Title</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="description">
+              <div class="d-flex">
+                <span>Description</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="minBalance">
+              <div class="d-flex">
+                <span>Min Balance</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="maxBalance">
+              <div class="d-flex">
+                <span>Max Balance</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (loyaltyLevel of loyaltyLevels; track trackId) {
+            <tr data-cy="entityTable">
+              <td>
+                <a [routerLink]="['/loyalty-level', loyaltyLevel.id, 'view']">{{ loyaltyLevel.id }}</a>
+              </td>
+              <td>{{ { null: '', DIAMOND: 'DIAMOND', GOLD: 'GOLD', SILVER: 'SILVER', BASIC: 'BASIC' }[loyaltyLevel.title ?? 'null'] }}</td>
+              <td>{{ loyaltyLevel.description }}</td>
+              <td>{{ loyaltyLevel.minBalance }}</td>
+              <td>{{ loyaltyLevel.maxBalance }}</td>
+              <td class="text-end">
+                <div class="btn-group">
+                  <a [routerLink]="['/loyalty-level', loyaltyLevel.id, 'view']" class="btn btn-info btn-sm" data-cy="entityDetailsButton">
+                    <fa-icon icon="eye"></fa-icon>
+                    <span class="d-none d-md-inline">View</span>
+                  </a>
+
+                  <a [routerLink]="['/loyalty-level', loyaltyLevel.id, 'edit']" class="btn btn-primary btn-sm" data-cy="entityEditButton">
+                    <fa-icon icon="pencil-alt"></fa-icon>
+                    <span class="d-none d-md-inline">Edit</span>
+                  </a>
+
+                  <button type="submit" (click)="delete(loyaltyLevel)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
+                    <fa-icon icon="times"></fa-icon>
+                    <span class="d-none d-md-inline">Delete</span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+  @if (loyaltyLevels && loyaltyLevels.length > 0) {
+    <div>
+      <div class="d-flex justify-content-center">
+        <jhi-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }"></jhi-item-count>
+      </div>
+
+      <div class="d-flex justify-content-center">
+        <ngb-pagination
+          [collectionSize]="totalItems"
+          [page]="page"
+          [pageSize]="itemsPerPage"
+          [maxSize]="5"
+          [rotate]="true"
+          [boundaryLinks]="true"
+          (pageChange)="navigateToPage($event)"
+        ></ngb-pagination>
+      </div>
+    </div>
+  }
+</div>

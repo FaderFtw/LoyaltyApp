@@ -1,6 +1,6 @@
 
 entity LoyaltyLevel {
-    title LoyaltyType required,
+    title LoyaltyType unique,
     description String,
     minBalance Long required,
     maxBalance Long required
@@ -14,7 +14,7 @@ entity Reward {
     createdAt ZonedDateTime required,
     fromDate ZonedDateTime required,
     toDate ZonedDateTime required,
-    code String required
+    code String required unique
 }
 
 entity RewardConfig {
@@ -39,13 +39,10 @@ entity Offer {
     itemSku String,
     grandTotal Float
 }
-relationship ManyToOne{
-    LoyaltyLevel to User with builtInEntity
-}
 
-relationship OneToMany{
+relationship ManyToOne{
     Reward{rewardConfig} to RewardConfig
-    Reward{user required} to User with builtInEntity
+    Reward{user required} to User{rewards} with builtInEntity
 }
 
 relationship ManyToMany{

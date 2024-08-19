@@ -64,7 +64,14 @@ public class UserExtraResource {
         }
         userExtra = userExtraRepository.save(userExtra);
         return ResponseEntity.created(new URI("/api/user-extras/" + userExtra.getId()))
-            .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, userExtra.getId()))
+            .headers(
+                HeaderUtil.createEntityCreationAlert(
+                    applicationName,
+                    false,
+                    ENTITY_NAME,
+                    userExtra.getUser().getFirstName() + " " + userExtra.getUser().getLastName()
+                )
+            )
             .body(userExtra);
     }
 
@@ -98,7 +105,14 @@ public class UserExtraResource {
 
         userExtra = userExtraRepository.save(userExtra);
         return ResponseEntity.ok()
-            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, userExtra.getId()))
+            .headers(
+                HeaderUtil.createEntityUpdateAlert(
+                    applicationName,
+                    false,
+                    ENTITY_NAME,
+                    userExtra.getUser().getFirstName() + " " + userExtra.getUser().getLastName()
+                )
+            )
             .body(userExtra);
     }
 
@@ -147,7 +161,12 @@ public class UserExtraResource {
 
         return ResponseUtil.wrapOrNotFound(
             result,
-            HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, userExtra.getId())
+            HeaderUtil.createEntityUpdateAlert(
+                applicationName,
+                false,
+                ENTITY_NAME,
+                userExtra.getUser().getFirstName() + " " + userExtra.getUser().getLastName()
+            )
         );
     }
 

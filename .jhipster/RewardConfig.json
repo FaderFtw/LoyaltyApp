@@ -1,0 +1,44 @@
+{
+  "annotations": {
+    "changelogDate": "20240819112246"
+  },
+  "applications": "*",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "title",
+      "fieldType": "RewardType",
+      "fieldValidateRules": ["required"],
+      "fieldValues": "DISCOUNT,DONATION,PHONETOPUP"
+    },
+    {
+      "fieldName": "description",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "balanceValue",
+      "fieldType": "Integer"
+    },
+    {
+      "fieldName": "convertedValue",
+      "fieldType": "Float"
+    },
+    {
+      "fieldName": "daysToExpire",
+      "fieldType": "Integer"
+    }
+  ],
+  "name": "RewardConfig",
+  "pagination": "pagination",
+  "relationships": [
+    {
+      "otherEntityName": "loyaltyLevel",
+      "otherEntityRelationshipName": "rewards",
+      "relationshipName": "loyaltyLevels",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-many"
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceClass"
+}

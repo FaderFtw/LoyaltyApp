@@ -1,0 +1,61 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    @if (rewardConfig()) {
+      <div>
+        <h2 data-cy="rewardConfigDetailsHeading"><span>Reward Config</span></h2>
+
+        <hr />
+
+        <jhi-alert-error></jhi-alert-error>
+
+        <jhi-alert></jhi-alert>
+
+        <dl class="row-md jh-entity-details">
+          <dt><span>ID</span></dt>
+          <dd>
+            <span>{{ rewardConfig()!.id }}</span>
+          </dd>
+          <dt><span>Title</span></dt>
+          <dd>
+            <span>{{
+              { null: '', DISCOUNT: 'DISCOUNT', DONATION: 'DONATION', PHONETOPUP: 'PHONETOPUP' }[rewardConfig()!.title ?? 'null']
+            }}</span>
+          </dd>
+          <dt><span>Description</span></dt>
+          <dd>
+            <span>{{ rewardConfig()!.description }}</span>
+          </dd>
+          <dt><span>Balance Value</span></dt>
+          <dd>
+            <span>{{ rewardConfig()!.balanceValue }}</span>
+          </dd>
+          <dt><span>Converted Value</span></dt>
+          <dd>
+            <span>{{ rewardConfig()!.convertedValue }}</span>
+          </dd>
+          <dt><span>Days To Expire</span></dt>
+          <dd>
+            <span>{{ rewardConfig()!.daysToExpire }}</span>
+          </dd>
+          <dt><span>Loyalty Levels</span></dt>
+          <dd>
+            @for (loyaltyLevels of rewardConfig()!.loyaltyLevels; track $index; let last = $last) {
+              <span>
+                <a [routerLink]="['/loyalty-level', loyaltyLevels.id, 'view']">{{ loyaltyLevels?.id }}</a
+                >{{ last ? '' : ', ' }}
+              </span>
+            }
+          </dd>
+        </dl>
+
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span>Back</span>
+        </button>
+
+        <button type="button" [routerLink]="['/reward-config', rewardConfig()!.id, 'edit']" class="btn btn-primary">
+          <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span>Edit</span>
+        </button>
+      </div>
+    }
+  </div>
+</div>

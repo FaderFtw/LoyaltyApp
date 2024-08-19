@@ -1,6 +1,7 @@
 package com.satoripop.loyalityapp.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.satoripop.loyalityapp.config.Constants;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -52,6 +53,10 @@ public class User extends AbstractAuditingEntity<String> implements Serializable
     @Size(max = 20)
     @Column(name = "phone", length = 20, unique = true)
     private String phone;
+
+    @ManyToOne
+    @JoinColumn(name = "loyalty_level_id", referencedColumnName = "id")
+    private LoyaltyLevel loyaltyLevel;
 
     @NotNull
     @Column(nullable = false)
@@ -195,5 +200,13 @@ public class User extends AbstractAuditingEntity<String> implements Serializable
 
     public void setCardNumber(String cardNumber) {
         this.cardNumber = cardNumber;
+    }
+
+    public LoyaltyLevel getLoyaltyLevel() {
+        return loyaltyLevel;
+    }
+
+    public void setLoyaltyLevel(LoyaltyLevel loyaltyLevel) {
+        this.loyaltyLevel = loyaltyLevel;
     }
 }

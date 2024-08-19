@@ -102,7 +102,6 @@ export class UserExtraComponent implements OnInit {
     const dataFromBody = this.fillComponentAttributesFromResponseBody(response.body);
     this.userExtras = this.refineData(dataFromBody);
     this.totalItems = Number(response.headers.get(TOTAL_COUNT_RESPONSE_HEADER));
-    this.paginator.length = this.totalItems; // Set total items for the paginator
   }
 
   protected refineData(data: IUserExtra[]): IUserExtra[] {

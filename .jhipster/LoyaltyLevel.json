@@ -1,0 +1,49 @@
+{
+  "annotations": {
+    "changelogDate": "20240819112244"
+  },
+  "applications": "*",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "title",
+      "fieldType": "LoyaltyType",
+      "fieldValidateRules": ["unique"],
+      "fieldValues": "DIAMOND,GOLD,SILVER,BASIC"
+    },
+    {
+      "fieldName": "description",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "minBalance",
+      "fieldType": "Long",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "maxBalance",
+      "fieldType": "Long",
+      "fieldValidateRules": ["required"]
+    }
+  ],
+  "name": "LoyaltyLevel",
+  "pagination": "pagination",
+  "relationships": [
+    {
+      "otherEntityName": "offer",
+      "otherEntityRelationshipName": "loyaltyLevels",
+      "relationshipName": "offers",
+      "relationshipSide": "right",
+      "relationshipType": "many-to-many"
+    },
+    {
+      "otherEntityName": "rewardConfig",
+      "otherEntityRelationshipName": "loyaltyLevels",
+      "relationshipName": "rewards",
+      "relationshipSide": "right",
+      "relationshipType": "many-to-many"
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceClass"
+}

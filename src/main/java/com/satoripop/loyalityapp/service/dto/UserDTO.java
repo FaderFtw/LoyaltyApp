@@ -1,5 +1,6 @@
 package com.satoripop.loyalityapp.service.dto;
 
+import com.satoripop.loyalityapp.domain.LoyaltyLevel;
 import com.satoripop.loyalityapp.domain.User;
 import java.io.Serializable;
 import java.util.Objects;
@@ -19,6 +20,8 @@ public class UserDTO implements Serializable {
 
     private String lastName;
 
+    private LoyaltyLevel loyaltyLevel;
+
     public UserDTO() {
         // Empty constructor needed for Jackson.
     }
@@ -29,6 +32,7 @@ public class UserDTO implements Serializable {
         this.login = user.getLogin();
         this.firstName = user.getFirstName();
         this.lastName = user.getLastName();
+        this.loyaltyLevel = user.getLoyaltyLevel();
     }
 
     public String getId() {
@@ -75,6 +79,9 @@ public class UserDTO implements Serializable {
         return "UserDTO{" +
             "id='" + id + '\'' +
             ", login='" + login + '\'' +
+            ", firstName='" + firstName + '\'' +
+            ", lastName='" + lastName + '\'' +
+            ", loyaltyLevel='" + loyaltyLevel + '\'' +
             "}";
     }
 
@@ -92,5 +99,13 @@ public class UserDTO implements Serializable {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public LoyaltyLevel getLoyaltyLevel() {
+        return loyaltyLevel;
+    }
+
+    public void setLoyaltyLevel(LoyaltyLevel loyaltyLevel) {
+        this.loyaltyLevel = loyaltyLevel;
     }
 }

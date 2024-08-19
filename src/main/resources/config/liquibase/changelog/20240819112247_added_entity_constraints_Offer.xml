@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+    <!--
+        Added the constraints for entity Offer.
+    -->
+    <changeSet id="20240819112247-2" author="jhipster">
+
+        <addForeignKeyConstraint baseColumnNames="offer_id"
+                                 baseTableName="rel_offer__loyalty_levels"
+                                 constraintName="fk_rel_offer__loyalty_levels__offer_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="offer"
+                                 />
+
+        <addForeignKeyConstraint baseColumnNames="loyalty_levels_id"
+                                 baseTableName="rel_offer__loyalty_levels"
+                                 constraintName="fk_rel_offer__loyalty_levels__loyalty_levels_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="loyalty_level"
+                                 />
+    </changeSet>
+</databaseChangeLog>

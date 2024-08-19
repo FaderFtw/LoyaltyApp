@@ -1,0 +1,163 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <form name="editForm" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+      <h2 id="jhi-offer-heading" data-cy="OfferCreateUpdateHeading">Create or edit an Offer</h2>
+
+      <div>
+        <jhi-alert-error></jhi-alert-error>
+
+        @if (editForm.controls.id.value !== null) {
+          <div class="mb-3">
+            <label class="form-label" for="field_id">ID</label>
+            <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+          </div>
+        }
+
+        <div class="d-flex justify-content-between">
+          <div class="mb-3 me-3 w-50">
+            <label class="form-label" for="field_fromDate">From Date</label>
+            <div class="d-flex">
+              <input
+                id="field_fromDate"
+                data-cy="fromDate"
+                type="datetime-local"
+                class="form-control"
+                name="fromDate"
+                formControlName="fromDate"
+                placeholder="YYYY-MM-DD HH:mm"
+              />
+            </div>
+            @if (editForm.get('fromDate')!.invalid && (editForm.get('fromDate')!.dirty || editForm.get('fromDate')!.touched)) {
+              <div>
+                @if (editForm.get('fromDate')?.errors?.required) {
+                  <small class="form-text text-danger">This field is required.</small>
+                }
+                <small class="form-text text-danger" [hidden]="!editForm.get('fromDate')?.errors?.datetimelocal"
+                  >This field should be a date and time.</small
+                >
+              </div>
+            }
+          </div>
+
+          <div class="mb-3 w-50">
+            <label class="form-label" for="field_toDate">To Date</label>
+            <div class="d-flex">
+              <input
+                id="field_toDate"
+                data-cy="toDate"
+                type="datetime-local"
+                class="form-control"
+                name="toDate"
+                formControlName="toDate"
+                placeholder="YYYY-MM-DD HH:mm"
+              />
+            </div>
+            @if (editForm.get('toDate')!.invalid && (editForm.get('toDate')!.dirty || editForm.get('toDate')!.touched)) {
+              <div>
+                @if (editForm.get('toDate')?.errors?.required) {
+                  <small class="form-text text-danger">This field is required.</small>
+                }
+                <small class="form-text text-danger" [hidden]="!editForm.get('toDate')?.errors?.datetimelocal"
+                  >This field should be a date and time.</small
+                >
+              </div>
+            }
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_title">Title</label>
+          <input type="text" class="form-control" name="title" id="field_title" data-cy="title" formControlName="title" />
+          @if (editForm.get('title')!.invalid && (editForm.get('title')!.dirty || editForm.get('title')!.touched)) {
+            <div>
+              @if (editForm.get('title')?.errors?.required) {
+                <small class="form-text text-danger">This field is required.</small>
+              }
+            </div>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_description">Description</label>
+          <input
+            type="text"
+            class="form-control"
+            name="description"
+            id="field_description"
+            data-cy="description"
+            formControlName="description"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_rewardPoints">Reward Points</label>
+          <input
+            type="number"
+            class="form-control"
+            name="rewardPoints"
+            id="field_rewardPoints"
+            data-cy="rewardPoints"
+            formControlName="rewardPoints"
+          />
+        </div>
+
+        <div class="d-flex justify-content-between">
+          <div class="mb-3 me-3 w-50">
+            <label class="form-label" for="field_itemQty">Item Qty</label>
+            <input type="number" class="form-control" name="itemQty" id="field_itemQty" data-cy="itemQty" formControlName="itemQty" />
+          </div>
+
+          <div class="mb-3 w-50">
+            <label class="form-label" for="field_itemSku">Item Sku</label>
+            <input type="text" class="form-control" name="itemSku" id="field_itemSku" data-cy="itemSku" formControlName="itemSku" />
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_grandTotal">Grand Total</label>
+          <input
+            type="number"
+            class="form-control"
+            name="grandTotal"
+            id="field_grandTotal"
+            data-cy="grandTotal"
+            formControlName="grandTotal"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label class="mb-2" for="field_loyaltyLevels">Loyalty Levels</label>
+          <select
+            class="form-control"
+            id="field_loyaltyLevels"
+            data-cy="loyaltyLevels"
+            multiple
+            name="loyaltyLevels"
+            formControlName="loyaltyLevels"
+            [compareWith]="compareLoyaltyLevel"
+          >
+            @for (loyaltyLevelOption of loyaltyLevelsSharedCollection; track $index) {
+              <option [ngValue]="loyaltyLevelOption">{{ loyaltyLevelOption.id }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
+          <fa-icon icon="ban"></fa-icon>&nbsp;<span>Cancel</span>
+        </button>
+
+        <button
+          type="submit"
+          id="save-entity"
+          data-cy="entityCreateSaveButton"
+          [disabled]="editForm.invalid || isSaving"
+          class="btn btn-primary"
+        >
+          <fa-icon icon="save"></fa-icon>&nbsp;<span>Save</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

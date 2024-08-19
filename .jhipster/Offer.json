@@ -1,0 +1,57 @@
+{
+  "annotations": {
+    "changelogDate": "20240819112247"
+  },
+  "applications": "*",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "fromDate",
+      "fieldType": "ZonedDateTime",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "toDate",
+      "fieldType": "ZonedDateTime",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "title",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "description",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "rewardPoints",
+      "fieldType": "Integer"
+    },
+    {
+      "fieldName": "itemQty",
+      "fieldType": "Float"
+    },
+    {
+      "fieldName": "itemSku",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "grandTotal",
+      "fieldType": "Float"
+    }
+  ],
+  "name": "Offer",
+  "pagination": "pagination",
+  "relationships": [
+    {
+      "otherEntityName": "loyaltyLevel",
+      "otherEntityRelationshipName": "offers",
+      "relationshipName": "loyaltyLevels",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-many"
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceClass"
+}

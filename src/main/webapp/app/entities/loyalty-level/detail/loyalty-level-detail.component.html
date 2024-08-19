@@ -1,0 +1,48 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    @if (loyaltyLevel()) {
+      <div>
+        <h2 data-cy="loyaltyLevelDetailsHeading"><span>Loyalty Level</span></h2>
+
+        <hr />
+
+        <jhi-alert-error></jhi-alert-error>
+
+        <jhi-alert></jhi-alert>
+
+        <dl class="row-md jh-entity-details">
+          <dt><span>ID</span></dt>
+          <dd>
+            <span>{{ loyaltyLevel()!.id }}</span>
+          </dd>
+          <dt><span>Title</span></dt>
+          <dd>
+            <span>{{
+              { null: '', DIAMOND: 'DIAMOND', GOLD: 'GOLD', SILVER: 'SILVER', BASIC: 'BASIC' }[loyaltyLevel()!.title ?? 'null']
+            }}</span>
+          </dd>
+          <dt><span>Description</span></dt>
+          <dd>
+            <span>{{ loyaltyLevel()!.description }}</span>
+          </dd>
+          <dt><span>Min Balance</span></dt>
+          <dd>
+            <span>{{ loyaltyLevel()!.minBalance }}</span>
+          </dd>
+          <dt><span>Max Balance</span></dt>
+          <dd>
+            <span>{{ loyaltyLevel()!.maxBalance }}</span>
+          </dd>
+        </dl>
+
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span>Back</span>
+        </button>
+
+        <button type="button" [routerLink]="['/loyalty-level', loyaltyLevel()!.id, 'edit']" class="btn btn-primary">
+          <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span>Edit</span>
+        </button>
+      </div>
+    }
+  </div>
+</div>
