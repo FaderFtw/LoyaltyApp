@@ -3,6 +3,7 @@ package com.satoripop.loyalityapp.web.rest;
 import static com.satoripop.loyalityapp.domain.OfferAsserts.*;
 import static com.satoripop.loyalityapp.web.rest.TestUtil.createUpdateProxyForBean;
 import static com.satoripop.loyalityapp.web.rest.TestUtil.sameInstant;
+import static com.satoripop.loyalityapp.web.rest.TestUtil.sameNumber;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.mockito.Mockito.*;
@@ -18,11 +19,13 @@ import com.satoripop.loyalityapp.service.OfferService;
 import com.satoripop.loyalityapp.service.dto.OfferDTO;
 import com.satoripop.loyalityapp.service.mapper.OfferMapper;
 import jakarta.persistence.EntityManager;
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
 import org.junit.jupiter.api.AfterEach;
@@ -49,29 +52,34 @@ import org.springframework.transaction.annotation.Transactional;
 @WithMockUser
 class OfferResourceIT {
 
-    private static final ZonedDateTime DEFAULT_FROM_DATE = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0L), ZoneOffset.UTC);
-    private static final ZonedDateTime UPDATED_FROM_DATE = ZonedDateTime.now(ZoneId.systemDefault()).withNano(0);
-
-    private static final ZonedDateTime DEFAULT_TO_DATE = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0L), ZoneOffset.UTC);
-    private static final ZonedDateTime UPDATED_TO_DATE = ZonedDateTime.now(ZoneId.systemDefault()).withNano(0);
-
     private static final String DEFAULT_TITLE = "AAAAAAAAAA";
     private static final String UPDATED_TITLE = "BBBBBBBBBB";
 
     private static final String DEFAULT_DESCRIPTION = "AAAAAAAAAA";
     private static final String UPDATED_DESCRIPTION = "BBBBBBBBBB";
 
+    private static final ZonedDateTime DEFAULT_FROM_DATE = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0L), ZoneOffset.UTC);
+    private static final ZonedDateTime UPDATED_FROM_DATE = ZonedDateTime.now(ZoneId.systemDefault()).withNano(0);
+
+    private static final ZonedDateTime DEFAULT_TO_DATE = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0L), ZoneOffset.UTC);
+    private static final ZonedDateTime UPDATED_TO_DATE = ZonedDateTime.now(ZoneId.systemDefault()).withNano(0);
+
     private static final Integer DEFAULT_REWARD_POINTS = 1;
     private static final Integer UPDATED_REWARD_POINTS = 2;
 
-    private static final Float DEFAULT_ITEM_QTY = 1F;
-    private static final Float UPDATED_ITEM_QTY = 2F;
+    private static final Integer DEFAULT_ITEM_QTY = 1;
+    private static final Integer UPDATED_ITEM_QTY = 2;
 
     private static final String DEFAULT_ITEM_SKU = "AAAAAAAAAA";
     private static final String UPDATED_ITEM_SKU = "BBBBBBBBBB";
 
-    private static final Float DEFAULT_GRAND_TOTAL = 1F;
-    private static final Float UPDATED_GRAND_TOTAL = 2F;
+    private static final BigDecimal DEFAULT_GRAND_TOTAL = new BigDecimal(1);
+    private static final BigDecimal UPDATED_GRAND_TOTAL = new BigDecimal(2);
+
+    private static final byte[] DEFAULT_IMAGE = TestUtil.createByteArray(1, "0");
+    private static final byte[] UPDATED_IMAGE = TestUtil.createByteArray(1, "1");
+    private static final String DEFAULT_IMAGE_CONTENT_TYPE = "image/jpg";
+    private static final String UPDATED_IMAGE_CONTENT_TYPE = "image/png";
 
     private static final String ENTITY_API_URL = "/api/offers";
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
@@ -112,14 +120,16 @@ class OfferResourceIT {
      */
     public static Offer createEntity(EntityManager em) {
         Offer offer = new Offer()
-            .fromDate(DEFAULT_FROM_DATE)
-            .toDate(DEFAULT_TO_DATE)
             .title(DEFAULT_TITLE)
             .description(DEFAULT_DESCRIPTION)
+            .fromDate(DEFAULT_FROM_DATE)
+            .toDate(DEFAULT_TO_DATE)
             .rewardPoints(DEFAULT_REWARD_POINTS)
             .itemQty(DEFAULT_ITEM_QTY)
             .itemSku(DEFAULT_ITEM_SKU)
-            .grandTotal(DEFAULT_GRAND_TOTAL);
+            .grandTotal(DEFAULT_GRAND_TOTAL)
+            .image(DEFAULT_IMAGE)
+            .imageContentType(DEFAULT_IMAGE_CONTENT_TYPE);
         return offer;
     }
 
@@ -131,14 +141,16 @@ class OfferResourceIT {
      */
     public static Offer createUpdatedEntity(EntityManager em) {
         Offer offer = new Offer()
-            .fromDate(UPDATED_FROM_DATE)
-            .toDate(UPDATED_TO_DATE)
             .title(UPDATED_TITLE)
             .description(UPDATED_DESCRIPTION)
+            .fromDate(UPDATED_FROM_DATE)
+            .toDate(UPDATED_TO_DATE)
             .rewardPoints(UPDATED_REWARD_POINTS)
             .itemQty(UPDATED_ITEM_QTY)
             .itemSku(UPDATED_ITEM_SKU)
-            .grandTotal(UPDATED_GRAND_TOTAL);
+            .grandTotal(UPDATED_GRAND_TOTAL)
+            .image(UPDATED_IMAGE)
+            .imageContentType(UPDATED_IMAGE_CONTENT_TYPE);
         return offer;
     }
 
@@ -199,6 +211,23 @@ class OfferResourceIT {
 
     @Test
     @Transactional
+    void checkTitleIsRequired() throws Exception {
+        long databaseSizeBeforeTest = getRepositoryCount();
+        // set the field null
+        offer.setTitle(null);
+
+        // Create the Offer, which fails.
+        OfferDTO offerDTO = offerMapper.toDto(offer);
+
+        restOfferMockMvc
+            .perform(post(ENTITY_API_URL).with(csrf()).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(offerDTO)))
+            .andExpect(status().isBadRequest());
+
+        assertSameRepositoryCount(databaseSizeBeforeTest);
+    }
+
+    @Test
+    @Transactional
     void checkFromDateIsRequired() throws Exception {
         long databaseSizeBeforeTest = getRepositoryCount();
         // set the field null
@@ -233,10 +262,61 @@ class OfferResourceIT {
 
     @Test
     @Transactional
-    void checkTitleIsRequired() throws Exception {
+    void checkRewardPointsIsRequired() throws Exception {
         long databaseSizeBeforeTest = getRepositoryCount();
         // set the field null
-        offer.setTitle(null);
+        offer.setRewardPoints(null);
+
+        // Create the Offer, which fails.
+        OfferDTO offerDTO = offerMapper.toDto(offer);
+
+        restOfferMockMvc
+            .perform(post(ENTITY_API_URL).with(csrf()).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(offerDTO)))
+            .andExpect(status().isBadRequest());
+
+        assertSameRepositoryCount(databaseSizeBeforeTest);
+    }
+
+    @Test
+    @Transactional
+    void checkItemQtyIsRequired() throws Exception {
+        long databaseSizeBeforeTest = getRepositoryCount();
+        // set the field null
+        offer.setItemQty(null);
+
+        // Create the Offer, which fails.
+        OfferDTO offerDTO = offerMapper.toDto(offer);
+
+        restOfferMockMvc
+            .perform(post(ENTITY_API_URL).with(csrf()).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(offerDTO)))
+            .andExpect(status().isBadRequest());
+
+        assertSameRepositoryCount(databaseSizeBeforeTest);
+    }
+
+    @Test
+    @Transactional
+    void checkItemSkuIsRequired() throws Exception {
+        long databaseSizeBeforeTest = getRepositoryCount();
+        // set the field null
+        offer.setItemSku(null);
+
+        // Create the Offer, which fails.
+        OfferDTO offerDTO = offerMapper.toDto(offer);
+
+        restOfferMockMvc
+            .perform(post(ENTITY_API_URL).with(csrf()).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(offerDTO)))
+            .andExpect(status().isBadRequest());
+
+        assertSameRepositoryCount(databaseSizeBeforeTest);
+    }
+
+    @Test
+    @Transactional
+    void checkGrandTotalIsRequired() throws Exception {
+        long databaseSizeBeforeTest = getRepositoryCount();
+        // set the field null
+        offer.setGrandTotal(null);
 
         // Create the Offer, which fails.
         OfferDTO offerDTO = offerMapper.toDto(offer);
@@ -260,14 +340,16 @@ class OfferResourceIT {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(offer.getId().intValue())))
-            .andExpect(jsonPath("$.[*].fromDate").value(hasItem(sameInstant(DEFAULT_FROM_DATE))))
-            .andExpect(jsonPath("$.[*].toDate").value(hasItem(sameInstant(DEFAULT_TO_DATE))))
             .andExpect(jsonPath("$.[*].title").value(hasItem(DEFAULT_TITLE)))
             .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION)))
+            .andExpect(jsonPath("$.[*].fromDate").value(hasItem(sameInstant(DEFAULT_FROM_DATE))))
+            .andExpect(jsonPath("$.[*].toDate").value(hasItem(sameInstant(DEFAULT_TO_DATE))))
             .andExpect(jsonPath("$.[*].rewardPoints").value(hasItem(DEFAULT_REWARD_POINTS)))
-            .andExpect(jsonPath("$.[*].itemQty").value(hasItem(DEFAULT_ITEM_QTY.doubleValue())))
+            .andExpect(jsonPath("$.[*].itemQty").value(hasItem(DEFAULT_ITEM_QTY)))
             .andExpect(jsonPath("$.[*].itemSku").value(hasItem(DEFAULT_ITEM_SKU)))
-            .andExpect(jsonPath("$.[*].grandTotal").value(hasItem(DEFAULT_GRAND_TOTAL.doubleValue())));
+            .andExpect(jsonPath("$.[*].grandTotal").value(hasItem(sameNumber(DEFAULT_GRAND_TOTAL))))
+            .andExpect(jsonPath("$.[*].imageContentType").value(hasItem(DEFAULT_IMAGE_CONTENT_TYPE)))
+            .andExpect(jsonPath("$.[*].image").value(hasItem(Base64.getEncoder().encodeToString(DEFAULT_IMAGE))));
     }
 
     @SuppressWarnings({ "unchecked" })
@@ -299,14 +381,16 @@ class OfferResourceIT {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(offer.getId().intValue()))
-            .andExpect(jsonPath("$.fromDate").value(sameInstant(DEFAULT_FROM_DATE)))
-            .andExpect(jsonPath("$.toDate").value(sameInstant(DEFAULT_TO_DATE)))
             .andExpect(jsonPath("$.title").value(DEFAULT_TITLE))
             .andExpect(jsonPath("$.description").value(DEFAULT_DESCRIPTION))
+            .andExpect(jsonPath("$.fromDate").value(sameInstant(DEFAULT_FROM_DATE)))
+            .andExpect(jsonPath("$.toDate").value(sameInstant(DEFAULT_TO_DATE)))
             .andExpect(jsonPath("$.rewardPoints").value(DEFAULT_REWARD_POINTS))
-            .andExpect(jsonPath("$.itemQty").value(DEFAULT_ITEM_QTY.doubleValue()))
+            .andExpect(jsonPath("$.itemQty").value(DEFAULT_ITEM_QTY))
             .andExpect(jsonPath("$.itemSku").value(DEFAULT_ITEM_SKU))
-            .andExpect(jsonPath("$.grandTotal").value(DEFAULT_GRAND_TOTAL.doubleValue()));
+            .andExpect(jsonPath("$.grandTotal").value(sameNumber(DEFAULT_GRAND_TOTAL)))
+            .andExpect(jsonPath("$.imageContentType").value(DEFAULT_IMAGE_CONTENT_TYPE))
+            .andExpect(jsonPath("$.image").value(Base64.getEncoder().encodeToString(DEFAULT_IMAGE)));
     }
 
     @Test
@@ -329,14 +413,16 @@ class OfferResourceIT {
         // Disconnect from session so that the updates on updatedOffer are not directly saved in db
         em.detach(updatedOffer);
         updatedOffer
-            .fromDate(UPDATED_FROM_DATE)
-            .toDate(UPDATED_TO_DATE)
             .title(UPDATED_TITLE)
             .description(UPDATED_DESCRIPTION)
+            .fromDate(UPDATED_FROM_DATE)
+            .toDate(UPDATED_TO_DATE)
             .rewardPoints(UPDATED_REWARD_POINTS)
             .itemQty(UPDATED_ITEM_QTY)
             .itemSku(UPDATED_ITEM_SKU)
-            .grandTotal(UPDATED_GRAND_TOTAL);
+            .grandTotal(UPDATED_GRAND_TOTAL)
+            .image(UPDATED_IMAGE)
+            .imageContentType(UPDATED_IMAGE_CONTENT_TYPE);
         OfferDTO offerDTO = offerMapper.toDto(updatedOffer);
 
         restOfferMockMvc
@@ -429,7 +515,14 @@ class OfferResourceIT {
         Offer partialUpdatedOffer = new Offer();
         partialUpdatedOffer.setId(offer.getId());
 
-        partialUpdatedOffer.toDate(UPDATED_TO_DATE).rewardPoints(UPDATED_REWARD_POINTS).itemQty(UPDATED_ITEM_QTY).itemSku(UPDATED_ITEM_SKU);
+        partialUpdatedOffer
+            .title(UPDATED_TITLE)
+            .description(UPDATED_DESCRIPTION)
+            .rewardPoints(UPDATED_REWARD_POINTS)
+            .itemQty(UPDATED_ITEM_QTY)
+            .itemSku(UPDATED_ITEM_SKU)
+            .image(UPDATED_IMAGE)
+            .imageContentType(UPDATED_IMAGE_CONTENT_TYPE);
 
         restOfferMockMvc
             .perform(
@@ -459,14 +552,16 @@ class OfferResourceIT {
         partialUpdatedOffer.setId(offer.getId());
 
         partialUpdatedOffer
-            .fromDate(UPDATED_FROM_DATE)
-            .toDate(UPDATED_TO_DATE)
             .title(UPDATED_TITLE)
             .description(UPDATED_DESCRIPTION)
+            .fromDate(UPDATED_FROM_DATE)
+            .toDate(UPDATED_TO_DATE)
             .rewardPoints(UPDATED_REWARD_POINTS)
             .itemQty(UPDATED_ITEM_QTY)
             .itemSku(UPDATED_ITEM_SKU)
-            .grandTotal(UPDATED_GRAND_TOTAL);
+            .grandTotal(UPDATED_GRAND_TOTAL)
+            .image(UPDATED_IMAGE)
+            .imageContentType(UPDATED_IMAGE_CONTENT_TYPE);
 
         restOfferMockMvc
             .perform(

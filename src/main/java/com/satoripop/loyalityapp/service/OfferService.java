@@ -106,9 +106,7 @@ public class OfferService {
     @Transactional(readOnly = true)
     public Optional<Offer> findOne(Long id) {
         log.debug("Request to get Offer : {}", id);
-        Optional<Offer> offer = offerRepository.findOneWithEagerRelationships(id);
-        log.debug("Offer: {}", offer);
-        return offer;
+        return offerRepository.findOneWithEagerRelationships(id);
     }
 
     /**

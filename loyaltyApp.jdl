@@ -1,57 +1,13 @@
-
-entity LoyaltyLevel {
-    title LoyaltyType unique,
-    description String,
-    minBalance Long required,
-    maxBalance Long required
-}
-
-enum LoyaltyType{
-    DIAMOND, GOLD, SILVER, BASIC
-}
-
-entity Reward {
-    createdAt ZonedDateTime required,
-    fromDate ZonedDateTime required,
-    toDate ZonedDateTime required,
-    code String required unique
-}
-
-entity RewardConfig {
-    title RewardType required,
-    description String,
-    balanceValue Integer,
-    convertedValue Float,
-    daysToExpire Integer
-}
-
-enum RewardType{
-    DISCOUNT, DONATION, PHONETOPUP
-}
-
 entity Offer {
-    fromDate ZonedDateTime required,
-    toDate ZonedDateTime required,
     title String required,
     description String,
-    rewardPoints Integer,
-    itemQty Float,
-    itemSku String,
-    grandTotal Float
+    fromDate ZonedDateTime required,
+    toDate ZonedDateTime required,
+    rewardPoints Integer required,
+    itemQty Integer required,
+    itemSku String required,
+    grandTotal BigDecimal required
+    image ImageBlob
 }
 
-relationship ManyToOne{
-    Reward{rewardConfig} to RewardConfig
-    Reward{user required} to User{rewards} with builtInEntity
-}
-
-relationship ManyToMany{
-    Offer{loyaltyLevels} to LoyaltyLevel{offers},
-    RewardConfig{loyaltyLevels} to LoyaltyLevel{rewards}
-}
-
-// Set pagination options
-dto * with mapstruct paginate LoyaltyLevel, Reward, RewardConfig, Offer with pagination
-
-
-
+dto * with mapstruct paginate Offer with pagination

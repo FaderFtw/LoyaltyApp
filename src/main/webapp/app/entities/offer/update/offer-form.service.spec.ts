@@ -20,14 +20,15 @@ describe('Offer Form Service', () => {
         expect(formGroup.controls).toEqual(
           expect.objectContaining({
             id: expect.any(Object),
-            fromDate: expect.any(Object),
-            toDate: expect.any(Object),
             title: expect.any(Object),
             description: expect.any(Object),
+            fromDate: expect.any(Object),
+            toDate: expect.any(Object),
             rewardPoints: expect.any(Object),
             itemQty: expect.any(Object),
             itemSku: expect.any(Object),
             grandTotal: expect.any(Object),
+            image: expect.any(Object),
             loyaltyLevels: expect.any(Object),
           }),
         );
@@ -39,14 +40,15 @@ describe('Offer Form Service', () => {
         expect(formGroup.controls).toEqual(
           expect.objectContaining({
             id: expect.any(Object),
-            fromDate: expect.any(Object),
-            toDate: expect.any(Object),
             title: expect.any(Object),
             description: expect.any(Object),
+            fromDate: expect.any(Object),
+            toDate: expect.any(Object),
             rewardPoints: expect.any(Object),
             itemQty: expect.any(Object),
             itemSku: expect.any(Object),
             grandTotal: expect.any(Object),
+            image: expect.any(Object),
             loyaltyLevels: expect.any(Object),
           }),
         );

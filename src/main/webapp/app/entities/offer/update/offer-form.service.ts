@@ -32,14 +32,16 @@ type OfferFormDefaults = Pick<NewOffer, 'id' | 'fromDate' | 'toDate' | 'loyaltyL
 
 type OfferFormGroupContent = {
   id: FormControl<OfferFormRawValue['id'] | NewOffer['id']>;
-  fromDate: FormControl<OfferFormRawValue['fromDate']>;
-  toDate: FormControl<OfferFormRawValue['toDate']>;
   title: FormControl<OfferFormRawValue['title']>;
   description: FormControl<OfferFormRawValue['description']>;
+  fromDate: FormControl<OfferFormRawValue['fromDate']>;
+  toDate: FormControl<OfferFormRawValue['toDate']>;
   rewardPoints: FormControl<OfferFormRawValue['rewardPoints']>;
   itemQty: FormControl<OfferFormRawValue['itemQty']>;
   itemSku: FormControl<OfferFormRawValue['itemSku']>;
   grandTotal: FormControl<OfferFormRawValue['grandTotal']>;
+  image: FormControl<OfferFormRawValue['image']>;
+  imageContentType: FormControl<OfferFormRawValue['imageContentType']>;
   loyaltyLevels: FormControl<OfferFormRawValue['loyaltyLevels']>;
 };
 
@@ -60,20 +62,30 @@ export class OfferFormService {
           validators: [Validators.required],
         },
       ),
+      title: new FormControl(offerRawValue.title, {
+        validators: [Validators.required],
+      }),
+      description: new FormControl(offerRawValue.description),
       fromDate: new FormControl(offerRawValue.fromDate, {
         validators: [Validators.required],
       }),
       toDate: new FormControl(offerRawValue.toDate, {
         validators: [Validators.required],
       }),
-      title: new FormControl(offerRawValue.title, {
+      rewardPoints: new FormControl(offerRawValue.rewardPoints, {
         validators: [Validators.required],
       }),
-      description: new FormControl(offerRawValue.description),
-      rewardPoints: new FormControl(offerRawValue.rewardPoints),
-      itemQty: new FormControl(offerRawValue.itemQty),
-      itemSku: new FormControl(offerRawValue.itemSku),
-      grandTotal: new FormControl(offerRawValue.grandTotal),
+      itemQty: new FormControl(offerRawValue.itemQty, {
+        validators: [Validators.required],
+      }),
+      itemSku: new FormControl(offerRawValue.itemSku, {
+        validators: [Validators.required],
+      }),
+      grandTotal: new FormControl(offerRawValue.grandTotal, {
+        validators: [Validators.required],
+      }),
+      image: new FormControl(offerRawValue.image),
+      imageContentType: new FormControl(offerRawValue.imageContentType),
       loyaltyLevels: new FormControl(offerRawValue.loyaltyLevels ?? []),
     });
   }

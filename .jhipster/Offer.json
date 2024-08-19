@@ -6,6 +6,15 @@
   "dto": "mapstruct",
   "fields": [
     {
+      "fieldName": "title",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "description",
+      "fieldType": "String"
+    },
+    {
       "fieldName": "fromDate",
       "fieldType": "ZonedDateTime",
       "fieldValidateRules": ["required"]
@@ -16,42 +25,34 @@
       "fieldValidateRules": ["required"]
     },
     {
-      "fieldName": "title",
+      "fieldName": "rewardPoints",
+      "fieldType": "Integer",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "itemQty",
+      "fieldType": "Integer",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "itemSku",
       "fieldType": "String",
       "fieldValidateRules": ["required"]
     },
     {
-      "fieldName": "description",
-      "fieldType": "String"
-    },
-    {
-      "fieldName": "rewardPoints",
-      "fieldType": "Integer"
-    },
-    {
-      "fieldName": "itemQty",
-      "fieldType": "Float"
-    },
-    {
-      "fieldName": "itemSku",
-      "fieldType": "String"
-    },
-    {
       "fieldName": "grandTotal",
-      "fieldType": "Float"
+      "fieldType": "BigDecimal",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "image",
+      "fieldType": "byte[]",
+      "fieldTypeBlobContent": "image"
     }
   ],
   "name": "Offer",
   "pagination": "pagination",
-  "relationships": [
-    {
-      "otherEntityName": "loyaltyLevel",
-      "otherEntityRelationshipName": "offers",
-      "relationshipName": "loyaltyLevels",
-      "relationshipSide": "left",
-      "relationshipType": "many-to-many"
-    }
-  ],
+  "relationships": [],
   "searchEngine": "no",
   "service": "serviceClass"
 }

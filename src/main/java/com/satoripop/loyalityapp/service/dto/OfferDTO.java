@@ -1,7 +1,9 @@
 package com.satoripop.loyalityapp.service.dto;
 
+import jakarta.persistence.Lob;
 import jakarta.validation.constraints.*;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.Objects;
@@ -16,23 +18,32 @@ public class OfferDTO implements Serializable {
     private Long id;
 
     @NotNull
+    private String title;
+
+    private String description;
+
+    @NotNull
     private ZonedDateTime fromDate;
 
     @NotNull
     private ZonedDateTime toDate;
 
     @NotNull
-    private String title;
-
-    private String description;
-
     private Integer rewardPoints;
 
-    private Float itemQty;
+    @NotNull
+    private Integer itemQty;
 
+    @NotNull
     private String itemSku;
 
-    private Float grandTotal;
+    @NotNull
+    private BigDecimal grandTotal;
+
+    @Lob
+    private byte[] image;
+
+    private String imageContentType;
 
     private Set<LoyaltyLevelDTO> loyaltyLevels = new HashSet<>();
 
@@ -42,22 +53,6 @@ public class OfferDTO implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public ZonedDateTime getFromDate() {
-        return fromDate;
-    }
-
-    public void setFromDate(ZonedDateTime fromDate) {
-        this.fromDate = fromDate;
-    }
-
-    public ZonedDateTime getToDate() {
-        return toDate;
-    }
-
-    public void setToDate(ZonedDateTime toDate) {
-        this.toDate = toDate;
     }
 
     public String getTitle() {
@@ -76,6 +71,22 @@ public class OfferDTO implements Serializable {
         this.description = description;
     }
 
+    public ZonedDateTime getFromDate() {
+        return fromDate;
+    }
+
+    public void setFromDate(ZonedDateTime fromDate) {
+        this.fromDate = fromDate;
+    }
+
+    public ZonedDateTime getToDate() {
+        return toDate;
+    }
+
+    public void setToDate(ZonedDateTime toDate) {
+        this.toDate = toDate;
+    }
+
     public Integer getRewardPoints() {
         return rewardPoints;
     }
@@ -84,11 +95,11 @@ public class OfferDTO implements Serializable {
         this.rewardPoints = rewardPoints;
     }
 
-    public Float getItemQty() {
+    public Integer getItemQty() {
         return itemQty;
     }
 
-    public void setItemQty(Float itemQty) {
+    public void setItemQty(Integer itemQty) {
         this.itemQty = itemQty;
     }
 
@@ -100,12 +111,28 @@ public class OfferDTO implements Serializable {
         this.itemSku = itemSku;
     }
 
-    public Float getGrandTotal() {
+    public BigDecimal getGrandTotal() {
         return grandTotal;
     }
 
-    public void setGrandTotal(Float grandTotal) {
+    public void setGrandTotal(BigDecimal grandTotal) {
         this.grandTotal = grandTotal;
+    }
+
+    public byte[] getImage() {
+        return image;
+    }
+
+    public void setImage(byte[] image) {
+        this.image = image;
+    }
+
+    public String getImageContentType() {
+        return imageContentType;
+    }
+
+    public void setImageContentType(String imageContentType) {
+        this.imageContentType = imageContentType;
     }
 
     public Set<LoyaltyLevelDTO> getLoyaltyLevels() {
@@ -142,14 +169,15 @@ public class OfferDTO implements Serializable {
     public String toString() {
         return "OfferDTO{" +
             "id=" + getId() +
-            ", fromDate='" + getFromDate() + "'" +
-            ", toDate='" + getToDate() + "'" +
             ", title='" + getTitle() + "'" +
             ", description='" + getDescription() + "'" +
+            ", fromDate='" + getFromDate() + "'" +
+            ", toDate='" + getToDate() + "'" +
             ", rewardPoints=" + getRewardPoints() +
             ", itemQty=" + getItemQty() +
             ", itemSku='" + getItemSku() + "'" +
             ", grandTotal=" + getGrandTotal() +
+            ", image='" + getImage() + "'" +
             ", loyaltyLevels=" + getLoyaltyLevels() +
             "}";
     }

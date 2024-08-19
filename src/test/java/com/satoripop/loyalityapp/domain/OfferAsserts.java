@@ -1,5 +1,6 @@
 package com.satoripop.loyalityapp.domain;
 
+import static com.satoripop.loyalityapp.domain.AssertUtils.bigDecimalCompareTo;
 import static com.satoripop.loyalityapp.domain.AssertUtils.zonedDataTimeSameInstant;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -48,6 +49,8 @@ public class OfferAsserts {
     public static void assertOfferUpdatableFieldsEquals(Offer expected, Offer actual) {
         assertThat(expected)
             .as("Verify Offer relevant properties")
+            .satisfies(e -> assertThat(e.getTitle()).as("check title").isEqualTo(actual.getTitle()))
+            .satisfies(e -> assertThat(e.getDescription()).as("check description").isEqualTo(actual.getDescription()))
             .satisfies(
                 e ->
                     assertThat(e.getFromDate())
@@ -58,12 +61,18 @@ public class OfferAsserts {
             .satisfies(
                 e -> assertThat(e.getToDate()).as("check toDate").usingComparator(zonedDataTimeSameInstant).isEqualTo(actual.getToDate())
             )
-            .satisfies(e -> assertThat(e.getTitle()).as("check title").isEqualTo(actual.getTitle()))
-            .satisfies(e -> assertThat(e.getDescription()).as("check description").isEqualTo(actual.getDescription()))
             .satisfies(e -> assertThat(e.getRewardPoints()).as("check rewardPoints").isEqualTo(actual.getRewardPoints()))
             .satisfies(e -> assertThat(e.getItemQty()).as("check itemQty").isEqualTo(actual.getItemQty()))
             .satisfies(e -> assertThat(e.getItemSku()).as("check itemSku").isEqualTo(actual.getItemSku()))
-            .satisfies(e -> assertThat(e.getGrandTotal()).as("check grandTotal").isEqualTo(actual.getGrandTotal()));
+            .satisfies(
+                e ->
+                    assertThat(e.getGrandTotal())
+                        .as("check grandTotal")
+                        .usingComparator(bigDecimalCompareTo)
+                        .isEqualTo(actual.getGrandTotal())
+            )
+            .satisfies(e -> assertThat(e.getImage()).as("check image").isEqualTo(actual.getImage()))
+            .satisfies(e -> assertThat(e.getImageContentType()).as("check image contenty type").isEqualTo(actual.getImageContentType()));
     }
 
     /**

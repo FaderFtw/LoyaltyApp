@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -25,6 +26,13 @@ public class Offer implements Serializable {
     private Long id;
 
     @NotNull
+    @Column(name = "title", nullable = false)
+    private String title;
+
+    @Column(name = "description")
+    private String description;
+
+    @NotNull
     @Column(name = "from_date", nullable = false)
     private ZonedDateTime fromDate;
 
@@ -33,25 +41,29 @@ public class Offer implements Serializable {
     private ZonedDateTime toDate;
 
     @NotNull
-    @Column(name = "title", nullable = false)
-    private String title;
-
-    @Column(name = "description")
-    private String description;
-
-    @Column(name = "reward_points")
+    @Column(name = "reward_points", nullable = false)
     private Integer rewardPoints;
 
-    @Column(name = "item_qty")
-    private Float itemQty;
+    @NotNull
+    @Column(name = "item_qty", nullable = false)
+    private Integer itemQty;
 
-    @Column(name = "item_sku")
+    @NotNull
+    @Column(name = "item_sku", nullable = false)
     private String itemSku;
 
-    @Column(name = "grand_total")
-    private Float grandTotal;
+    @NotNull
+    @Column(name = "grand_total", precision = 21, scale = 2, nullable = false)
+    private BigDecimal grandTotal;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @Lob
+    @Column(name = "image")
+    private byte[] image;
+
+    @Column(name = "image_content_type")
+    private String imageContentType;
+
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
         name = "rel_offer__loyalty_levels",
         joinColumns = @JoinColumn(name = "offer_id"),
@@ -73,32 +85,6 @@ public class Offer implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public ZonedDateTime getFromDate() {
-        return this.fromDate;
-    }
-
-    public Offer fromDate(ZonedDateTime fromDate) {
-        this.setFromDate(fromDate);
-        return this;
-    }
-
-    public void setFromDate(ZonedDateTime fromDate) {
-        this.fromDate = fromDate;
-    }
-
-    public ZonedDateTime getToDate() {
-        return this.toDate;
-    }
-
-    public Offer toDate(ZonedDateTime toDate) {
-        this.setToDate(toDate);
-        return this;
-    }
-
-    public void setToDate(ZonedDateTime toDate) {
-        this.toDate = toDate;
     }
 
     public String getTitle() {
@@ -127,6 +113,32 @@ public class Offer implements Serializable {
         this.description = description;
     }
 
+    public ZonedDateTime getFromDate() {
+        return this.fromDate;
+    }
+
+    public Offer fromDate(ZonedDateTime fromDate) {
+        this.setFromDate(fromDate);
+        return this;
+    }
+
+    public void setFromDate(ZonedDateTime fromDate) {
+        this.fromDate = fromDate;
+    }
+
+    public ZonedDateTime getToDate() {
+        return this.toDate;
+    }
+
+    public Offer toDate(ZonedDateTime toDate) {
+        this.setToDate(toDate);
+        return this;
+    }
+
+    public void setToDate(ZonedDateTime toDate) {
+        this.toDate = toDate;
+    }
+
     public Integer getRewardPoints() {
         return this.rewardPoints;
     }
@@ -140,16 +152,16 @@ public class Offer implements Serializable {
         this.rewardPoints = rewardPoints;
     }
 
-    public Float getItemQty() {
+    public Integer getItemQty() {
         return this.itemQty;
     }
 
-    public Offer itemQty(Float itemQty) {
+    public Offer itemQty(Integer itemQty) {
         this.setItemQty(itemQty);
         return this;
     }
 
-    public void setItemQty(Float itemQty) {
+    public void setItemQty(Integer itemQty) {
         this.itemQty = itemQty;
     }
 
@@ -166,17 +178,43 @@ public class Offer implements Serializable {
         this.itemSku = itemSku;
     }
 
-    public Float getGrandTotal() {
+    public BigDecimal getGrandTotal() {
         return this.grandTotal;
     }
 
-    public Offer grandTotal(Float grandTotal) {
+    public Offer grandTotal(BigDecimal grandTotal) {
         this.setGrandTotal(grandTotal);
         return this;
     }
 
-    public void setGrandTotal(Float grandTotal) {
+    public void setGrandTotal(BigDecimal grandTotal) {
         this.grandTotal = grandTotal;
+    }
+
+    public byte[] getImage() {
+        return this.image;
+    }
+
+    public Offer image(byte[] image) {
+        this.setImage(image);
+        return this;
+    }
+
+    public void setImage(byte[] image) {
+        this.image = image;
+    }
+
+    public String getImageContentType() {
+        return this.imageContentType;
+    }
+
+    public Offer imageContentType(String imageContentType) {
+        this.imageContentType = imageContentType;
+        return this;
+    }
+
+    public void setImageContentType(String imageContentType) {
+        this.imageContentType = imageContentType;
     }
 
     public Set<LoyaltyLevel> getLoyaltyLevels() {
@@ -226,14 +264,16 @@ public class Offer implements Serializable {
     public String toString() {
         return "Offer{" +
             "id=" + getId() +
-            ", fromDate='" + getFromDate() + "'" +
-            ", toDate='" + getToDate() + "'" +
             ", title='" + getTitle() + "'" +
             ", description='" + getDescription() + "'" +
+            ", fromDate='" + getFromDate() + "'" +
+            ", toDate='" + getToDate() + "'" +
             ", rewardPoints=" + getRewardPoints() +
             ", itemQty=" + getItemQty() +
             ", itemSku='" + getItemSku() + "'" +
             ", grandTotal=" + getGrandTotal() +
+            ", image='" + getImage() + "'" +
+            ", imageContentType='" + getImageContentType() + "'" +
             "}";
     }
 }

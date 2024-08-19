@@ -15,16 +15,6 @@
           <dd>
             <span>{{ offer()!.id }}</span>
           </dd>
-
-          <dt><span>From Date</span></dt>
-          <dd>
-            <span>{{ offer()!.fromDate | formatMediumDatetime }}</span>
-          </dd>
-          <dt><span>To Date</span></dt>
-          <dd>
-            <span>{{ offer()!.toDate | formatMediumDatetime }}</span>
-          </dd>
-
           <dt><span>Title</span></dt>
           <dd>
             <span>{{ offer()!.title }}</span>
@@ -32,6 +22,14 @@
           <dt><span>Description</span></dt>
           <dd>
             <span>{{ offer()!.description }}</span>
+          </dd>
+          <dt><span>From Date</span></dt>
+          <dd>
+            <span>{{ offer()!.fromDate | formatMediumDatetime }}</span>
+          </dd>
+          <dt><span>To Date</span></dt>
+          <dd>
+            <span>{{ offer()!.toDate | formatMediumDatetime }}</span>
           </dd>
           <dt><span>Reward Points</span></dt>
           <dd>
@@ -49,11 +47,22 @@
           <dd>
             <span>{{ offer()!.grandTotal }}</span>
           </dd>
+          <dt><span>Image</span></dt>
+          <dd>
+            @if (offer()!.image) {
+              <div>
+                <a (click)="openFile(offer()!.image ?? '', offer()!.imageContentType)">
+                  <img [src]="'data:' + offer()!.imageContentType + ';base64,' + offer()!.image" style="max-width: 100%" alt="offer" />
+                </a>
+                {{ offer()!.imageContentType }}, {{ byteSize(offer()!.image ?? '') }}
+              </div>
+            }
+          </dd>
           <dt><span>Loyalty Levels</span></dt>
           <dd>
-            @for (loyaltyLevel of offer()!.loyaltyLevels; track $index; let last = $last) {
+            @for (loyaltyLevels of offer()!.loyaltyLevels; track $index; let last = $last) {
               <span>
-                <a [routerLink]="['/loyalty-level', loyaltyLevel.id, 'view']">{{ loyaltyLevel.title }}</a
+                <a [routerLink]="['/loyalty-level', loyaltyLevels.id, 'view']">{{ loyaltyLevels?.title }}</a
                 >{{ last ? '' : ', ' }}
               </span>
             }

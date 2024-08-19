@@ -42,20 +42,6 @@
                 <fa-icon class="p-1" icon="sort"></fa-icon>
               </div>
             </th>
-            <th scope="col" jhiSortBy="fromDate">
-              <div class="d-flex">
-                <span>From Date</span>
-
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
-            <th scope="col" jhiSortBy="toDate">
-              <div class="d-flex">
-                <span>To Date</span>
-
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
             <th scope="col" jhiSortBy="title">
               <div class="d-flex">
                 <span>Title</span>
@@ -66,6 +52,20 @@
             <th scope="col" jhiSortBy="description">
               <div class="d-flex">
                 <span>Description</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="fromDate">
+              <div class="d-flex">
+                <span>From Date</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="toDate">
+              <div class="d-flex">
+                <span>To Date</span>
 
                 <fa-icon class="p-1" icon="sort"></fa-icon>
               </div>
@@ -98,6 +98,18 @@
                 <fa-icon class="p-1" icon="sort"></fa-icon>
               </div>
             </th>
+            <th scope="col" jhiSortBy="image">
+              <div class="d-flex">
+                <span>Image</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col">
+              <div class="d-flex">
+                <span>Loyalty Levels</span>
+              </div>
+            </th>
             <th scope="col"></th>
           </tr>
         </thead>
@@ -107,14 +119,30 @@
               <td>
                 <a [routerLink]="['/offer', offer.id, 'view']">{{ offer.id }}</a>
               </td>
-              <td>{{ offer.fromDate | formatMediumDatetime }}</td>
-              <td>{{ offer.toDate | formatMediumDatetime }}</td>
               <td>{{ offer.title }}</td>
               <td>{{ offer.description }}</td>
+              <td>{{ offer.fromDate | formatMediumDatetime }}</td>
+              <td>{{ offer.toDate | formatMediumDatetime }}</td>
               <td>{{ offer.rewardPoints }}</td>
               <td>{{ offer.itemQty }}</td>
               <td>{{ offer.itemSku }}</td>
               <td>{{ offer.grandTotal }}</td>
+              <td>
+                @if (offer.image) {
+                  <a (click)="openFile(offer.image, offer.imageContentType)">
+                    <img [src]="'data:' + offer.imageContentType + ';base64,' + offer.image" style="max-height: 30px" alt="offer" />
+                  </a>
+                  <span>{{ offer.imageContentType }}, {{ byteSize(offer.image) }}</span>
+                }
+              </td>
+              <td>
+                @for (loyaltyLevels of offer.loyaltyLevels; track $index; let last = $last) {
+                  <span>
+                    <a [routerLink]="['/loyalty-level', loyaltyLevels.id, 'view']">{{ loyaltyLevels?.title }}</a
+                    >{{ last ? '' : ', ' }}
+                  </span>
+                }
+              </td>
               <td class="text-end">
                 <div class="btn-group">
                   <a [routerLink]="['/offer', offer.id, 'view']" class="btn btn-info btn-sm" data-cy="entityDetailsButton">

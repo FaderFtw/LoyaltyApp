@@ -49,10 +49,10 @@ describe('Offer Management Update Component', () => {
   describe('ngOnInit', () => {
     it('Should call LoyaltyLevel query and add missing value', () => {
       const offer: IOffer = { id: 456 };
-      const loyaltyLevels: ILoyaltyLevel[] = [{ id: 26528 }];
+      const loyaltyLevels: ILoyaltyLevel[] = [{ id: 14712 }];
       offer.loyaltyLevels = loyaltyLevels;
 
-      const loyaltyLevelCollection: ILoyaltyLevel[] = [{ id: 12214 }];
+      const loyaltyLevelCollection: ILoyaltyLevel[] = [{ id: 17202 }];
       jest.spyOn(loyaltyLevelService, 'query').mockReturnValue(of(new HttpResponse({ body: loyaltyLevelCollection })));
       const additionalLoyaltyLevels = [...loyaltyLevels];
       const expectedCollection: ILoyaltyLevel[] = [...additionalLoyaltyLevels, ...loyaltyLevelCollection];
@@ -71,7 +71,7 @@ describe('Offer Management Update Component', () => {
 
     it('Should update editForm', () => {
       const offer: IOffer = { id: 456 };
-      const loyaltyLevels: ILoyaltyLevel = { id: 23951 };
+      const loyaltyLevels: ILoyaltyLevel = { id: 27337 };
       offer.loyaltyLevels = [loyaltyLevels];
 
       activatedRoute.data = of({ offer });

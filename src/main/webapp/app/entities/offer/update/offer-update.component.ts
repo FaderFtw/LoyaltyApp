@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ElementRef } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
@@ -7,10 +7,13 @@ import { finalize, map } from 'rxjs/operators';
 import SharedModule from 'app/shared/shared.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
+import { AlertError } from 'app/shared/alert/alert-error.model';
+import { EventManager, EventWithContent } from 'app/core/util/event-manager.service';
+import { DataUtils, FileLoadError } from 'app/core/util/data-util.service';
 import { ILoyaltyLevel } from 'app/entities/loyalty-level/loyalty-level.model';
 import { LoyaltyLevelService } from 'app/entities/loyalty-level/service/loyalty-level.service';
-import { IOffer } from '../offer.model';
 import { OfferService } from '../service/offer.service';
+import { IOffer } from '../offer.model';
 import { OfferFormService, OfferFormGroup } from './offer-form.service';
 
 @Component({
@@ -25,9 +28,12 @@ export class OfferUpdateComponent implements OnInit {
 
   loyaltyLevelsSharedCollection: ILoyaltyLevel[] = [];
 
+  protected dataUtils = inject(DataUtils);
+  protected eventManager = inject(EventManager);
   protected offerService = inject(OfferService);
   protected offerFormService = inject(OfferFormService);
   protected loyaltyLevelService = inject(LoyaltyLevelService);
+  protected elementRef = inject(ElementRef);
   protected activatedRoute = inject(ActivatedRoute);
 
   // eslint-disable-next-line @typescript-eslint/member-ordering
@@ -45,6 +51,31 @@ export class OfferUpdateComponent implements OnInit {
 
       this.loadRelationshipsOptions();
     });
+  }
+
+  byteSize(base64String: string): string {
+    return this.dataUtils.byteSize(base64String);
+  }
+
+  openFile(base64String: string, contentType: string | null | undefined): void {
+    this.dataUtils.openFile(base64String, contentType);
+  }
+
+  setFileData(event: Event, field: string, isImage: boolean): void {
+    this.dataUtils.loadFileToForm(event, this.editForm, field, isImage).subscribe({
+      error: (err: FileLoadError) =>
+        this.eventManager.broadcast(new EventWithContent<AlertError>('loyalityappApp.error', { message: err.message })),
+    });
+  }
+
+  clearInputImage(field: string, fieldContentType: string, idInput: string): void {
+    this.editForm.patchValue({
+      [field]: null,
+      [fieldContentType]: null,
+    });
+    if (idInput && this.elementRef.nativeElement.querySelector('#' + idInput)) {
+      this.elementRef.nativeElement.querySelector('#' + idInput).value = null;
+    }
   }
 
   previousState(): void {

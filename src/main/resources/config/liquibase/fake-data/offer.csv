@@ -1,11 +1,11 @@
-id;from_date;to_date;title;description;reward_points;item_qty;item_sku;grand_total
-1;2024-08-18T16:10:31;2024-08-19T06:31:32;yowza;meanwhile once geez;31778;12929.62;phooey opposite;28906.16
-2;2024-08-19T00:39:49;2024-08-19T07:09:49;however illiterate;gadzooks;2992;29760.02;alarming;9746.78
-3;2024-08-19T04:40:41;2024-08-18T21:07:23;ultimate duh worst;fifth that successfully;13833;28609.59;yippee yahoo yum;23075.3
-4;2024-08-18T12:06:36;2024-08-18T21:28:58;mid intensely wavy;icy;259;25696.79;glossy unlike exhaust;1434.05
-5;2024-08-19T10:39:01;2024-08-18T15:23:30;opposite how ouch;aw;14117;17573.14;than dimly;24678.89
-6;2024-08-19T07:14:06;2024-08-19T09:27:30;if;feud klutzy;28756;23950.26;unaccountably gall-bladder furthermore;976.66
-7;2024-08-18T18:51:12;2024-08-19T09:24:40;ugh weasel who;still;24190;30441.22;before;15037.27
-8;2024-08-19T00:17:58;2024-08-19T02:14:56;strictly past;perfectly contrary;11820;7905.57;unless;29513.11
-9;2024-08-19T00:33:57;2024-08-18T23:47:52;usefully finally;whereas beside;17813;21558.36;canalise anthropology;6148.59
-10;2024-08-18T14:09:45;2024-08-18T22:50:03;contrast;triumphantly agreement;2261;24198.73;whether oddball advocacy;12626.82
+id;title;description;from_date;to_date;reward_points;item_qty;item_sku;grand_total;image;image_content_type
+1;manufacturer especially viciously;up;2024-08-19T00:17:10;2024-08-19T05:53:34;31778;12930;phooey opposite;28906.16;../fake-data/blob/hipster.png;image/png
+2;handicap indeed;vaguely shakily behind;2024-08-18T21:07:23;2024-08-18T14:14:51;23464;29281;brightly accidentally;4610.18;../fake-data/blob/hipster.png;image/png
+3;however cheerful but;hallmark;2024-08-18T15:58:04;2024-08-19T05:52:11;28749;23371;yahoo yum;23075.3;../fake-data/blob/hipster.png;image/png
+4;pish after mastication;quick offensively skinny;2024-08-18T22:29:49;2024-08-19T05:06:07;9320;24771;exhaust properly peacock;12453.37;../fake-data/blob/hipster.png;image/png
+5;brunch;rudely;2024-08-18T23:23:24;2024-08-18T22:31:54;14117;17573;than dimly;24678.89;../fake-data/blob/hipster.png;image/png
+6;above;above trout;2024-08-18T20:30:35;2024-08-19T00:08:42;28756;23950;unaccountably gall-bladder furthermore;976.66;../fake-data/blob/hipster.png;image/png
+7;lest glamorous ew;finally queasily lovingly;2024-08-19T02:14:56;2024-08-18T21:18:32;21754;22627;nor;31227.87;../fake-data/blob/hipster.png;image/png
+8;naive;excepting whether jagged;2024-08-18T23:47:52;2024-08-19T00:56:00;20969;15554;absent mid often;15770.95;../fake-data/blob/hipster.png;image/png
+9;past;lively tackle that;2024-08-18T19:45:52;2024-08-19T07:08:18;15403;1203;via mmm;27459.22;../fake-data/blob/hipster.png;image/png
+10;boohoo hollow girdle;under yowza;2024-08-18T18:47:13;2024-08-19T00:39:35;3614;19373;variable approach;1802.61;../fake-data/blob/hipster.png;image/png
