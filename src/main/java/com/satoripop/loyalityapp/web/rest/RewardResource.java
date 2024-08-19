@@ -1,5 +1,6 @@
 package com.satoripop.loyalityapp.web.rest;
 
+import com.satoripop.loyalityapp.domain.Reward;
 import com.satoripop.loyalityapp.repository.RewardRepository;
 import com.satoripop.loyalityapp.service.RewardService;
 import com.satoripop.loyalityapp.service.dto.RewardDTO;
@@ -142,9 +143,9 @@ public class RewardResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of rewards in body.
      */
     @GetMapping("")
-    public ResponseEntity<List<RewardDTO>> getAllRewards(@org.springdoc.core.annotations.ParameterObject Pageable pageable) {
+    public ResponseEntity<List<Reward>> getAllRewards(@org.springdoc.core.annotations.ParameterObject Pageable pageable) {
         log.debug("REST request to get a page of Rewards");
-        Page<RewardDTO> page = rewardService.findAll(pageable);
+        Page<Reward> page = rewardService.findAll(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
@@ -156,10 +157,10 @@ public class RewardResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the rewardDTO, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/{id}")
-    public ResponseEntity<RewardDTO> getReward(@PathVariable("id") Long id) {
+    public ResponseEntity<Reward> getReward(@PathVariable("id") Long id) {
         log.debug("REST request to get Reward : {}", id);
-        Optional<RewardDTO> rewardDTO = rewardService.findOne(id);
-        return ResponseUtil.wrapOrNotFound(rewardDTO);
+        Optional<Reward> reward = rewardService.findOne(id);
+        return ResponseUtil.wrapOrNotFound(reward);
     }
 
     /**

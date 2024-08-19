@@ -47,10 +47,10 @@ export class RewardConfigFormService {
         validators: [Validators.required],
       }),
       description: new FormControl(rewardConfigRawValue.description),
-      balanceValue: new FormControl(rewardConfigRawValue.balanceValue),
-      convertedValue: new FormControl(rewardConfigRawValue.convertedValue),
+      balanceValue: new FormControl(rewardConfigRawValue.balanceValue, { validators: [Validators.required] }),
+      convertedValue: new FormControl(rewardConfigRawValue.convertedValue, { validators: [Validators.required] }),
       daysToExpire: new FormControl(rewardConfigRawValue.daysToExpire),
-      loyaltyLevels: new FormControl(rewardConfigRawValue.loyaltyLevels ?? []),
+      loyaltyLevels: new FormControl(rewardConfigRawValue.loyaltyLevels ?? [], { validators: [Validators.required] }),
     });
   }
 

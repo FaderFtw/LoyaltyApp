@@ -110,8 +110,15 @@ export class RewardUpdateComponent implements OnInit {
 
     this.userService
       .query()
-      .pipe(map((res: HttpResponse<IUser[]>) => res.body ?? []))
-      .pipe(map((users: IUser[]) => this.userService.addUserToCollectionIfMissing<IUser>(users, this.reward?.user)))
+      .pipe(
+        map((res: HttpResponse<IUser[]>) => res.body ?? []), // Get users from the response
+        map((users: IUser[]) => {
+          // Filter out users with ROLE_ADMIN
+          // @ts-ignore
+          const filteredUsers = users.filter(user => !user.authorities.some(authority => authority.name === 'ROLE_ADMIN'));
+          return this.userService.addUserToCollectionIfMissing<IUser>(filteredUsers, this.reward?.user);
+        }),
+      )
       .subscribe((users: IUser[]) => (this.usersSharedCollection = users));
   }
 }

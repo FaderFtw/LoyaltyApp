@@ -2,9 +2,11 @@ package com.satoripop.loyalityapp.service;
 
 import com.satoripop.loyalityapp.config.Constants;
 import com.satoripop.loyalityapp.domain.Authority;
+import com.satoripop.loyalityapp.domain.LoyaltyLevel;
 import com.satoripop.loyalityapp.domain.User;
 import com.satoripop.loyalityapp.domain.UserExtra;
 import com.satoripop.loyalityapp.repository.AuthorityRepository;
+import com.satoripop.loyalityapp.repository.LoyaltyLevelRepository;
 import com.satoripop.loyalityapp.repository.UserExtraRepository;
 import com.satoripop.loyalityapp.repository.UserRepository;
 import com.satoripop.loyalityapp.security.SecurityUtils;
@@ -37,11 +39,19 @@ public class UserService {
 
     private final UserExtraRepository userExtraRepository;
 
+    private final LoyaltyLevelRepository loyaltyLevelRepository;
+
     private final AuthorityRepository authorityRepository;
 
-    public UserService(UserRepository userRepository, UserExtraRepository userExtraRepository, AuthorityRepository authorityRepository) {
+    public UserService(
+        UserRepository userRepository,
+        UserExtraRepository userExtraRepository,
+        LoyaltyLevelRepository loyaltyLevelRepository,
+        AuthorityRepository authorityRepository
+    ) {
         this.userRepository = userRepository;
         this.userExtraRepository = userExtraRepository;
+        this.loyaltyLevelRepository = loyaltyLevelRepository;
         this.authorityRepository = authorityRepository;
     }
 
@@ -67,7 +77,8 @@ public class UserService {
         String langKey,
         String imageUrl,
         String cardNumber,
-        String phone
+        String phone,
+        LoyaltyLevel loyaltyLevel
     ) {
         SecurityUtils.getCurrentUserLogin()
             .flatMap(userRepository::findOneByLogin)
@@ -81,6 +92,7 @@ public class UserService {
                 user.setImageUrl(imageUrl);
                 user.setCardNumber(cardNumber);
                 user.setPhone(phone);
+                user.setLoyaltyLevel(loyaltyLevel);
                 userRepository.save(user);
                 log.debug("Changed Information for User: {}", user);
             });
@@ -123,6 +135,24 @@ public class UserService {
         }
         Optional<User> existingUser = userRepository.findOneByLogin(user.getLogin());
         if (existingUser.isPresent()) {
+            LoyaltyLevel newLoyaltyLevel = null;
+
+            if (existingUser.get().getAuthorities().stream().noneMatch(authority -> authority.getName().equals("ROLE_ADMIN"))) {
+                UserExtra userExtra = userExtraRepository
+                    .findById(existingUser.get().getId())
+                    .orElseThrow(() -> new RuntimeException("UserExtra not found"));
+
+                List<LoyaltyLevel> newLoyaltyLevels = loyaltyLevelRepository.findAll();
+                newLoyaltyLevel = newLoyaltyLevels
+                    .stream()
+                    .filter(
+                        level ->
+                            userExtra.getTotalBalance() >= level.getMinBalance() && userExtra.getTotalBalance() <= level.getMaxBalance()
+                    )
+                    .findFirst()
+                    .orElse(null);
+            }
+
             if (details.get("updated_at") != null) {
                 Instant dbModifiedDate = existingUser.orElseThrow().getLastModifiedDate();
                 Instant idpModifiedDate;
@@ -140,7 +170,8 @@ public class UserService {
                         user.getLangKey(),
                         user.getImageUrl(),
                         user.getCardNumber(),
-                        user.getPhone()
+                        user.getPhone(),
+                        newLoyaltyLevel
                     );
                 }
             } else {
@@ -152,11 +183,20 @@ public class UserService {
                     user.getLangKey(),
                     user.getImageUrl(),
                     user.getCardNumber(),
-                    user.getPhone()
+                    user.getPhone(),
+                    newLoyaltyLevel
                 );
             }
         } else {
             log.debug("Saving user '{}' in local database", user.getLogin());
+
+            if (existingUser.get().getAuthorities().stream().noneMatch(authority -> authority.getName().equals("ROLE_ADMIN"))) {
+                user.setLoyaltyLevel(
+                    loyaltyLevelRepository.findByMinBalance(0L).isPresent() ? loyaltyLevelRepository.findByMinBalance(0L).get() : null
+                );
+            } else {
+                user.setLoyaltyLevel(null);
+            }
             saveUserWithExtra(user);
         }
         return user;

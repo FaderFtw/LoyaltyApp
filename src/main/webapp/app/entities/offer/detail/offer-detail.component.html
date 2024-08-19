@@ -47,6 +47,15 @@
           <dd>
             <span>{{ offer()!.grandTotal }}</span>
           </dd>
+          <dt><span>Loyalty Levels</span></dt>
+          <dd>
+            @for (loyaltyLevels of offer()!.loyaltyLevels; track $index; let last = $last) {
+              <span>
+                <a [routerLink]="['/loyalty-level', loyaltyLevels.id, 'view']">{{ loyaltyLevels?.title }}</a
+                >{{ last ? '' : ', ' }}
+              </span>
+            }
+          </dd>
           <dt><span>Image</span></dt>
           <dd>
             @if (offer()!.image) {
@@ -56,15 +65,6 @@
                 </a>
                 {{ offer()!.imageContentType }}, {{ byteSize(offer()!.image ?? '') }}
               </div>
-            }
-          </dd>
-          <dt><span>Loyalty Levels</span></dt>
-          <dd>
-            @for (loyaltyLevels of offer()!.loyaltyLevels; track $index; let last = $last) {
-              <span>
-                <a [routerLink]="['/loyalty-level', loyaltyLevels.id, 'view']">{{ loyaltyLevels?.title }}</a
-                >{{ last ? '' : ', ' }}
-              </span>
             }
           </dd>
         </dl>

@@ -8,7 +8,7 @@ export interface IRewardConfig {
   balanceValue?: number | null;
   convertedValue?: number | null;
   daysToExpire?: number | null;
-  loyaltyLevels?: Pick<ILoyaltyLevel, 'id'>[] | null;
+  loyaltyLevels?: ILoyaltyLevel[] | null;
 }
 
 export type NewRewardConfig = Omit<IRewardConfig, 'id'> & { id: null };

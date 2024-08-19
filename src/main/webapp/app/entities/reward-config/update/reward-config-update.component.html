@@ -44,28 +44,46 @@
           />
         </div>
 
-        <div class="mb-3">
-          <label class="form-label" for="field_balanceValue">Balance Value</label>
-          <input
-            type="number"
-            class="form-control"
-            name="balanceValue"
-            id="field_balanceValue"
-            data-cy="balanceValue"
-            formControlName="balanceValue"
-          />
-        </div>
+        <div class="d-flex justify-content-between">
+          <div class="mb-3 me-3 w-50">
+            <label class="form-label" for="field_balanceValue">Balance Value</label>
+            <input
+              type="number"
+              class="form-control"
+              name="balanceValue"
+              id="field_balanceValue"
+              data-cy="balanceValue"
+              formControlName="balanceValue"
+            />
+            @if (editForm.get('balanceValue')!.invalid && (editForm.get('balanceValue')!.dirty || editForm.get('balanceValue')!.touched)) {
+              <div>
+                @if (editForm.get('balanceValue')?.errors?.required) {
+                  <small class="form-text text-danger">This field is required.</small>
+                }
+              </div>
+            }
+          </div>
 
-        <div class="mb-3">
-          <label class="form-label" for="field_convertedValue">Converted Value</label>
-          <input
-            type="number"
-            class="form-control"
-            name="convertedValue"
-            id="field_convertedValue"
-            data-cy="convertedValue"
-            formControlName="convertedValue"
-          />
+          <div class="mb-3 w-50">
+            <label class="form-label" for="field_convertedValue">Converted Value</label>
+            <input
+              type="number"
+              class="form-control"
+              name="convertedValue"
+              id="field_convertedValue"
+              data-cy="convertedValue"
+              formControlName="convertedValue"
+            />
+            @if (
+              editForm.get('convertedValue')!.invalid && (editForm.get('convertedValue')!.dirty || editForm.get('convertedValue')!.touched)
+            ) {
+              <div>
+                @if (editForm.get('convertedValue')?.errors?.required) {
+                  <small class="form-text text-danger">This field is required.</small>
+                }
+              </div>
+            }
+          </div>
         </div>
 
         <div class="mb-3">
@@ -81,7 +99,7 @@
         </div>
 
         <div class="mb-3">
-          <label for="field_loyaltyLevels">Loyalty Levels</label>
+          <label class="mb-1" for="field_loyaltyLevels">Loyalty Levels</label>
           <select
             class="form-control"
             id="field_loyaltyLevels"
@@ -92,9 +110,16 @@
             [compareWith]="compareLoyaltyLevel"
           >
             @for (loyaltyLevelOption of loyaltyLevelsSharedCollection; track $index) {
-              <option [ngValue]="loyaltyLevelOption">{{ loyaltyLevelOption.id }}</option>
+              <option [ngValue]="loyaltyLevelOption">{{ loyaltyLevelOption.title }}</option>
             }
           </select>
+          @if (editForm.get('loyaltyLevels')!.invalid && (editForm.get('loyaltyLevels')!.dirty || editForm.get('loyaltyLevels')!.touched)) {
+            <div>
+              @if (editForm.get('loyaltyLevels')?.errors?.required) {
+                <small class="form-text text-danger">This field is required.</small>
+              }
+            </div>
+          }
         </div>
       </div>
 

@@ -1,5 +1,6 @@
 package com.satoripop.loyalityapp.web.rest;
 
+import com.satoripop.loyalityapp.domain.RewardConfig;
 import com.satoripop.loyalityapp.repository.RewardConfigRepository;
 import com.satoripop.loyalityapp.service.RewardConfigService;
 import com.satoripop.loyalityapp.service.dto.RewardConfigDTO;
@@ -166,10 +167,10 @@ public class RewardConfigResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the rewardConfigDTO, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/{id}")
-    public ResponseEntity<RewardConfigDTO> getRewardConfig(@PathVariable("id") Long id) {
+    public ResponseEntity<RewardConfig> getRewardConfig(@PathVariable("id") Long id) {
         log.debug("REST request to get RewardConfig : {}", id);
-        Optional<RewardConfigDTO> rewardConfigDTO = rewardConfigService.findOne(id);
-        return ResponseUtil.wrapOrNotFound(rewardConfigDTO);
+        Optional<RewardConfig> rewardConfig = rewardConfigService.findOne(id);
+        return ResponseUtil.wrapOrNotFound(rewardConfig);
     }
 
     /**

@@ -39,9 +39,9 @@
           </dd>
           <dt><span>Loyalty Levels</span></dt>
           <dd>
-            @for (loyaltyLevels of rewardConfig()!.loyaltyLevels; track $index; let last = $last) {
+            @for (loyaltyLevel of rewardConfig()!.loyaltyLevels; track $index; let last = $last) {
               <span>
-                <a [routerLink]="['/loyalty-level', loyaltyLevels.id, 'view']">{{ loyaltyLevels?.id }}</a
+                <a [routerLink]="['/loyalty-level', loyaltyLevel.id, 'view']">{{ loyaltyLevel?.title }}</a
                 >{{ last ? '' : ', ' }}
               </span>
             }

@@ -38,11 +38,11 @@ public class Reward implements Serializable {
     @Column(name = "code", nullable = false, unique = true)
     private String code;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JsonIgnoreProperties(value = { "loyaltyLevels" }, allowSetters = true)
     private RewardConfig rewardConfig;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @NotNull
     private User user;
 

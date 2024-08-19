@@ -98,13 +98,14 @@
               <td>
                 @if (reward.rewardConfig) {
                   <div>
-                    <a [routerLink]="['/reward-config', reward.rewardConfig.id, 'view']">{{ reward.rewardConfig.id }}</a>
+                    <a [routerLink]="['/reward-config', reward.rewardConfig.id, 'view']"
+                      >{{ reward.rewardConfig.title }} (Balance: {{ reward.rewardConfig.balanceValue }} -> Converted:
+                      {{ reward.rewardConfig.convertedValue }} )</a
+                    >
                   </div>
                 }
               </td>
-              <td>
-                {{ reward.user?.id }}
-              </td>
+              <td>{{ reward.user?.firstName }} {{ reward.user?.lastName }}</td>
               <td class="text-end">
                 <div class="btn-group">
                   <a [routerLink]="['/reward', reward.id, 'view']" class="btn btn-info btn-sm" data-cy="entityDetailsButton">

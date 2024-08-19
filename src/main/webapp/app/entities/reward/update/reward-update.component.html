@@ -38,54 +38,56 @@
           }
         </div>
 
-        <div class="mb-3">
-          <label class="form-label" for="field_fromDate">From Date</label>
-          <div class="d-flex">
-            <input
-              id="field_fromDate"
-              data-cy="fromDate"
-              type="datetime-local"
-              class="form-control"
-              name="fromDate"
-              formControlName="fromDate"
-              placeholder="YYYY-MM-DD HH:mm"
-            />
-          </div>
-          @if (editForm.get('fromDate')!.invalid && (editForm.get('fromDate')!.dirty || editForm.get('fromDate')!.touched)) {
-            <div>
-              @if (editForm.get('fromDate')?.errors?.required) {
-                <small class="form-text text-danger">This field is required.</small>
-              }
-              <small class="form-text text-danger" [hidden]="!editForm.get('fromDate')?.errors?.datetimelocal"
-                >This field should be a date and time.</small
-              >
+        <div class="d-flex justify-content-between">
+          <div class="mb-3 me-3 w-50">
+            <label class="form-label" for="field_fromDate">From Date</label>
+            <div class="d-flex">
+              <input
+                id="field_fromDate"
+                data-cy="fromDate"
+                type="datetime-local"
+                class="form-control"
+                name="fromDate"
+                formControlName="fromDate"
+                placeholder="YYYY-MM-DD HH:mm"
+              />
             </div>
-          }
-        </div>
+            @if (editForm.get('fromDate')!.invalid && (editForm.get('fromDate')!.dirty || editForm.get('fromDate')!.touched)) {
+              <div>
+                @if (editForm.get('fromDate')?.errors?.required) {
+                  <small class="form-text text-danger">This field is required.</small>
+                }
+                <small class="form-text text-danger" [hidden]="!editForm.get('fromDate')?.errors?.datetimelocal"
+                  >This field should be a date and time.</small
+                >
+              </div>
+            }
+          </div>
 
-        <div class="mb-3">
-          <label class="form-label" for="field_toDate">To Date</label>
-          <div class="d-flex">
-            <input
-              id="field_toDate"
-              data-cy="toDate"
-              type="datetime-local"
-              class="form-control"
-              name="toDate"
-              formControlName="toDate"
-              placeholder="YYYY-MM-DD HH:mm"
-            />
-          </div>
-          @if (editForm.get('toDate')!.invalid && (editForm.get('toDate')!.dirty || editForm.get('toDate')!.touched)) {
-            <div>
-              @if (editForm.get('toDate')?.errors?.required) {
-                <small class="form-text text-danger">This field is required.</small>
-              }
-              <small class="form-text text-danger" [hidden]="!editForm.get('toDate')?.errors?.datetimelocal"
-                >This field should be a date and time.</small
-              >
+          <div class="mb-3 w-50">
+            <label class="form-label" for="field_toDate">To Date</label>
+            <div class="d-flex">
+              <input
+                id="field_toDate"
+                data-cy="toDate"
+                type="datetime-local"
+                class="form-control"
+                name="toDate"
+                formControlName="toDate"
+                placeholder="YYYY-MM-DD HH:mm"
+              />
             </div>
-          }
+            @if (editForm.get('toDate')!.invalid && (editForm.get('toDate')!.dirty || editForm.get('toDate')!.touched)) {
+              <div>
+                @if (editForm.get('toDate')?.errors?.required) {
+                  <small class="form-text text-danger">This field is required.</small>
+                }
+                <small class="form-text text-danger" [hidden]="!editForm.get('toDate')?.errors?.datetimelocal"
+                  >This field should be a date and time.</small
+                >
+              </div>
+            }
+          </div>
         </div>
 
         <div class="mb-3">
@@ -112,7 +114,10 @@
           >
             <option [ngValue]="null"></option>
             @for (rewardConfigOption of rewardConfigsSharedCollection; track $index) {
-              <option [ngValue]="rewardConfigOption">{{ rewardConfigOption.id }}</option>
+              <option [ngValue]="rewardConfigOption">
+                {{ rewardConfigOption.title }} (Balance: {{ rewardConfigOption.balanceValue }} -> Converted:
+                {{ rewardConfigOption.convertedValue }} )
+              </option>
             }
           </select>
         </div>
@@ -124,17 +129,17 @@
               <option [ngValue]="null" selected></option>
             }
             @for (userOption of usersSharedCollection; track $index) {
-              <option [ngValue]="userOption">{{ userOption.id }}</option>
+              <option [ngValue]="userOption">{{ userOption.firstName }} {{ userOption.lastName }}</option>
             }
           </select>
+          @if (editForm.get(['user'])!.invalid && (editForm.get(['user'])!.dirty || editForm.get(['user'])!.touched)) {
+            <div>
+              @if (editForm.get(['user'])?.errors?.required) {
+                <small class="form-text text-danger">This field is required.</small>
+              }
+            </div>
+          }
         </div>
-        @if (editForm.get(['user'])!.invalid && (editForm.get(['user'])!.dirty || editForm.get(['user'])!.touched)) {
-          <div>
-            @if (editForm.get(['user'])?.errors?.required) {
-              <small class="form-text text-danger">This field is required.</small>
-            }
-          </div>
-        }
       </div>
 
       <div>

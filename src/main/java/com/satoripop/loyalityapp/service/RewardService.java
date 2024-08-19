@@ -83,9 +83,9 @@ public class RewardService {
      * @return the list of entities.
      */
     @Transactional(readOnly = true)
-    public Page<RewardDTO> findAll(Pageable pageable) {
+    public Page<Reward> findAll(Pageable pageable) {
         log.debug("Request to get all Rewards");
-        return rewardRepository.findAll(pageable).map(rewardMapper::toDto);
+        return rewardRepository.findAll(pageable);
     }
 
     /**
@@ -95,9 +95,9 @@ public class RewardService {
      * @return the entity.
      */
     @Transactional(readOnly = true)
-    public Optional<RewardDTO> findOne(Long id) {
+    public Optional<Reward> findOne(Long id) {
         log.debug("Request to get Reward : {}", id);
-        return rewardRepository.findById(id).map(rewardMapper::toDto);
+        return rewardRepository.findById(id);
     }
 
     /**

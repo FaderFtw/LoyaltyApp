@@ -104,9 +104,9 @@ public class RewardConfigService {
      * @return the entity.
      */
     @Transactional(readOnly = true)
-    public Optional<RewardConfigDTO> findOne(Long id) {
+    public Optional<RewardConfig> findOne(Long id) {
         log.debug("Request to get RewardConfig : {}", id);
-        return rewardConfigRepository.findOneWithEagerRelationships(id).map(rewardConfigMapper::toDto);
+        return rewardConfigRepository.findOneWithEagerRelationships(id);
     }
 
     /**

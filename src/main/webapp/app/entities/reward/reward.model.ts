@@ -8,8 +8,8 @@ export interface IReward {
   fromDate?: dayjs.Dayjs | null;
   toDate?: dayjs.Dayjs | null;
   code?: string | null;
-  rewardConfig?: Pick<IRewardConfig, 'id'> | null;
-  user?: Pick<IUser, 'id'> | null;
+  rewardConfig?: IRewardConfig | null;
+  user?: IUser | null;
 }
 
 export type NewReward = Omit<IReward, 'id'> & { id: null };

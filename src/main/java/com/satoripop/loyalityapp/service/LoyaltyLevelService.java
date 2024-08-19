@@ -1,10 +1,16 @@
 package com.satoripop.loyalityapp.service;
 
 import com.satoripop.loyalityapp.domain.LoyaltyLevel;
+import com.satoripop.loyalityapp.domain.User;
+import com.satoripop.loyalityapp.domain.UserExtra;
 import com.satoripop.loyalityapp.repository.LoyaltyLevelRepository;
+import com.satoripop.loyalityapp.repository.UserExtraRepository;
+import com.satoripop.loyalityapp.repository.UserRepository;
 import com.satoripop.loyalityapp.service.dto.LoyaltyLevelDTO;
 import com.satoripop.loyalityapp.service.mapper.LoyaltyLevelMapper;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -23,11 +29,21 @@ public class LoyaltyLevelService {
 
     private final LoyaltyLevelRepository loyaltyLevelRepository;
 
+    private UserRepository userRepository;
+    private final UserExtraRepository userExtraRepository;
+
     private final LoyaltyLevelMapper loyaltyLevelMapper;
 
-    public LoyaltyLevelService(LoyaltyLevelRepository loyaltyLevelRepository, LoyaltyLevelMapper loyaltyLevelMapper) {
+    public LoyaltyLevelService(
+        LoyaltyLevelRepository loyaltyLevelRepository,
+        UserRepository userRepository,
+        LoyaltyLevelMapper loyaltyLevelMapper,
+        UserExtraRepository userExtraRepository
+    ) {
         this.loyaltyLevelRepository = loyaltyLevelRepository;
+        this.userRepository = userRepository;
         this.loyaltyLevelMapper = loyaltyLevelMapper;
+        this.userExtraRepository = userExtraRepository;
     }
 
     /**
@@ -107,7 +123,36 @@ public class LoyaltyLevelService {
      */
     public void delete(Long id) {
         log.debug("Request to delete LoyaltyLevel : {}", id);
-        // Check if there is users related to this loyalty level and if its the case we set the loyalty level to null
+
+        // Fetch the LoyaltyLevel to be deleted
+        LoyaltyLevel loyaltyLevelToDelete = loyaltyLevelRepository
+            .findById(id)
+            .orElseThrow(() -> new RuntimeException("LoyaltyLevel not found"));
+
+        // Fetch all users associated with this LoyaltyLevel
+        Set<User> users = userRepository.findByLoyaltyLevelId(id);
+
+        // Define the new loyalty levels (You may need to adjust this to fit your logic)
+        List<LoyaltyLevel> newLoyaltyLevels = loyaltyLevelRepository.findAll();
+
+        newLoyaltyLevels.remove(loyaltyLevelToDelete);
+
+        // Update each user with the appropriate new LoyaltyLevel
+        for (User user : users) {
+            UserExtra userExtra = userExtraRepository.findById(user.getId()).orElseThrow(() -> new RuntimeException("UserExtra not found"));
+
+            LoyaltyLevel newLoyaltyLevel = newLoyaltyLevels
+                .stream()
+                .filter(
+                    level -> userExtra.getTotalBalance() >= level.getMinBalance() && userExtra.getTotalBalance() <= level.getMaxBalance()
+                )
+                .findFirst()
+                .orElse(null);
+
+            user.setLoyaltyLevel(newLoyaltyLevel);
+            userRepository.save(user);
+        }
+
         loyaltyLevelRepository.deleteById(id);
     }
 }

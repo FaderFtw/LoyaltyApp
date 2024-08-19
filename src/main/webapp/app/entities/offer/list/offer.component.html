@@ -135,14 +135,6 @@
                   <span>{{ offer.imageContentType }}, {{ byteSize(offer.image) }}</span>
                 }
               </td>
-              <td>
-                @for (loyaltyLevels of offer.loyaltyLevels; track $index; let last = $last) {
-                  <span>
-                    <a [routerLink]="['/loyalty-level', loyaltyLevels.id, 'view']">{{ loyaltyLevels?.title }}</a
-                    >{{ last ? '' : ', ' }}
-                  </span>
-                }
-              </td>
               <td class="text-end">
                 <div class="btn-group">
                   <a [routerLink]="['/offer', offer.id, 'view']" class="btn btn-info btn-sm" data-cy="entityDetailsButton">

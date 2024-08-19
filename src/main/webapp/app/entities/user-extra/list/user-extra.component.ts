@@ -45,7 +45,7 @@ export class UserExtraComponent implements OnInit {
   isLoading = false;
 
   sortState = sortStateSignal({});
-  currentPage = 0; // MatPaginator uses 0-indexed pages
+  currentPage = 0;
   totalItems = 0;
   itemsPerPage = ITEMS_PER_PAGE;
 
@@ -127,7 +127,7 @@ export class UserExtraComponent implements OnInit {
   protected handleNavigation(sortState: SortState): void {
     const queryParamsObj = {
       sort: this.sortService.buildSortParam(sortState),
-      page: this.currentPage + 1, // MatPaginator is 0-indexed, URL is 1-indexed
+      page: this.currentPage,
     };
 
     this.ngZone.run(() => {
