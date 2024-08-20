@@ -15,6 +15,7 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
@@ -182,9 +183,17 @@ public class RewardConfigResource {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteRewardConfig(@PathVariable("id") Long id) {
         log.debug("REST request to delete RewardConfig : {}", id);
-        rewardConfigService.delete(id);
-        return ResponseEntity.noContent()
-            .headers(HeaderUtil.createEntityDeletionAlert(applicationName, false, ENTITY_NAME, id.toString()))
-            .build();
+        try {
+            rewardConfigService.delete(id);
+            return ResponseEntity.noContent()
+                .headers(HeaderUtil.createEntityDeletionAlert(applicationName, false, ENTITY_NAME, id.toString()))
+                .build();
+        } catch (DataIntegrityViolationException e) {
+            log.error("Error deleting RewardConfig: {}", id, e);
+            String errorMessage = "Cannot delete this RewardConfig because it is related to existing Rewards.";
+            return ResponseEntity.badRequest()
+                .headers(HeaderUtil.createFailureAlert(applicationName, false, ENTITY_NAME, "rewardconfigdeletionerror", errorMessage))
+                .body(null);
+        }
     }
 }

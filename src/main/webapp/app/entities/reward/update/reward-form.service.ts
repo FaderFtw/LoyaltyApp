@@ -70,7 +70,9 @@ export class RewardFormService {
       code: new FormControl(rewardRawValue.code, {
         validators: [Validators.required],
       }),
-      rewardConfig: new FormControl(rewardRawValue.rewardConfig),
+      rewardConfig: new FormControl(rewardRawValue.rewardConfig, {
+        validators: [Validators.required],
+      }),
       user: new FormControl(rewardRawValue.user, {
         validators: [Validators.required],
       }),

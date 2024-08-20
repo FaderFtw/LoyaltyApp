@@ -112,7 +112,9 @@
             formControlName="rewardConfig"
             [compareWith]="compareRewardConfig"
           >
-            <option [ngValue]="null"></option>
+            @if (!editForm.get('user')!.value) {
+              <option [ngValue]="null" selected>Select a Reward Configuration</option>
+            }
             @for (rewardConfigOption of rewardConfigsSharedCollection; track $index) {
               <option [ngValue]="rewardConfigOption">
                 {{ rewardConfigOption.title }} (Balance: {{ rewardConfigOption.balanceValue }} -> Converted:
@@ -120,13 +122,22 @@
               </option>
             }
           </select>
+          @if (
+            editForm.get(['rewardConfig'])!.invalid && (editForm.get(['rewardConfig'])!.dirty || editForm.get(['rewardConfig'])!.touched)
+          ) {
+            <div>
+              @if (editForm.get(['rewardConfig'])?.errors?.required) {
+                <small class="form-text text-danger">This field is required.</small>
+              }
+            </div>
+          }
         </div>
 
         <div class="mb-3">
           <label class="form-label" for="field_user">User</label>
           <select class="form-control" id="field_user" data-cy="user" name="user" formControlName="user" [compareWith]="compareUser">
             @if (!editForm.get('user')!.value) {
-              <option [ngValue]="null" selected></option>
+              <option [ngValue]="null" selected>Select a User</option>
             }
             @for (userOption of usersSharedCollection; track $index) {
               <option [ngValue]="userOption">{{ userOption.firstName }} {{ userOption.lastName }}</option>
