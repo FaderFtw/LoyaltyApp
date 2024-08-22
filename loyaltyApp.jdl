@@ -1,13 +1,18 @@
-entity Offer {
-    title String required,
-    description String,
+entity Reward {
+    createdAt ZonedDateTime required,
     fromDate ZonedDateTime required,
     toDate ZonedDateTime required,
-    rewardPoints Integer required,
-    itemQty Integer required,
-    itemSku String required,
-    grandTotal BigDecimal required
-    image ImageBlob
+    code String required unique,
+    status RewardStatus required
 }
 
-dto * with mapstruct paginate Offer with pagination
+enum RewardStatus {
+    ACTIVE, EXPIRED, USED
+}
+
+relationship ManyToOne{
+    Reward{user required} to User{rewards} with builtInEntity,
+    Reward{rewardConfig required} to RewardConfig with builtInEntity,
+}
+
+dto * with mapstruct paginate Reward with pagination

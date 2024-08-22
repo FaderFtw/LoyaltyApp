@@ -65,7 +65,8 @@ public class RewardAsserts {
             .satisfies(
                 e -> assertThat(e.getToDate()).as("check toDate").usingComparator(zonedDataTimeSameInstant).isEqualTo(actual.getToDate())
             )
-            .satisfies(e -> assertThat(e.getCode()).as("check code").isEqualTo(actual.getCode()));
+            .satisfies(e -> assertThat(e.getCode()).as("check code").isEqualTo(actual.getCode()))
+            .satisfies(e -> assertThat(e.getStatus()).as("check status").isEqualTo(actual.getStatus()));
     }
 
     /**

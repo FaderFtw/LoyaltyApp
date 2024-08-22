@@ -17,6 +17,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
@@ -35,25 +36,20 @@ public class UserService {
 
     private static final Logger log = LoggerFactory.getLogger(UserService.class);
 
-    private final UserRepository userRepository;
+    @Autowired
+    private UserRepository userRepository;
 
-    private final UserExtraRepository userExtraRepository;
+    @Autowired
+    private UserExtraRepository userExtraRepository;
 
-    private final LoyaltyLevelRepository loyaltyLevelRepository;
+    @Autowired
+    private LoyaltyLevelRepository loyaltyLevelRepository;
 
-    private final AuthorityRepository authorityRepository;
+    @Autowired
+    private LoyaltyLevelService loyaltyLevelService;
 
-    public UserService(
-        UserRepository userRepository,
-        UserExtraRepository userExtraRepository,
-        LoyaltyLevelRepository loyaltyLevelRepository,
-        AuthorityRepository authorityRepository
-    ) {
-        this.userRepository = userRepository;
-        this.userExtraRepository = userExtraRepository;
-        this.loyaltyLevelRepository = loyaltyLevelRepository;
-        this.authorityRepository = authorityRepository;
-    }
+    @Autowired
+    private AuthorityRepository authorityRepository;
 
     public Optional<UserDTO> findUserById(String id) {
         return userRepository.findById(id).map(UserDTO::new);
@@ -136,21 +132,12 @@ public class UserService {
         Optional<User> existingUser = userRepository.findOneByLogin(user.getLogin());
         if (existingUser.isPresent()) {
             LoyaltyLevel newLoyaltyLevel = null;
-
-            if (existingUser.get().getAuthorities().stream().noneMatch(authority -> authority.getName().equals("ROLE_ADMIN"))) {
+            if (user.getAuthorities().stream().noneMatch(authority -> authority.getName().equals("ROLE_ADMIN"))) {
                 UserExtra userExtra = userExtraRepository
-                    .findById(existingUser.get().getId())
+                    .findById(user.getId())
                     .orElseThrow(() -> new RuntimeException("UserExtra not found"));
 
-                List<LoyaltyLevel> newLoyaltyLevels = loyaltyLevelRepository.findAll();
-                newLoyaltyLevel = newLoyaltyLevels
-                    .stream()
-                    .filter(
-                        level ->
-                            userExtra.getTotalBalance() >= level.getMinBalance() && userExtra.getTotalBalance() <= level.getMaxBalance()
-                    )
-                    .findFirst()
-                    .orElse(null);
+                newLoyaltyLevel = loyaltyLevelService.determineNewLoyaltyLevel(userExtra.getTotalBalance());
             }
 
             if (details.get("updated_at") != null) {
@@ -190,7 +177,7 @@ public class UserService {
         } else {
             log.debug("Saving user '{}' in local database", user.getLogin());
 
-            if (existingUser.get().getAuthorities().stream().noneMatch(authority -> authority.getName().equals("ROLE_ADMIN"))) {
+            if (userAuthorities.stream().noneMatch(authority -> authority.equals("ROLE_ADMIN"))) {
                 user.setLoyaltyLevel(
                     loyaltyLevelRepository.findByMinBalance(0L).isPresent() ? loyaltyLevelRepository.findByMinBalance(0L).get() : null
                 );

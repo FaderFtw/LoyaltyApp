@@ -42,6 +42,22 @@ export class AccountService {
     return userIdentity.authorities.some((authority: string) => authorities.includes(authority));
   }
 
+  hasExactlyOneAuthority(authorities: string[] | string): boolean {
+    const userIdentity = this.userIdentity();
+    if (!userIdentity) {
+      return false;
+    }
+    console.log('userIdentity', userIdentity.authorities);
+    console.log('Authority', authorities);
+
+    if (!Array.isArray(authorities)) {
+      authorities = [authorities];
+    }
+
+    const matchingAuthorities = ['ROLE_USER', 'ROLE_ADMIN'].filter(authority => authorities.includes('ROLE_USER'));
+    return matchingAuthorities.length === 1 && matchingAuthorities[0] === 'ROLE_USER';
+  }
+
   identity(force?: boolean): Observable<Account | null> {
     if (!this.accountCache$ || force) {
       this.accountCache$ = this.fetch().pipe(

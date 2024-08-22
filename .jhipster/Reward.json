@@ -24,21 +24,29 @@
       "fieldName": "code",
       "fieldType": "String",
       "fieldValidateRules": ["required", "unique"]
+    },
+    {
+      "fieldName": "status",
+      "fieldType": "RewardStatus",
+      "fieldValidateRules": ["required"],
+      "fieldValues": "ACTIVE,EXPIRED,USED"
     }
   ],
   "name": "Reward",
   "pagination": "pagination",
   "relationships": [
     {
-      "otherEntityName": "rewardConfig",
-      "relationshipName": "rewardConfig",
-      "relationshipSide": "left",
-      "relationshipType": "many-to-one"
-    },
-    {
       "otherEntityName": "user",
       "otherEntityRelationshipName": "rewards",
       "relationshipName": "user",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one",
+      "relationshipValidateRules": "required",
+      "relationshipWithBuiltInEntity": true
+    },
+    {
+      "otherEntityName": "rewardConfig",
+      "relationshipName": "rewardConfig",
       "relationshipSide": "left",
       "relationshipType": "many-to-one",
       "relationshipValidateRules": "required",

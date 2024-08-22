@@ -4,6 +4,14 @@ body {
   font-family: 'Droid Arabic Kufi', 'Roboto Light', serif !important;
 }
 
+#kc-header {
+  margin-bottom: 20px;
+}
+
+#kc-header-wrapper {
+  padding-top: 5%;
+}
+
 .pf-c-form__label-text {
   margin-bottom: 3px;
 }

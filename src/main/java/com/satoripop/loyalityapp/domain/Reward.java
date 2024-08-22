@@ -1,6 +1,7 @@
 package com.satoripop.loyalityapp.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.satoripop.loyalityapp.domain.enumeration.RewardStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import java.io.Serializable;
@@ -38,13 +39,19 @@ public class Reward implements Serializable {
     @Column(name = "code", nullable = false, unique = true)
     private String code;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JsonIgnoreProperties(value = { "loyaltyLevels" }, allowSetters = true)
-    private RewardConfig rewardConfig;
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    private RewardStatus status;
 
-    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @ManyToOne(optional = false)
     @NotNull
     private User user;
+
+    @ManyToOne(optional = false)
+    @NotNull
+    @JsonIgnoreProperties(value = { "loyaltyLevels" }, allowSetters = true)
+    private RewardConfig rewardConfig;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
@@ -113,17 +120,17 @@ public class Reward implements Serializable {
         this.code = code;
     }
 
-    public RewardConfig getRewardConfig() {
-        return this.rewardConfig;
+    public RewardStatus getStatus() {
+        return this.status;
     }
 
-    public void setRewardConfig(RewardConfig rewardConfig) {
-        this.rewardConfig = rewardConfig;
-    }
-
-    public Reward rewardConfig(RewardConfig rewardConfig) {
-        this.setRewardConfig(rewardConfig);
+    public Reward status(RewardStatus status) {
+        this.setStatus(status);
         return this;
+    }
+
+    public void setStatus(RewardStatus status) {
+        this.status = status;
     }
 
     public User getUser() {
@@ -136,6 +143,19 @@ public class Reward implements Serializable {
 
     public Reward user(User user) {
         this.setUser(user);
+        return this;
+    }
+
+    public RewardConfig getRewardConfig() {
+        return this.rewardConfig;
+    }
+
+    public void setRewardConfig(RewardConfig rewardConfig) {
+        this.rewardConfig = rewardConfig;
+    }
+
+    public Reward rewardConfig(RewardConfig rewardConfig) {
+        this.setRewardConfig(rewardConfig);
         return this;
     }
 
@@ -167,6 +187,7 @@ public class Reward implements Serializable {
             ", fromDate='" + getFromDate() + "'" +
             ", toDate='" + getToDate() + "'" +
             ", code='" + getCode() + "'" +
+            ", status='" + getStatus() + "'" +
             "}";
     }
 }

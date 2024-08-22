@@ -1,5 +1,6 @@
 package com.satoripop.loyalityapp.service.dto;
 
+import com.satoripop.loyalityapp.domain.enumeration.RewardStatus;
 import jakarta.validation.constraints.*;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
@@ -25,10 +26,14 @@ public class RewardDTO implements Serializable {
     @NotNull
     private String code;
 
-    private RewardConfigDTO rewardConfig;
+    @NotNull
+    private RewardStatus status;
 
     @NotNull
     private UserDTO user;
+
+    @NotNull
+    private RewardConfigDTO rewardConfig;
 
     public Long getId() {
         return id;
@@ -70,12 +75,12 @@ public class RewardDTO implements Serializable {
         this.code = code;
     }
 
-    public RewardConfigDTO getRewardConfig() {
-        return rewardConfig;
+    public RewardStatus getStatus() {
+        return status;
     }
 
-    public void setRewardConfig(RewardConfigDTO rewardConfig) {
-        this.rewardConfig = rewardConfig;
+    public void setStatus(RewardStatus status) {
+        this.status = status;
     }
 
     public UserDTO getUser() {
@@ -84,6 +89,14 @@ public class RewardDTO implements Serializable {
 
     public void setUser(UserDTO user) {
         this.user = user;
+    }
+
+    public RewardConfigDTO getRewardConfig() {
+        return rewardConfig;
+    }
+
+    public void setRewardConfig(RewardConfigDTO rewardConfig) {
+        this.rewardConfig = rewardConfig;
     }
 
     @Override
@@ -116,8 +129,9 @@ public class RewardDTO implements Serializable {
             ", fromDate='" + getFromDate() + "'" +
             ", toDate='" + getToDate() + "'" +
             ", code='" + getCode() + "'" +
-            ", rewardConfig=" + getRewardConfig() +
+            ", status='" + getStatus() + "'" +
             ", user=" + getUser() +
+            ", rewardConfig=" + getRewardConfig() +
             "}";
     }
 }

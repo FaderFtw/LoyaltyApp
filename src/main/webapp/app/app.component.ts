@@ -7,7 +7,7 @@ import locale from '@angular/common/locales/en';
 // jhipster-needle-angular-add-module-import JHipster will add new module here
 
 import { ApplicationConfigService } from 'app/core/config/application-config.service';
-import { fontAwesomeIcons } from './config/font-awesome-icons';
+import { fas } from '@fortawesome/free-solid-svg-icons';
 import MainComponent from './layouts/main/main.component';
 
 @Component({
@@ -27,7 +27,7 @@ export default class AppComponent {
   constructor() {
     this.applicationConfigService.setEndpointPrefix(SERVER_API_URL);
     registerLocaleData(locale);
-    this.iconLibrary.addIcons(...fontAwesomeIcons);
+    this.iconLibrary.addIconPacks(fas);
     this.dpConfig.minDate = { year: dayjs().subtract(100, 'year').year(), month: 1, day: 1 };
   }
 }

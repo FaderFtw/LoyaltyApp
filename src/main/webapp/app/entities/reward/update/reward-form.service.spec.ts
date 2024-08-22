@@ -24,8 +24,9 @@ describe('Reward Form Service', () => {
             fromDate: expect.any(Object),
             toDate: expect.any(Object),
             code: expect.any(Object),
-            rewardConfig: expect.any(Object),
+            status: expect.any(Object),
             user: expect.any(Object),
+            rewardConfig: expect.any(Object),
           }),
         );
       });
@@ -40,8 +41,9 @@ describe('Reward Form Service', () => {
             fromDate: expect.any(Object),
             toDate: expect.any(Object),
             code: expect.any(Object),
-            rewardConfig: expect.any(Object),
+            status: expect.any(Object),
             user: expect.any(Object),
+            rewardConfig: expect.any(Object),
           }),
         );
       });

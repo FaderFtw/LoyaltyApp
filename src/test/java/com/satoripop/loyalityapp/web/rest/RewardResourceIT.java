@@ -12,7 +12,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.satoripop.loyalityapp.IntegrationTest;
 import com.satoripop.loyalityapp.domain.Reward;
+import com.satoripop.loyalityapp.domain.RewardConfig;
 import com.satoripop.loyalityapp.domain.User;
+import com.satoripop.loyalityapp.domain.enumeration.RewardStatus;
 import com.satoripop.loyalityapp.repository.RewardRepository;
 import com.satoripop.loyalityapp.repository.UserRepository;
 import com.satoripop.loyalityapp.service.dto.RewardDTO;
@@ -54,6 +56,9 @@ class RewardResourceIT {
     private static final String DEFAULT_CODE = "AAAAAAAAAA";
     private static final String UPDATED_CODE = "BBBBBBBBBB";
 
+    private static final RewardStatus DEFAULT_STATUS = RewardStatus.ACTIVE;
+    private static final RewardStatus UPDATED_STATUS = RewardStatus.EXPIRED;
+
     private static final String ENTITY_API_URL = "/api/rewards";
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
 
@@ -89,12 +94,27 @@ class RewardResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static Reward createEntity(EntityManager em) {
-        Reward reward = new Reward().createdAt(DEFAULT_CREATED_AT).fromDate(DEFAULT_FROM_DATE).toDate(DEFAULT_TO_DATE).code(DEFAULT_CODE);
+        Reward reward = new Reward()
+            .createdAt(DEFAULT_CREATED_AT)
+            .fromDate(DEFAULT_FROM_DATE)
+            .toDate(DEFAULT_TO_DATE)
+            .code(DEFAULT_CODE)
+            .status(DEFAULT_STATUS);
         // Add required entity
         User user = UserResourceIT.createEntity(em);
         em.persist(user);
         em.flush();
         reward.setUser(user);
+        // Add required entity
+        RewardConfig rewardConfig;
+        if (TestUtil.findAll(em, RewardConfig.class).isEmpty()) {
+            rewardConfig = RewardConfigResourceIT.createEntity(em);
+            em.persist(rewardConfig);
+            em.flush();
+        } else {
+            rewardConfig = TestUtil.findAll(em, RewardConfig.class).get(0);
+        }
+        reward.setRewardConfig(rewardConfig);
         return reward;
     }
 
@@ -105,12 +125,27 @@ class RewardResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static Reward createUpdatedEntity(EntityManager em) {
-        Reward reward = new Reward().createdAt(UPDATED_CREATED_AT).fromDate(UPDATED_FROM_DATE).toDate(UPDATED_TO_DATE).code(UPDATED_CODE);
+        Reward reward = new Reward()
+            .createdAt(UPDATED_CREATED_AT)
+            .fromDate(UPDATED_FROM_DATE)
+            .toDate(UPDATED_TO_DATE)
+            .code(UPDATED_CODE)
+            .status(UPDATED_STATUS);
         // Add required entity
         User user = UserResourceIT.createEntity(em);
         em.persist(user);
         em.flush();
         reward.setUser(user);
+        // Add required entity
+        RewardConfig rewardConfig;
+        if (TestUtil.findAll(em, RewardConfig.class).isEmpty()) {
+            rewardConfig = RewardConfigResourceIT.createUpdatedEntity(em);
+            em.persist(rewardConfig);
+            em.flush();
+        } else {
+            rewardConfig = TestUtil.findAll(em, RewardConfig.class).get(0);
+        }
+        reward.setRewardConfig(rewardConfig);
         return reward;
     }
 
@@ -240,6 +275,23 @@ class RewardResourceIT {
 
     @Test
     @Transactional
+    void checkStatusIsRequired() throws Exception {
+        long databaseSizeBeforeTest = getRepositoryCount();
+        // set the field null
+        reward.setStatus(null);
+
+        // Create the Reward, which fails.
+        RewardDTO rewardDTO = rewardMapper.toDto(reward);
+
+        restRewardMockMvc
+            .perform(post(ENTITY_API_URL).with(csrf()).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(rewardDTO)))
+            .andExpect(status().isBadRequest());
+
+        assertSameRepositoryCount(databaseSizeBeforeTest);
+    }
+
+    @Test
+    @Transactional
     void getAllRewards() throws Exception {
         // Initialize the database
         insertedReward = rewardRepository.saveAndFlush(reward);
@@ -253,7 +305,8 @@ class RewardResourceIT {
             .andExpect(jsonPath("$.[*].createdAt").value(hasItem(sameInstant(DEFAULT_CREATED_AT))))
             .andExpect(jsonPath("$.[*].fromDate").value(hasItem(sameInstant(DEFAULT_FROM_DATE))))
             .andExpect(jsonPath("$.[*].toDate").value(hasItem(sameInstant(DEFAULT_TO_DATE))))
-            .andExpect(jsonPath("$.[*].code").value(hasItem(DEFAULT_CODE)));
+            .andExpect(jsonPath("$.[*].code").value(hasItem(DEFAULT_CODE)))
+            .andExpect(jsonPath("$.[*].status").value(hasItem(DEFAULT_STATUS.toString())));
     }
 
     @Test
@@ -271,7 +324,8 @@ class RewardResourceIT {
             .andExpect(jsonPath("$.createdAt").value(sameInstant(DEFAULT_CREATED_AT)))
             .andExpect(jsonPath("$.fromDate").value(sameInstant(DEFAULT_FROM_DATE)))
             .andExpect(jsonPath("$.toDate").value(sameInstant(DEFAULT_TO_DATE)))
-            .andExpect(jsonPath("$.code").value(DEFAULT_CODE));
+            .andExpect(jsonPath("$.code").value(DEFAULT_CODE))
+            .andExpect(jsonPath("$.status").value(DEFAULT_STATUS.toString()));
     }
 
     @Test
@@ -293,7 +347,12 @@ class RewardResourceIT {
         Reward updatedReward = rewardRepository.findById(reward.getId()).orElseThrow();
         // Disconnect from session so that the updates on updatedReward are not directly saved in db
         em.detach(updatedReward);
-        updatedReward.createdAt(UPDATED_CREATED_AT).fromDate(UPDATED_FROM_DATE).toDate(UPDATED_TO_DATE).code(UPDATED_CODE);
+        updatedReward
+            .createdAt(UPDATED_CREATED_AT)
+            .fromDate(UPDATED_FROM_DATE)
+            .toDate(UPDATED_TO_DATE)
+            .code(UPDATED_CODE)
+            .status(UPDATED_STATUS);
         RewardDTO rewardDTO = rewardMapper.toDto(updatedReward);
 
         restRewardMockMvc
@@ -386,7 +445,7 @@ class RewardResourceIT {
         Reward partialUpdatedReward = new Reward();
         partialUpdatedReward.setId(reward.getId());
 
-        partialUpdatedReward.createdAt(UPDATED_CREATED_AT).fromDate(UPDATED_FROM_DATE).code(UPDATED_CODE);
+        partialUpdatedReward.createdAt(UPDATED_CREATED_AT).code(UPDATED_CODE).status(UPDATED_STATUS);
 
         restRewardMockMvc
             .perform(
@@ -415,7 +474,12 @@ class RewardResourceIT {
         Reward partialUpdatedReward = new Reward();
         partialUpdatedReward.setId(reward.getId());
 
-        partialUpdatedReward.createdAt(UPDATED_CREATED_AT).fromDate(UPDATED_FROM_DATE).toDate(UPDATED_TO_DATE).code(UPDATED_CODE);
+        partialUpdatedReward
+            .createdAt(UPDATED_CREATED_AT)
+            .fromDate(UPDATED_FROM_DATE)
+            .toDate(UPDATED_TO_DATE)
+            .code(UPDATED_CODE)
+            .status(UPDATED_STATUS);
 
         restRewardMockMvc
             .perform(

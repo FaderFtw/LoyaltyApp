@@ -13,17 +13,17 @@ import org.mapstruct.*;
  */
 @Mapper(componentModel = "spring")
 public interface RewardMapper extends EntityMapper<RewardDTO, Reward> {
-    @Mapping(target = "rewardConfig", source = "rewardConfig", qualifiedByName = "rewardConfigId")
     @Mapping(target = "user", source = "user", qualifiedByName = "userId")
+    @Mapping(target = "rewardConfig", source = "rewardConfig", qualifiedByName = "rewardConfigId")
     RewardDTO toDto(Reward s);
-
-    @Named("rewardConfigId")
-    @BeanMapping(ignoreByDefault = true)
-    @Mapping(target = "id", source = "id")
-    RewardConfigDTO toDtoRewardConfigId(RewardConfig rewardConfig);
 
     @Named("userId")
     @BeanMapping(ignoreByDefault = true)
     @Mapping(target = "id", source = "id")
     UserDTO toDtoUserId(User user);
+
+    @Named("rewardConfigId")
+    @BeanMapping(ignoreByDefault = true)
+    @Mapping(target = "id", source = "id")
+    RewardConfigDTO toDtoRewardConfigId(RewardConfig rewardConfig);
 }

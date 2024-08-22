@@ -26,10 +26,13 @@
             <column name="code" type="varchar(255)">
                 <constraints nullable="false" unique="true" uniqueConstraintName="ux_reward__code" />
             </column>
-            <column name="reward_config_id" type="bigint">
-                <constraints nullable="true" />
+            <column name="status" type="varchar(255)">
+                <constraints nullable="false" />
             </column>
             <column name="user_id" type="varchar(100)">
+                <constraints nullable="false" />
+            </column>
+            <column name="reward_config_id" type="bigint">
                 <constraints nullable="false" />
             </column>
             <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here -->
@@ -60,7 +63,9 @@
             <column name="from_date" type="date"/>
             <column name="to_date" type="date"/>
             <column name="code" type="string"/>
+            <column name="status" type="string"/>
             <column name="user_id" type="string"/>
+            <column name="reward_config_id" type="numeric"/>
             <!-- jhipster-needle-liquibase-add-loadcolumn - JHipster (and/or extensions) can add load columns here -->
         </loadData>
     </changeSet>

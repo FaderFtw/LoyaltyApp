@@ -4,6 +4,7 @@ import { Location } from '@angular/common'; // Import Location service
 
 import SharedModule from 'app/shared/shared.module';
 import HasAnyAuthorityDirective from 'app/shared/auth/has-any-authority.directive';
+import HasNotAuthorityDirective from 'app/shared/auth/has-not-authority.directive';
 import { VERSION } from 'app/app.constants';
 import { AccountService } from 'app/core/auth/account.service';
 import { LoginService } from 'app/login/login.service';
@@ -11,13 +12,15 @@ import { ProfileService } from 'app/layouts/profiles/profile.service';
 import { EntityNavbarItems } from 'app/entities/entity-navbar-items';
 import NavbarItem from './navbar-item.model';
 import { KeycloakConstants } from '../../keycloak/KeycloakConstants';
+import { FaIconLibrary } from '@fortawesome/angular-fontawesome';
+import { fas } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   standalone: true,
   selector: 'jhi-navbar',
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss'],
-  imports: [RouterModule, SharedModule, HasAnyAuthorityDirective],
+  imports: [RouterModule, SharedModule, HasAnyAuthorityDirective, HasNotAuthorityDirective],
 })
 export default class NavbarComponent implements OnInit {
   inProduction?: boolean;
@@ -36,7 +39,8 @@ export default class NavbarComponent implements OnInit {
   private router = inject(Router);
   private location = inject(Location); // Inject Location service
 
-  constructor() {
+  constructor(library: FaIconLibrary) {
+    library.addIconPacks(fas); // Load all solid icons
     if (VERSION) {
       this.version = VERSION.toLowerCase().startsWith('v') ? VERSION : `v${VERSION}`;
     }

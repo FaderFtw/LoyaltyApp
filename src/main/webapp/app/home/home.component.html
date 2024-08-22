@@ -6,27 +6,24 @@
   <div class="col-md-9">
     <h1 class="display-4"><span>Welcome!</span></h1>
 
-    <p class="lead">This is your homepage</p>
+    <p class="lead" *ngIf="account()">This is your homepage</p>
 
-    <div>
-      @if (account() !== null) {
+    <div *ngIf="account() !== null">
+      <div *ngIf="accountService.hasAnyAuthority(['ROLE_ADMIN']); else userContent">
         <div class="alert alert-success">
-          @if (account()) {
-            <span id="home-logged-message"
-              >You are logged in as user &quot;{{ account()!.login }}&quot; and {{ account()!.firstName }}</span
-            >
-          }
+          <span>You are logged in as Admin &quot;{{ account()!.login }}&quot; and {{ account()!.firstName }}</span>
         </div>
-      } @else {
-        <div class="alert alert-warning">
-          <span>If you want to </span>
-          <a class="alert-link" (click)="login()">sign in</a
-          ><span
-            >, you can try the default accounts:<br />- Administrator (login=&quot;admin&quot; and password=&quot;admin&quot;) <br />- User
-            (login=&quot;user&quot; and password=&quot;user&quot;).</span
-          >
+        <!-- Admin-specific content goes here -->
+      </div>
+
+      <ng-template #userContent>
+        <div *ngIf="accountService.hasAnyAuthority(['ROLE_USER'])">
+          <div class="alert alert-success">
+            <span>You are logged in as User &quot;{{ account()!.login }}&quot; and {{ account()!.firstName }}</span>
+          </div>
+          <!-- User-specific content goes here -->
         </div>
-      }
+      </ng-template>
     </div>
   </div>
 </div>

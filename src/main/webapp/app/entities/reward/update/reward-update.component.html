@@ -112,7 +112,7 @@
             formControlName="rewardConfig"
             [compareWith]="compareRewardConfig"
           >
-            @if (!editForm.get('user')!.value) {
+            @if (!editForm.get('rewardConfig')!.value) {
               <option [ngValue]="null" selected>Select a Reward Configuration</option>
             }
             @for (rewardConfigOption of rewardConfigsSharedCollection; track $index) {
@@ -133,23 +133,42 @@
           }
         </div>
 
-        <div class="mb-3">
-          <label class="form-label" for="field_user">User</label>
-          <select class="form-control" id="field_user" data-cy="user" name="user" formControlName="user" [compareWith]="compareUser">
-            @if (!editForm.get('user')!.value) {
-              <option [ngValue]="null" selected>Select a User</option>
-            }
-            @for (userOption of usersSharedCollection; track $index) {
-              <option [ngValue]="userOption">{{ userOption.firstName }} {{ userOption.lastName }}</option>
-            }
-          </select>
-          @if (editForm.get(['user'])!.invalid && (editForm.get(['user'])!.dirty || editForm.get(['user'])!.touched)) {
-            <div>
-              @if (editForm.get(['user'])?.errors?.required) {
-                <small class="form-text text-danger">This field is required.</small>
+        <div class="d-flex justify-content-between">
+          <div class="mb-3 me-3 w-50">
+            <label class="form-label" for="field_user">User</label>
+            <select class="form-control" id="field_user" data-cy="user" name="user" formControlName="user" [compareWith]="compareUser">
+              @if (!editForm.get('user')!.value) {
+                <option [ngValue]="null" selected>Select a User</option>
               }
-            </div>
-          }
+              @for (userOption of usersSharedCollection; track $index) {
+                <option [ngValue]="userOption">{{ userOption.firstName }} {{ userOption.lastName }}</option>
+              }
+            </select>
+            @if (editForm.get(['user'])!.invalid && (editForm.get(['user'])!.dirty || editForm.get(['user'])!.touched)) {
+              <div>
+                @if (editForm.get(['user'])?.errors?.required) {
+                  <small class="form-text text-danger">This field is required.</small>
+                }
+              </div>
+            }
+          </div>
+
+          <div class="mb-3 w-50">
+            <label class="form-label" for="field_status">Status</label>
+            <select class="form-control" name="status" formControlName="status" id="field_status" data-cy="status">
+              <option [ngValue]="null">Select a Status</option>
+              @for (rewardStatus of rewardStatusValues; track $index) {
+                <option [value]="rewardStatus">{{ { null: '', ACTIVE: 'ACTIVE', EXPIRED: 'EXPIRED', USED: 'USED' }[rewardStatus] }}</option>
+              }
+            </select>
+            @if (editForm.get('status')!.invalid && (editForm.get('status')!.dirty || editForm.get('status')!.touched)) {
+              <div>
+                @if (editForm.get('status')?.errors?.required) {
+                  <small class="form-text text-danger">This field is required.</small>
+                }
+              </div>
+            }
+          </div>
         </div>
       </div>
 

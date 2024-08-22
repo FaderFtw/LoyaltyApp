@@ -37,8 +37,9 @@ type RewardFormGroupContent = {
   fromDate: FormControl<RewardFormRawValue['fromDate']>;
   toDate: FormControl<RewardFormRawValue['toDate']>;
   code: FormControl<RewardFormRawValue['code']>;
-  rewardConfig: FormControl<RewardFormRawValue['rewardConfig']>;
+  status: FormControl<RewardFormRawValue['status']>;
   user: FormControl<RewardFormRawValue['user']>;
+  rewardConfig: FormControl<RewardFormRawValue['rewardConfig']>;
 };
 
 export type RewardFormGroup = FormGroup<RewardFormGroupContent>;
@@ -70,10 +71,13 @@ export class RewardFormService {
       code: new FormControl(rewardRawValue.code, {
         validators: [Validators.required],
       }),
-      rewardConfig: new FormControl(rewardRawValue.rewardConfig, {
+      status: new FormControl(rewardRawValue.status, {
         validators: [Validators.required],
       }),
       user: new FormControl(rewardRawValue.user, {
+        validators: [Validators.required],
+      }),
+      rewardConfig: new FormControl(rewardRawValue.rewardConfig, {
         validators: [Validators.required],
       }),
     });

@@ -1,7 +1,10 @@
 package com.satoripop.loyalityapp.web.rest;
 
+import com.satoripop.loyalityapp.domain.LoyaltyLevel;
 import com.satoripop.loyalityapp.domain.UserExtra;
 import com.satoripop.loyalityapp.repository.UserExtraRepository;
+import com.satoripop.loyalityapp.repository.UserRepository;
+import com.satoripop.loyalityapp.service.LoyaltyLevelService;
 import com.satoripop.loyalityapp.web.rest.errors.BadRequestAlertException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -12,6 +15,7 @@ import java.util.Objects;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -42,11 +46,14 @@ public class UserExtraResource {
     @Value("${jhipster.clientApp.name}")
     private String applicationName;
 
-    private final UserExtraRepository userExtraRepository;
+    @Autowired
+    private UserExtraRepository userExtraRepository;
 
-    public UserExtraResource(UserExtraRepository userExtraRepository) {
-        this.userExtraRepository = userExtraRepository;
-    }
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private LoyaltyLevelService loyaltyLevelService;
 
     /**
      * {@code POST  /user-extras} : Create a new userExtra.
@@ -102,6 +109,13 @@ public class UserExtraResource {
         if (!userExtraRepository.existsById(id)) {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
+
+        // Update the loyalty level using the service function
+        LoyaltyLevel newLoyaltyLevel = loyaltyLevelService.determineNewLoyaltyLevel(userExtra.getTotalBalance());
+        log.debug("New loyalty level: {}", newLoyaltyLevel);
+
+        userExtra.getUser().setLoyaltyLevel(newLoyaltyLevel);
+        userRepository.save(userExtra.getUser());
 
         userExtra = userExtraRepository.save(userExtra);
         return ResponseEntity.ok()

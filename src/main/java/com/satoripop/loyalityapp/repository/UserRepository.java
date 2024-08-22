@@ -1,6 +1,7 @@
 package com.satoripop.loyalityapp.repository;
 
 import com.satoripop.loyalityapp.domain.User;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import org.springframework.data.domain.*;
@@ -15,7 +16,9 @@ import org.springframework.stereotype.Repository;
 public interface UserRepository extends JpaRepository<User, String> {
     Optional<User> findOneByLogin(String login);
 
-    Set<User> findByLoyaltyLevelId(Long id);
+    List<User> findByLoyaltyLevelId(Long id);
+
+    List<User> findByLoyaltyLevelIdOrLoyaltyLevelIdIsNull(Long loyaltyLevelId);
 
     @EntityGraph(attributePaths = "authorities")
     Optional<User> findOneWithAuthoritiesByLogin(String login);

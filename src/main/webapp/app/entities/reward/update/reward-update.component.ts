@@ -7,10 +7,11 @@ import { finalize, map } from 'rxjs/operators';
 import SharedModule from 'app/shared/shared.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
-import { IRewardConfig } from 'app/entities/reward-config/reward-config.model';
-import { RewardConfigService } from 'app/entities/reward-config/service/reward-config.service';
 import { IUser } from 'app/entities/user/user.model';
 import { UserService } from 'app/entities/user/service/user.service';
+import { IRewardConfig } from 'app/entities/reward-config/reward-config.model';
+import { RewardConfigService } from 'app/entities/reward-config/service/reward-config.service';
+import { RewardStatus } from 'app/entities/enumerations/reward-status.model';
 import { RewardService } from '../service/reward.service';
 import { IReward } from '../reward.model';
 import { RewardFormService, RewardFormGroup } from './reward-form.service';
@@ -24,23 +25,24 @@ import { RewardFormService, RewardFormGroup } from './reward-form.service';
 export class RewardUpdateComponent implements OnInit {
   isSaving = false;
   reward: IReward | null = null;
+  rewardStatusValues = Object.keys(RewardStatus);
 
-  rewardConfigsSharedCollection: IRewardConfig[] = [];
   usersSharedCollection: IUser[] = [];
+  rewardConfigsSharedCollection: IRewardConfig[] = [];
 
   protected rewardService = inject(RewardService);
   protected rewardFormService = inject(RewardFormService);
-  protected rewardConfigService = inject(RewardConfigService);
   protected userService = inject(UserService);
+  protected rewardConfigService = inject(RewardConfigService);
   protected activatedRoute = inject(ActivatedRoute);
 
   // eslint-disable-next-line @typescript-eslint/member-ordering
   editForm: RewardFormGroup = this.rewardFormService.createRewardFormGroup();
 
+  compareUser = (o1: IUser | null, o2: IUser | null): boolean => this.userService.compareUser(o1, o2);
+
   compareRewardConfig = (o1: IRewardConfig | null, o2: IRewardConfig | null): boolean =>
     this.rewardConfigService.compareRewardConfig(o1, o2);
-
-  compareUser = (o1: IUser | null, o2: IUser | null): boolean => this.userService.compareUser(o1, o2);
 
   ngOnInit(): void {
     this.activatedRoute.data.subscribe(({ reward }) => {
@@ -90,24 +92,14 @@ export class RewardUpdateComponent implements OnInit {
     this.reward = reward;
     this.rewardFormService.resetForm(this.editForm, reward);
 
+    this.usersSharedCollection = this.userService.addUserToCollectionIfMissing<IUser>(this.usersSharedCollection, reward.user);
     this.rewardConfigsSharedCollection = this.rewardConfigService.addRewardConfigToCollectionIfMissing<IRewardConfig>(
       this.rewardConfigsSharedCollection,
       reward.rewardConfig,
     );
-    this.usersSharedCollection = this.userService.addUserToCollectionIfMissing<IUser>(this.usersSharedCollection, reward.user);
   }
 
   protected loadRelationshipsOptions(): void {
-    this.rewardConfigService
-      .query()
-      .pipe(map((res: HttpResponse<IRewardConfig[]>) => res.body ?? []))
-      .pipe(
-        map((rewardConfigs: IRewardConfig[]) =>
-          this.rewardConfigService.addRewardConfigToCollectionIfMissing<IRewardConfig>(rewardConfigs, this.reward?.rewardConfig),
-        ),
-      )
-      .subscribe((rewardConfigs: IRewardConfig[]) => (this.rewardConfigsSharedCollection = rewardConfigs));
-
     this.userService
       .query()
       .pipe(
@@ -120,5 +112,14 @@ export class RewardUpdateComponent implements OnInit {
         }),
       )
       .subscribe((users: IUser[]) => (this.usersSharedCollection = users));
+    this.rewardConfigService
+      .query()
+      .pipe(map((res: HttpResponse<IRewardConfig[]>) => res.body ?? []))
+      .pipe(
+        map((rewardConfigs: IRewardConfig[]) =>
+          this.rewardConfigService.addRewardConfigToCollectionIfMissing<IRewardConfig>(rewardConfigs, this.reward?.rewardConfig),
+        ),
+      )
+      .subscribe((rewardConfigs: IRewardConfig[]) => (this.rewardConfigsSharedCollection = rewardConfigs));
   }
 }

@@ -31,17 +31,24 @@
           <dd>
             <span>{{ reward()!.code }}</span>
           </dd>
+          <dt><span>Status</span></dt>
+          <dd>
+            <span>{{ { null: '', ACTIVE: 'ACTIVE', EXPIRED: 'EXPIRED', USED: 'USED' }[reward()!.status ?? 'null'] }}</span>
+          </dd>
+          <dt><span>User</span></dt>
+          <dd>
+            <span>{{ reward()!.user?.firstName }} {{ reward()!.user?.lastName }}</span>
+          </dd>
           <dt><span>Reward Config</span></dt>
           <dd>
             @if (reward()!.rewardConfig) {
               <div>
-                <a [routerLink]="['/reward-config', reward()!.rewardConfig?.id, 'view']">{{ reward()!.rewardConfig?.id }}</a>
+                <a [routerLink]="['/reward-config', reward()!.rewardConfig?.id, 'view']"
+                  >{{ reward()!.rewardConfig?.title }} (Balance: {{ reward()!.rewardConfig?.balanceValue }} -> Converted:
+                  {{ reward()!.rewardConfig?.convertedValue }} )</a
+                >
               </div>
             }
-          </dd>
-          <dt><span>User</span></dt>
-          <dd>
-            <span>{{ reward()!.user?.id }}</span>
           </dd>
         </dl>
 
