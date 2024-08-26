@@ -110,56 +110,52 @@
             </div>
           }
         </div>
+        <div [ngClass]="{ 'd-flex justify-content-between': editForm.get('selectedOption')?.value === 'option2' }">
+          <div class="mb-3" [ngClass]="{ 'me-3 w-50': editForm.get('selectedOption')?.value === 'option2' }">
+            <label for="optionSelect" class="form-label">Select Condition Type for Offer</label>
+            <select class="form-select" id="optionSelect" formControlName="selectedOption">
+              <option value="option1" selected>Item Quantity and SKU (Specify the number and SKU of the product)</option>
+              <option value="option2">Grand Total Purchase (Specify the minimum total amount to spend)</option>
+            </select>
+          </div>
 
-        <div class="d-flex justify-content-between">
+          <div *ngIf="editForm.get('selectedOption')?.value === 'option2'" class="mb-3 w-50">
+            <label class="form-label" for="field_grandTotal">Grand Total <fa-icon icon="dollar-sign"></fa-icon></label>
+            <input
+              type="number"
+              class="form-control"
+              name="grandTotal"
+              id="field_grandTotal"
+              data-cy="grandTotal"
+              formControlName="grandTotal"
+            />
+            <div *ngIf="editForm.get('grandTotal')!.invalid && (editForm.get('grandTotal')!.dirty || editForm.get('grandTotal')!.touched)">
+              <small *ngIf="editForm.get('grandTotal')?.errors?.required" class="form-text text-danger">This field is required.</small>
+              <small class="form-text text-danger" [hidden]="!editForm.get('grandTotal')?.errors?.number"
+                >This field should be a number.</small
+              >
+            </div>
+          </div>
+        </div>
+        <div class="d-flex justify-content-between" *ngIf="editForm.get('selectedOption')?.value === 'option1'">
           <div class="mb-3 me-3 w-50">
             <label class="form-label" for="field_itemQty">Item Qty</label>
             <input type="number" class="form-control" name="itemQty" id="field_itemQty" data-cy="itemQty" formControlName="itemQty" />
-            @if (editForm.get('itemQty')!.invalid && (editForm.get('itemQty')!.dirty || editForm.get('itemQty')!.touched)) {
-              <div>
-                @if (editForm.get('itemQty')?.errors?.required) {
-                  <small class="form-text text-danger">This field is required.</small>
-                }
-                <small class="form-text text-danger" [hidden]="!editForm.get('itemQty')?.errors?.number"
-                  >This field should be a number.</small
-                >
-              </div>
-            }
+            <div *ngIf="editForm.get('itemQty')!.invalid && (editForm.get('itemQty')!.dirty || editForm.get('itemQty')!.touched)">
+              <small *ngIf="editForm.get('itemQty')?.errors?.required" class="form-text text-danger">This field is required.</small>
+              <small class="form-text text-danger" [hidden]="!editForm.get('itemQty')?.errors?.number"
+                >This field should be a number.</small
+              >
+            </div>
           </div>
 
           <div class="mb-3 w-50">
             <label class="form-label" for="field_itemSku">Item Sku</label>
             <input type="text" class="form-control" name="itemSku" id="field_itemSku" data-cy="itemSku" formControlName="itemSku" />
-            @if (editForm.get('itemSku')!.invalid && (editForm.get('itemSku')!.dirty || editForm.get('itemSku')!.touched)) {
-              <div>
-                @if (editForm.get('itemSku')?.errors?.required) {
-                  <small class="form-text text-danger">This field is required.</small>
-                }
-              </div>
-            }
-          </div>
-        </div>
-
-        <div class="mb-3">
-          <label class="form-label" for="field_grandTotal">Grand Total</label>
-          <input
-            type="number"
-            class="form-control"
-            name="grandTotal"
-            id="field_grandTotal"
-            data-cy="grandTotal"
-            formControlName="grandTotal"
-          />
-          @if (editForm.get('grandTotal')!.invalid && (editForm.get('grandTotal')!.dirty || editForm.get('grandTotal')!.touched)) {
-            <div>
-              @if (editForm.get('grandTotal')?.errors?.required) {
-                <small class="form-text text-danger">This field is required.</small>
-              }
-              <small class="form-text text-danger" [hidden]="!editForm.get('grandTotal')?.errors?.number"
-                >This field should be a number.</small
-              >
+            <div *ngIf="editForm.get('itemSku')!.invalid && (editForm.get('itemSku')!.dirty || editForm.get('itemSku')!.touched)">
+              <small *ngIf="editForm.get('itemSku')?.errors?.required" class="form-text text-danger">This field is required.</small>
             </div>
-          }
+          </div>
         </div>
 
         <div class="d-flex justify-content-between">

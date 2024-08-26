@@ -7,29 +7,28 @@ import FooterComponent from '../footer/footer.component';
 import PageRibbonComponent from '../profiles/page-ribbon.component';
 import NavbarComponent from '../navbar/navbar.component';
 import { UserNavbarComponent } from '../user-navbar/user-navbar.component';
-import { NgIf } from '@angular/common';
+import { NgClass, NgIf } from '@angular/common';
 
 @Component({
   standalone: true,
   selector: 'jhi-main',
   templateUrl: './main.component.html',
   providers: [AppPageTitleStrategy],
-  imports: [RouterOutlet, FooterComponent, PageRibbonComponent, NavbarComponent, UserNavbarComponent, NgIf],
+  imports: [RouterOutlet, FooterComponent, PageRibbonComponent, NavbarComponent, UserNavbarComponent, NgIf, NgClass],
 })
 export default class MainComponent implements OnInit {
   private router = inject(Router);
   private appPageTitleStrategy = inject(AppPageTitleStrategy);
   private accountService = inject(AccountService);
-  protected isUserHome = true;
+  protected isAdmin = false;
 
   constructor() {}
 
   ngOnInit(): void {
     this.accountService.identity().subscribe(account => {
-      if (!this.router.url.includes('home')) {
-        this.isUserHome = false;
+      if (account) {
+        this.isAdmin = this.accountService.hasAnyAuthority('ROLE_ADMIN');
       }
-      console.log('isUser', this.isUserHome);
     });
   }
 }

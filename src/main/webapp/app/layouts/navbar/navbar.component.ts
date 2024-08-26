@@ -30,7 +30,6 @@ export default class NavbarComponent implements OnInit {
   account = inject(AccountService).trackCurrentAccount();
   entitiesNavbarItems: NavbarItem[] = [];
 
-  private keycloakAccountConsoleUrl = 'http://localhost:9080/realms/loyaltyApp/account';
   private referrer = 'web_app';
   private referrerUri: string = '';
 

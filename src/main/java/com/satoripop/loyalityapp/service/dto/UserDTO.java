@@ -4,6 +4,7 @@ import com.satoripop.loyalityapp.domain.Authority;
 import com.satoripop.loyalityapp.domain.LoyaltyLevel;
 import com.satoripop.loyalityapp.domain.User;
 import java.io.Serializable;
+import java.time.Instant;
 import java.util.Objects;
 import java.util.Set;
 
@@ -22,6 +23,8 @@ public class UserDTO implements Serializable {
 
     private String lastName;
 
+    private Instant createdDate;
+
     private LoyaltyLevel loyaltyLevel;
 
     private Set<Authority> authorities;
@@ -32,10 +35,10 @@ public class UserDTO implements Serializable {
 
     public UserDTO(User user) {
         this.id = user.getId();
-        // Customize it here if you need, or not, firstName/lastName/etc
         this.login = user.getLogin();
         this.firstName = user.getFirstName();
         this.lastName = user.getLastName();
+        this.createdDate = user.getCreatedDate();
         this.loyaltyLevel = user.getLoyaltyLevel();
         this.authorities = user.getAuthorities();
     }
@@ -88,6 +91,7 @@ public class UserDTO implements Serializable {
             ", lastName='" + lastName + '\'' +
             ", loyaltyLevel='" + loyaltyLevel + '\'' +
             ", authorities='" + authorities + '\'' +
+            ", createdDate='" + createdDate + '\'' +
             "}";
     }
 
@@ -121,5 +125,13 @@ public class UserDTO implements Serializable {
 
     public void setAuthorities(Set<Authority> authorities) {
         this.authorities = authorities;
+    }
+
+    public Instant getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(Instant createdDate) {
+        this.createdDate = createdDate;
     }
 }

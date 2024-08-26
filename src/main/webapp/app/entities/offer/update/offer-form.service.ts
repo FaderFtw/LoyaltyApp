@@ -37,6 +37,7 @@ type OfferFormGroupContent = {
   fromDate: FormControl<OfferFormRawValue['fromDate']>;
   toDate: FormControl<OfferFormRawValue['toDate']>;
   rewardPoints: FormControl<OfferFormRawValue['rewardPoints']>;
+  selectedOption: FormControl;
   itemQty: FormControl<OfferFormRawValue['itemQty']>;
   itemSku: FormControl<OfferFormRawValue['itemSku']>;
   grandTotal: FormControl<OfferFormRawValue['grandTotal']>;
@@ -75,15 +76,10 @@ export class OfferFormService {
       rewardPoints: new FormControl(offerRawValue.rewardPoints, {
         validators: [Validators.required],
       }),
-      itemQty: new FormControl(offerRawValue.itemQty, {
-        validators: [Validators.required],
-      }),
-      itemSku: new FormControl(offerRawValue.itemSku, {
-        validators: [Validators.required],
-      }),
-      grandTotal: new FormControl(offerRawValue.grandTotal, {
-        validators: [Validators.required],
-      }),
+      selectedOption: new FormControl('option1'),
+      itemQty: new FormControl(offerRawValue.itemQty),
+      itemSku: new FormControl(offerRawValue.itemSku),
+      grandTotal: new FormControl(offerRawValue.grandTotal),
       image: new FormControl(offerRawValue.image),
       imageContentType: new FormControl(offerRawValue.imageContentType),
       loyaltyLevels: new FormControl(offerRawValue.loyaltyLevels ?? []),
@@ -91,17 +87,32 @@ export class OfferFormService {
   }
 
   getOffer(form: OfferFormGroup): IOffer | NewOffer {
-    return this.convertOfferRawValueToOffer(form.getRawValue() as OfferFormRawValue | NewOfferFormRawValue);
+    // Extract form values
+    const selectedOption: string = form.getRawValue().selectedOption;
+    const formValue = form.getRawValue() as OfferFormRawValue | NewOfferFormRawValue;
+
+    // Check selected option and adjust values accordingly
+    if (selectedOption === 'option1') {
+      formValue.grandTotal = null;
+    } else if (selectedOption === 'option2') {
+      formValue.itemQty = null;
+      formValue.itemSku = null;
+    }
+
+    return this.convertOfferRawValueToOffer(formValue);
   }
 
   resetForm(form: OfferFormGroup, offer: OfferFormGroupInput): void {
     const offerRawValue = this.convertOfferToOfferRawValue({ ...this.getFormDefaults(), ...offer });
-    form.reset(
-      {
-        ...offerRawValue,
-        id: { value: offerRawValue.id, disabled: true },
-      } as any /* cast to workaround https://github.com/angular/angular/issues/46458 */,
-    );
+    form.reset({
+      ...offerRawValue,
+      id: { value: offerRawValue.id, disabled: true },
+    } as any);
+    if (!offer.grandTotal) {
+      form.controls.selectedOption.setValue('option1');
+    } else {
+      form.controls.selectedOption.setValue('option2');
+    }
   }
 
   private getFormDefaults(): OfferFormDefaults {

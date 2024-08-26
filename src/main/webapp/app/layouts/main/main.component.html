@@ -1,11 +1,10 @@
 <div>
-  <!-- if its a user display jhi-user-navbar if not display the jhi-navbar-->
-  <jhi-navbar *ngIf="!isUserHome"></jhi-navbar>
-  <jhi-user-navbar *ngIf="isUserHome"></jhi-user-navbar>
+  <jhi-navbar *ngIf="isAdmin"></jhi-navbar>
+  <!-- <jhi-navbar></jhi-navbar>-->
 </div>
 
-<div class="container-fluid">
-  <div class="card jh-card">
+<div [ngClass]="{ 'container-fluid': isAdmin }">
+  <div [ngClass]="{ 'card jh-card': isAdmin }">
     <router-outlet></router-outlet>
   </div>
 </div>

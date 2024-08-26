@@ -5,9 +5,7 @@ import { UserRouteAccessService } from 'app/core/auth/user-route-access.service'
 import { errorRoute } from './layouts/error/error.route';
 
 import HomeComponent from './home/home.component';
-import NavbarComponent from './layouts/navbar/navbar.component';
-import { UserHomeComponent } from './user-home/user-home.component';
-import { UserNavbarComponent } from './layouts/user-navbar/user-navbar.component';
+import { UserLayoutComponent } from './user-home/layouts/user-layout/user-layout.component';
 
 const routes: Routes = [
   {
@@ -17,12 +15,13 @@ const routes: Routes = [
       authorities: [Authority.ADMIN],
     },
     canActivate: [UserRouteAccessService],
-    title: 'home.title',
+    title: 'LoyaltyApp',
   },
   {
     path: 'home',
-    component: UserHomeComponent,
+    component: UserLayoutComponent,
     canActivate: [UserRouteAccessService],
+    loadChildren: () => import('./user-home/layouts/user-layout/user-layout.routes'),
     title: 'LoyaltyApp',
   },
   {

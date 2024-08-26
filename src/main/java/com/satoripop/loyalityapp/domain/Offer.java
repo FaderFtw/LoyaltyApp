@@ -44,16 +44,13 @@ public class Offer implements Serializable {
     @Column(name = "reward_points", nullable = false)
     private Integer rewardPoints;
 
-    @NotNull
-    @Column(name = "item_qty", nullable = false)
+    @Column(name = "item_qty")
     private Integer itemQty;
 
-    @NotNull
-    @Column(name = "item_sku", nullable = false)
+    @Column(name = "item_sku")
     private String itemSku;
 
-    @NotNull
-    @Column(name = "grand_total", precision = 21, scale = 2, nullable = false)
+    @Column(name = "grand_total", precision = 21, scale = 2)
     private BigDecimal grandTotal;
 
     @Lob

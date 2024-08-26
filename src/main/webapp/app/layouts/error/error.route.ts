@@ -18,11 +18,7 @@ export const errorRoute: Routes = [
   },
   {
     path: '404',
-    component: ErrorComponent,
-    data: {
-      errorMessage: 'The page does not exist.',
-    },
-    title: 'Error page!',
+    redirectTo: '',
   },
   {
     path: '**',

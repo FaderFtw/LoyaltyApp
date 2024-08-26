@@ -141,6 +141,7 @@ public class UserExtraResource {
      * or with status {@code 500 (Internal Server Error)} if the userExtra couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
+
     @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public ResponseEntity<UserExtra> partialUpdateUserExtra(

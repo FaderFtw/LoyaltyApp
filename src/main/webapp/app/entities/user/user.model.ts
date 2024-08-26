@@ -8,4 +8,5 @@ export interface IUser {
   lastName?: string | null;
   authorities?: IAuthority[] | null;
   loyaltyLevel?: ILoyaltyLevel | null;
+  createdDate?: string | null;
 }

@@ -4,6 +4,7 @@ import jakarta.persistence.Lob;
 import jakarta.validation.constraints.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.Objects;
@@ -31,13 +32,10 @@ public class OfferDTO implements Serializable {
     @NotNull
     private Integer rewardPoints;
 
-    @NotNull
     private Integer itemQty;
 
-    @NotNull
     private String itemSku;
 
-    @NotNull
     private BigDecimal grandTotal;
 
     @Lob

@@ -1,0 +1,27 @@
+<div class="wrapper">
+  <div class="sidebar" data-color="white" data-active-color="danger">
+    <div class="sidebar-wrapper">
+      <div class="logo p-4">
+        <a [routerLink]="['/home']">
+          <img src="content/images/loyaltyapp-black.png" />
+        </a>
+      </div>
+      <ul class="nav">
+        <li *ngFor="let menuItem of menuItems" routerLinkActive="active" class="{{ menuItem.class }}">
+          <a [routerLink]="[menuItem.path]">
+            <i class="nc-icon {{ menuItem.icon }}"></i>
+            <p>{{ menuItem.title }}</p>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="main-panel">
+    <navbar-cmp></navbar-cmp>
+    <div class="content">
+      <router-outlet></router-outlet>
+    </div>
+    <footer-cmp></footer-cmp>
+  </div>
+</div>

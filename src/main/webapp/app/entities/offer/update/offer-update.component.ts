@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 import { finalize, map } from 'rxjs/operators';
 
 import SharedModule from 'app/shared/shared.module';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 
 import { AlertError } from 'app/shared/alert/alert-error.model';
 import { EventManager, EventWithContent } from 'app/core/util/event-manager.service';
@@ -50,6 +50,7 @@ export class OfferUpdateComponent implements OnInit {
       }
 
       this.loadRelationshipsOptions();
+      this.setupOptionChangeHandler();
     });
   }
 
@@ -85,6 +86,7 @@ export class OfferUpdateComponent implements OnInit {
   save(): void {
     this.isSaving = true;
     const offer = this.offerFormService.getOffer(this.editForm);
+    console.log(offer);
     if (offer.id !== null) {
       this.subscribeToSaveResponse(this.offerService.update(offer));
     } else {
@@ -103,9 +105,7 @@ export class OfferUpdateComponent implements OnInit {
     this.previousState();
   }
 
-  protected onSaveError(): void {
-    // Api for inheritance.
-  }
+  protected onSaveError(): void {}
 
   protected onSaveFinalize(): void {
     this.isSaving = false;
@@ -131,5 +131,19 @@ export class OfferUpdateComponent implements OnInit {
         ),
       )
       .subscribe((loyaltyLevels: ILoyaltyLevel[]) => (this.loyaltyLevelsSharedCollection = loyaltyLevels));
+  }
+
+  protected setupOptionChangeHandler(): void {
+    this.editForm.get('selectedOption')?.valueChanges.subscribe(selectedOption => {
+      if (selectedOption === 'option1') {
+        this.editForm.get('itemQty')?.setValue(null);
+        this.editForm.get('itemSku')?.setValue(null);
+        this.editForm.get('grandTotal')?.setValue(null);
+      } else if (selectedOption === 'option2') {
+        this.editForm.get('itemQty')?.setValue(null);
+        this.editForm.get('itemSku')?.setValue(null);
+        this.editForm.get('grandTotal')?.setValue(null);
+      }
+    });
   }
 }
