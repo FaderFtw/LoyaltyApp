@@ -7,10 +7,12 @@
         </a>
       </div>
       <ul class="nav">
-        <li *ngFor="let menuItem of menuItems" routerLinkActive="active" class="{{ menuItem.class }}">
-          <a [routerLink]="[menuItem.path]">
-            <i class="nc-icon {{ menuItem.icon }}"></i>
-            <p>{{ menuItem.title }}</p>
+        <li *ngFor="let menuItem of menuItems" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+          <a [routerLink]="['/' + menuItem.path]" class="d-flex fs-5 nav-link">
+            <div class="text-center d-flex justify-content-between">
+              <fa-icon icon="{{ menuItem.icon }}" class="me-3"></fa-icon>
+            </div>
+            <p class="fw-normal">{{ menuItem.title }}</p>
           </a>
         </li>
       </ul>

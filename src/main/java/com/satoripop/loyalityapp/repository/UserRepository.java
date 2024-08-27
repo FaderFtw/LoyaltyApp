@@ -1,6 +1,7 @@
 package com.satoripop.loyalityapp.repository;
 
 import com.satoripop.loyalityapp.domain.User;
+import java.nio.channels.FileChannel;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -24,4 +25,6 @@ public interface UserRepository extends JpaRepository<User, String> {
     Optional<User> findOneWithAuthoritiesByLogin(String login);
 
     Page<User> findAllByIdNotNullAndActivatedIsTrue(Pageable pageable);
+
+    Optional<User> findUserByEmail(String email);
 }

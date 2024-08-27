@@ -1,15 +1,17 @@
 import { Routes } from '@angular/router';
 
-import { TableComponent } from '../../pages/table/table.component';
-import { TypographyComponent } from '../../pages/typography/typography.component';
-import { IconsComponent } from '../../pages/icons/icons.component';
-import { MapsComponent } from '../../pages/maps/maps.component';
+import { UserRewardsComponent } from '../../pages/user-rewards/user-rewards.component';
+import { UserOffersComponent } from '../../pages/user-offers/user-offers.component';
+import { UserPurchasesComponent } from '../../pages/user-purchases/user-purchases.component';
+import { UserHistoryComponent } from '../../pages/user-history/user-history.component';
+import { UserHomeComponent } from '../../user-home.component';
 
 const routes: Routes = [
-  { path: 'table', component: TableComponent },
-  { path: 'typography', component: TypographyComponent },
-  { path: 'icons', component: IconsComponent },
-  { path: 'maps', component: MapsComponent },
+  { path: '', component: UserHomeComponent },
+  { path: 'rewards', component: UserRewardsComponent },
+  { path: 'offers', component: UserOffersComponent },
+  { path: 'purchases', component: UserPurchasesComponent },
+  { path: 'history', component: UserHistoryComponent },
 ];
 
 export default routes;

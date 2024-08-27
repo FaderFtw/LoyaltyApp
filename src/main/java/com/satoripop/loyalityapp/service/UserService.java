@@ -51,8 +51,8 @@ public class UserService {
     @Autowired
     private AuthorityRepository authorityRepository;
 
-    public Optional<UserDTO> findUserById(String id) {
-        return userRepository.findById(id).map(UserDTO::new);
+    public Optional<UserDTO> findUserByEmail(String id) {
+        return userRepository.findUserByEmail(id).map(UserDTO::new);
     }
 
     /**

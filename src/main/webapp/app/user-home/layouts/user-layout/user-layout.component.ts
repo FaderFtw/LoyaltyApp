@@ -1,14 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { UserComponent } from '../../pages/user/user.component';
-import { TableComponent } from '../../pages/table/table.component';
-import { TypographyComponent } from '../../pages/typography/typography.component';
-import { IconsComponent } from '../../pages/icons/icons.component';
-import { MapsComponent } from '../../pages/maps/maps.component';
 import SharedModule from '../../../shared/shared.module';
-import { NavbarModule } from '../../shared/navbar/navbar.module';
 import { ToastrModule } from 'ngx-toastr';
 import { FooterModule } from '../../shared/footer/footer.module';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { NavbarComponent } from '../../shared/navbar/navbar.component';
 
 export interface RouteInfo {
   path: string;
@@ -18,10 +14,11 @@ export interface RouteInfo {
 }
 
 export const ROUTES: RouteInfo[] = [
-  { path: 'icons', title: 'Icons', icon: 'nc-diamond', class: '' },
-  { path: 'maps', title: 'Maps', icon: 'nc-pin-3', class: '' },
-  { path: 'table', title: 'Table List', icon: 'nc-tile-56', class: '' },
-  { path: 'typography', title: 'Typography', icon: 'nc-caps-small', class: '' },
+  { path: 'home', title: 'Home', icon: 'home', class: '' }, // Changed '/' to 'home'
+  { path: 'home/offers', title: 'Offers', icon: 'dollar', class: '' },
+  { path: 'home/rewards', title: 'Rewards', icon: 'gifts', class: '' },
+  { path: 'home/purchases', title: 'My Purchases', icon: 'shopping-cart', class: '' },
+  { path: 'home/history', title: 'My History', icon: 'history', class: '' },
 ];
 
 @Component({
@@ -29,20 +26,7 @@ export const ROUTES: RouteInfo[] = [
   standalone: true,
   templateUrl: './user-layout.component.html',
   styleUrls: ['./user-layout-styles.scss'],
-  imports: [
-    SharedModule,
-    UserComponent,
-    TableComponent,
-    TypographyComponent,
-    IconsComponent,
-    MapsComponent,
-    NavbarModule,
-    ToastrModule,
-    FooterModule,
-    RouterOutlet,
-    RouterLinkActive,
-    RouterLink,
-  ],
+  imports: [SharedModule, UserComponent, NavbarComponent, ToastrModule, FooterModule, RouterOutlet, RouterLinkActive, RouterLink],
 })
 export class UserLayoutComponent implements OnInit {
   public menuItems: any[] = [];

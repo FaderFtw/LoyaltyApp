@@ -1,0 +1,140 @@
+@import './layouts/user-layout/user-layout-styles.scss';
+.carousel-control-prev,
+.carousel-control-next {
+  top: 45%; /* Center the arrows vertically */
+  margin: 0 20px; /* Remove default margin */
+  width: 50px; /* Adjust size as needed */
+  height: 50px; /* Adjust size as needed */
+  background-color: white;
+  border-radius: 50%; /* Circular shape */
+  color: black; /* Bold color */
+  font-size: 1.5rem; /* Adjust size as needed */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3; /* Ensure above other elements */
+}
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+  background-color: transparent; /* Remove default background */
+  font-weight: bold; /* Make arrows bold */
+}
+
+.carousel-control-prev-icon {
+  border-left: 2px solid black; /* Left arrow style */
+  border-top: 2px solid black; /* Up arrow style */
+}
+
+.carousel-control-next-icon {
+  border-right: 2px solid black; /* Right arrow style */
+  border-bottom: 2px solid black; /* Down arrow style */
+}
+
+.carousel-indicators {
+  z-index: 3;
+
+  button {
+    background-color: white;
+    border: 1px solid white; /* Optional: Add a border */
+  }
+
+  .active {
+    background-color: gray; /* Change the active indicator color if needed */
+  }
+}
+
+.carousel-inner {
+  border-radius: 20px;
+  .carousel-item {
+    position: relative;
+
+    img {
+      width: 100%;
+      height: 400px;
+      object-fit: cover; // Ensure the image covers the container
+    }
+
+    .overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5); // Semi-transparent dark overlay
+      z-index: 1; // Ensure the overlay is on top of the image but below the text
+    }
+
+    .offers-btn {
+      position: absolute;
+      padding: 10px 15px;
+      top: 15px;
+      right: 15px;
+      z-index: 2; // Ensure the badge is on top of the overlay
+    }
+
+    .badge {
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      padding: 10px;
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      font-size: 1rem;
+      background-color: #1ec71e;
+      color: white;
+      z-index: 2; // Ensure the badge is on top of the overlay
+    }
+
+    .carousel-caption {
+      position: absolute;
+      bottom: 15px;
+      z-index: 2; // Ensure the caption is on top of the overlay
+      h5 {
+        font-size: 2rem; /* Increase title size */
+        font-weight: bold; /* Increase font weight */
+      }
+
+      .availability-text {
+        font-size: 0.875rem; /* Smaller font size */
+        margin: 10px 0; /* Add spacing */
+        font-weight: bold;
+      }
+
+      .btn-primary {
+        margin-top: 10px; /* Add spacing above the button */
+      }
+    }
+  }
+}
+
+.card {
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.card-title {
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.list-group-item {
+  border: none;
+  padding: 0.75rem 0;
+}
+
+.btn-info {
+  background-color: #5bc0de;
+  border-color: #5bc0de;
+  color: white;
+}
+
+.btn-info:hover {
+  background-color: #31b0d5;
+  border-color: #31b0d5;
+}
+
+.badge {
+  font-size: 0.9em;
+}

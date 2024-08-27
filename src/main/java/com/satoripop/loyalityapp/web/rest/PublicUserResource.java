@@ -44,10 +44,10 @@ public class PublicUserResource {
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
 
-    @GetMapping("/users/{id}")
-    public ResponseEntity<UserDTO> getUser(@PathVariable String id) {
-        log.debug("REST request to get User : {}", id);
-        Optional<UserDTO> userDTO = userService.findUserById(id);
+    @GetMapping("/users/{email}")
+    public ResponseEntity<UserDTO> getUser(@PathVariable String email) {
+        log.debug("REST request to get User : {}", email);
+        Optional<UserDTO> userDTO = userService.findUserByEmail(email);
         return ResponseUtil.wrapOrNotFound(userDTO);
     }
 }

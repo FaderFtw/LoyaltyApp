@@ -17,8 +17,8 @@ export class UserService {
 
   protected resourceUrl = this.applicationConfigService.getEndpointFor('api/users');
 
-  find(id: string): Observable<EntityResponseType> {
-    return this.http.get<IUser>(`${this.resourceUrl}/${id}`, { observe: 'response' });
+  find(email: string): Observable<EntityResponseType> {
+    return this.http.get<IUser>(`${this.resourceUrl}/${email}`, { observe: 'response' });
   }
 
   query(req?: any): Observable<EntityArrayResponseType> {

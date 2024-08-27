@@ -77,4 +77,19 @@ export class LoyaltyLevelService {
     }
     return loyaltyLevelCollection;
   }
+
+  getLoyaltyLevelImage(loyaltyLevel: ILoyaltyLevel): string {
+    switch (loyaltyLevel.title) {
+      case 'DIAMOND':
+        return 'Diamond-small.png';
+      case 'GOLD':
+        return 'Gold-small.png';
+      case 'SILVER':
+        return 'Silver-small.png';
+      case 'BASIC':
+        return 'Basic-small.png';
+      default:
+        return 'default.png'; // Fallback image if needed
+    }
+  }
 }

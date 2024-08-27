@@ -1,0 +1,97 @@
+<div *ngIf="offers.length !== 0" id="carouselExampleDark" class="carousel carousel-dark slide">
+  <div class="carousel-indicators">
+    <button
+      type="button"
+      *ngFor="let offer of offers; let i = index"
+      [attr.data-bs-target]="'#carouselExampleDark'"
+      [attr.data-bs-slide-to]="i"
+      [class.active]="i === 0"
+      [attr.aria-current]="i === 0 ? 'true' : null"
+      [attr.aria-label]="'Slide ' + (i + 1)"
+    ></button>
+  </div>
+  <div class="carousel-inner">
+    <div class="carousel-item" *ngFor="let offer of offers; let i = index" [class.active]="i === 0" [attr.data-bs-interval]="5000">
+      <img
+        *ngIf="offer.image; else defaultImage"
+        [src]="'data:' + offer.imageContentType + ';base64,' + offer.image"
+        class="d-block w-100 object-fit-cover"
+        alt="Offer Image"
+      />
+      <ng-template #defaultImage>
+        <img src="content/images/Offer.png" class="d-block w-100 object-fit-cover" alt="Default Offer Image" />
+      </ng-template>
+      <div class="overlay"></div>
+      <a [routerLink]="['offers']" class="offers-btn btn btn-primary rounded-4 m-0">Go to offers</a>
+      <span class="badge"><fa-icon icon="coins" class="me-2"></fa-icon> {{ offer.rewardPoints }} pts</span>
+
+      <div class="carousel-caption d-md-block">
+        <div class="offer-details text-white">
+          <h5>{{ offer.title }}</h5>
+          <p class="d-none d-md-block" *ngIf="offer.itemQty && offer.itemSku">
+            Buy {{ offer.itemQty }} of this product {{ offer.itemSku }}
+          </p>
+          <p class="d-none d-md-block" *ngIf="offer.grandTotal">Spend {{ offer.grandTotal | currency }} on your next purchase.</p>
+          <p class="availability-text">
+            <fa-icon icon="clock" class="me-2"></fa-icon> Available until {{ offer.toDate?.format('MM/DD/YYYY') }}
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleDark" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Previous</span>
+  </button>
+  <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleDark" data-bs-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Next</span>
+  </button>
+</div>
+
+<div class="row mt-4">
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">CHECK NEW REWARDS</h5>
+        <ul *ngIf="rewardConfigs.length !== 0; else EmptyMessage" class="list-group list-group-flush">
+          <li *ngFor="let reward of rewardConfigs" class="list-group-item d-flex justify-content-between align-items-center">
+            {{ reward.description }}
+            <span class="badge bg-primary rounded-pill">{{ reward.balanceValue }} Pts -> {{ reward.balanceValue }} TND</span>
+          </li>
+        </ul>
+        <a href="#" class="btn btn-info mt-3">View Rewards</a>
+      </div>
+      <ng-template #EmptyMessage>
+        <p class="text-muted text-center">No rewards available for now. <fa-icon icon="sad-tear" size="xl" class="m-1"></fa-icon></p>
+      </ng-template>
+    </div>
+  </div>
+
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">MY LATEST PURCHASES</h5>
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            <div>
+              <i class="fas fa-shopping-cart"></i> Product 1
+              <br />
+              <small class="text-muted">08/24/2024</small>
+            </div>
+            <span class="badge bg-secondary rounded-pill">5.15 DT</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            <div>
+              <i class="fas fa-shopping-cart"></i> Product 2
+              <br />
+              <small class="text-muted">08/24/2024</small>
+            </div>
+            <span class="badge bg-secondary rounded-pill">3.10 DT</span>
+          </li>
+        </ul>
+        <a href="#" class="btn btn-info mt-3">View Coupons</a>
+      </div>
+    </div>
+  </div>
+</div>
