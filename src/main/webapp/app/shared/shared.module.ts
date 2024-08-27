@@ -13,7 +13,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
  */
 @NgModule({
   imports: [AlertComponent, AlertErrorComponent],
-  exports: [CommonModule, NgbModule, FontAwesomeModule, AlertComponent, AlertErrorComponent],
+  exports: [CommonModule, NgbModule, FontAwesomeModule, AlertComponent, AlertErrorComponent, BrowserAnimationsModule],
 })
 export default class SharedModule {
   constructor(library: FaIconLibrary) {
