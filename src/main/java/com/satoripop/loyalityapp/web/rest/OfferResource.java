@@ -146,15 +146,25 @@ public class OfferResource {
     @GetMapping("")
     public ResponseEntity<List<OfferDTO>> getAllOffers(
         @org.springdoc.core.annotations.ParameterObject Pageable pageable,
-        @RequestParam(name = "eagerload", required = false, defaultValue = "true") boolean eagerload
+        @RequestParam(name = "eagerload", required = false, defaultValue = "true") boolean eagerload,
+        @RequestParam(name = "grandTotalNotNull", required = false) Boolean grandTotalNotNull,
+        @RequestParam(name = "itemQteNotNull", required = false) Boolean itemQteNotNull,
+        @RequestParam(name = "itemSkuNotNull", required = false) Boolean itemSkuNotNull
     ) {
         log.debug("REST request to get a page of Offers");
+
         Page<OfferDTO> page;
-        if (eagerload) {
+
+        if (Boolean.TRUE.equals(grandTotalNotNull)) {
+            page = offerService.findAllWithGrandTotalNotNull(pageable, eagerload);
+        } else if (Boolean.TRUE.equals(itemQteNotNull) && Boolean.TRUE.equals(itemSkuNotNull)) {
+            page = offerService.findAllWithItemQteAndItemSkuNotNull(pageable, eagerload);
+        } else if (eagerload) {
             page = offerService.findAllWithEagerRelationships(pageable);
         } else {
             page = offerService.findAll(pageable);
         }
+
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }

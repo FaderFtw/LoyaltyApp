@@ -1,0 +1,104 @@
+.offers-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.offer-card {
+  width: 100%;
+  max-width: 800px;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: transform 0.2s ease-in-out;
+}
+
+.offer-card:hover {
+  transform: scale(1.05);
+}
+
+.image-container {
+  position: relative;
+}
+
+.offer-card img {
+  height: 250px;
+  object-fit: cover;
+}
+
+.overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
+  color: #fff;
+  padding: 20px;
+}
+
+.overlay-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.reward-points {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 10px;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  font-size: 1rem;
+  background-color: #1ec71e;
+  color: white;
+}
+
+.offer-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin: 0;
+}
+
+.end-date {
+  font-size: 14px;
+}
+
+.offer-card .card-body {
+  padding: 15px;
+}
+
+.offer-card .card-body p {
+  font-size: 14px;
+  color: #6c757d;
+  margin-bottom: 5px;
+}
+
+.availability-text {
+  color: #ff0000;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.btn-primary {
+  background-color: #5865f2;
+  border-color: #5865f2;
+}
+
+.btn-primary:hover {
+  background-color: #4752c4;
+  border-color: #4752c4;
+}
+
+::ng-deep .disabled {
+  .page-link {
+    background-color: white !important;
+  }
+}
+
+::ng-deep .active {
+  .page-link {
+    background-color: #5bc0de !important;
+    border-color: #5bc0de !important;
+  }
+}

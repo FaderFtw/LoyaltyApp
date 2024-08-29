@@ -1,1 +1,141 @@
-<p>user-offers works!</p>
+<div class="d-flex justify-content-between mb-4 align-items-center">
+  <h4 class="fw-bold m-0">Discover Offers. Get Points.</h4>
+
+  <div class="d-flex">
+    <div class="dropdown me-4">
+      <button
+        class="btn btn-secondary dropdown-toggle"
+        type="button"
+        id="dropdownMenuButton2"
+        data-bs-toggle="dropdown"
+        aria-expanded="false"
+      >
+        Offers Type
+      </button>
+      <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton2">
+        <li>
+          <a class="dropdown-item" (click)="filterOffers(null)">
+            Both
+            <fa-icon class="p-1" icon="dollar-sign"></fa-icon>
+          </a>
+        </li>
+        <li>
+          <a class="dropdown-item" (click)="filterOffers('grandTotal')">
+            Grand Total
+            <fa-icon class="p-1" icon="shopping-cart"></fa-icon>
+          </a>
+        </li>
+        <li>
+          <a class="dropdown-item" (click)="filterOffers('product')">
+            Product
+            <fa-icon class="p-1" icon="box"></fa-icon>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="dropdown">
+      <button
+        class="btn btn-secondary dropdown-toggle"
+        type="button"
+        id="dropdownMenuButton"
+        data-bs-toggle="dropdown"
+        aria-expanded="false"
+      >
+        Sort By
+      </button>
+      <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+        <li>
+          <a class="dropdown-item" (click)="navigateToWithComponentValues('rewardPoints')">
+            Reward Points
+            <fa-icon class="p-1" [icon]="getSortIcon('rewardPoints')"></fa-icon>
+          </a>
+        </li>
+        <li>
+          <a class="dropdown-item" (click)="navigateToWithComponentValues('fromDate')">
+            Release Date
+            <fa-icon class="p-1" [icon]="getSortIcon('fromDate')"></fa-icon>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-6 col-lg-6 mb-4 d-flex justify-content-center" *ngFor="let offer of offers">
+    <div class="offer-card card shadow-sm">
+      <div class="image-container position-relative">
+        <span class="reward-points"><fa-icon icon="coins" class="me-2"></fa-icon>{{ offer.rewardPoints }}</span>
+        <img
+          *ngIf="offer.image; else defaultImage"
+          [src]="'data:' + offer.imageContentType + ';base64,' + offer.image"
+          class="card-img-top"
+          alt="Offer Image"
+        />
+        <ng-template #defaultImage>
+          <img src="content/images/Offer.png" class="card-img-top" alt="Default Offer Image" />
+        </ng-template>
+        <div class="overlay">
+          <div class="overlay-content">
+            <h5 class="offer-title">{{ offer.title }}</h5>
+            <span class="end-date">Ends {{ offer.toDate | formatMediumDate }}</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-body d-flex justify-content-between">
+        <div class="d-flex align-items-center">
+          <!-- Conditionally display the product image or the shopping cart icon -->
+          <ng-container *ngIf="!offer.grandTotal; else showCartIcon">
+            <img
+              *ngIf="offer.itemSku"
+              [src]="getProductImage(offer.itemSku)"
+              alt="Product Image"
+              class="me-3"
+              style="width: 50px; height: auto"
+            />
+          </ng-container>
+          <ng-template #showCartIcon>
+            <fa-icon icon="shopping-cart" size="2xl" class="me-3"></fa-icon>
+          </ng-template>
+
+          <!-- Offer description and details -->
+          <div>
+            <p class="fw-bold">{{ offer.description }}</p>
+            <p class="d-none d-md-block" *ngIf="offer.itemQty && offer.itemSku">
+              Buy {{ offer.itemQty }} of this product {{ offer.itemSku }}
+            </p>
+            <p class="d-none d-md-block" *ngIf="offer.grandTotal">Spend {{ offer.grandTotal | currency }} on your next purchase.</p>
+          </div>
+        </div>
+
+        <!-- Offer validity message -->
+        <div *ngIf="isOfferExpired(offer.toDate); else validOffer" class="d-flex align-items-center">
+          <p class="availability-text">Ended</p>
+        </div>
+        <ng-template #validOffer>
+          <div class="d-flex align-items-center">
+            <p class="availability-text">Limited time offer, act now!</p>
+          </div>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="offers && offers.length > 0">
+  <div class="d-flex justify-content-center">
+    <jhi-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }"></jhi-item-count>
+  </div>
+
+  <div class="d-flex justify-content-center">
+    <ngb-pagination
+      [collectionSize]="totalItems"
+      [page]="page"
+      [pageSize]="itemsPerPage"
+      [maxSize]="5"
+      [rotate]="true"
+      (pageChange)="navigateToPage($event)"
+    ></ngb-pagination>
+  </div>
+</div>

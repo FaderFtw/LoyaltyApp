@@ -97,6 +97,24 @@ public class OfferService {
         return offerRepository.findAllWithEagerRelationships(pageable).map(offerMapper::toDto);
     }
 
+    public Page<OfferDTO> findAllWithGrandTotalNotNull(Pageable pageable, boolean eagerload) {
+        log.debug("Request to get all Offers where grandTotal is not null");
+        if (eagerload) {
+            return offerRepository.findAllWithEagerRelationshipsWhereGrandTotalIsNotNull(pageable).map(offerMapper::toDto);
+        } else {
+            return offerRepository.findAllWhereGrandTotalIsNotNull(pageable).map(offerMapper::toDto);
+        }
+    }
+
+    public Page<OfferDTO> findAllWithItemQteAndItemSkuNotNull(Pageable pageable, boolean eagerload) {
+        log.debug("Request to get all Offers where itemQte and itemSku are not null");
+        if (eagerload) {
+            return offerRepository.findAllWithEagerRelationshipsWhereItemQtyAndItemSkuIsNotNull(pageable).map(offerMapper::toDto);
+        } else {
+            return offerRepository.findAllWhereItemQtyAndItemSkuIsNotNull(pageable).map(offerMapper::toDto);
+        }
+    }
+
     /**
      * Get one offer by id.
      *

@@ -27,4 +27,18 @@ public interface OfferRepository extends OfferRepositoryWithBagRelationships, Jp
     default Page<Offer> findAllWithEagerRelationships(Pageable pageable) {
         return this.fetchBagRelationships(this.findAll(pageable));
     }
+
+    @Query("SELECT o FROM Offer o WHERE o.grandTotal IS NOT NULL")
+    Page<Offer> findAllWhereGrandTotalIsNotNull(Pageable pageable);
+
+    default Page<Offer> findAllWithEagerRelationshipsWhereGrandTotalIsNotNull(Pageable pageable) {
+        return this.fetchBagRelationships(this.findAllWhereGrandTotalIsNotNull(pageable));
+    }
+
+    @Query("SELECT o FROM Offer o WHERE o.itemQty IS NOT NULL AND o.itemSku IS NOT NULL")
+    Page<Offer> findAllWhereItemQtyAndItemSkuIsNotNull(Pageable pageable);
+
+    default Page<Offer> findAllWithEagerRelationshipsWhereItemQtyAndItemSkuIsNotNull(Pageable pageable) {
+        return this.fetchBagRelationships(this.findAllWhereItemQtyAndItemSkuIsNotNull(pageable));
+    }
 }

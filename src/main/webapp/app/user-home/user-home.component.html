@@ -56,11 +56,21 @@
         <h5 class="card-title">CHECK NEW REWARDS</h5>
         <ul *ngIf="rewardConfigs.length !== 0; else EmptyMessage" class="list-group list-group-flush">
           <li *ngFor="let reward of rewardConfigs" class="list-group-item d-flex justify-content-between align-items-center">
-            {{ reward.description }}
-            <span class="badge bg-primary rounded-pill">{{ reward.balanceValue }} Pts -> {{ reward.balanceValue }} TND</span>
+            <div [ngSwitch]="reward.title">
+              <fa-icon *ngSwitchCase="'DISCOUNT'" icon="gift" class="me-1"></fa-icon>
+              <fa-icon *ngSwitchCase="'DONATION'" icon="dollar-sign" class="me-1"></fa-icon>
+              <fa-icon *ngSwitchCase="'PHONETOPUP'" icon="phone" class="me-1"></fa-icon>
+              <strong class="fw-bold">{{ reward.title }}</strong>
+              <br />
+              <small class="text-muted">{{ reward.description }}</small>
+            </div>
+            <br />
+            <span class="badge bg-primary rounded-pill"
+              >{{ reward.balanceValue }} Pts <fa-icon icon="arrow-right" class="mx-2"></fa-icon> {{ reward.convertedValue }} TND</span
+            >
           </li>
         </ul>
-        <a href="#" class="btn btn-info mt-3">View Rewards</a>
+        <a [routerLink]="['rewards']" class="btn btn-info mt-3">View Rewards</a>
       </div>
       <ng-template #EmptyMessage>
         <p class="text-muted text-center">No rewards available for now. <fa-icon icon="sad-tear" size="xl" class="m-1"></fa-icon></p>
@@ -75,7 +85,7 @@
         <ul class="list-group list-group-flush">
           <li class="list-group-item d-flex justify-content-between align-items-center">
             <div>
-              <i class="fas fa-shopping-cart"></i> Product 1
+              <fa-icon icon="shopping-cart" class="me-1"> </fa-icon> <strong class="fw-bold">Product : 2</strong>
               <br />
               <small class="text-muted">08/24/2024</small>
             </div>
@@ -83,14 +93,22 @@
           </li>
           <li class="list-group-item d-flex justify-content-between align-items-center">
             <div>
-              <i class="fas fa-shopping-cart"></i> Product 2
+              <fa-icon icon="shopping-cart" class="me-1"> </fa-icon> <strong class="fw-bold">Product : 5</strong>
               <br />
               <small class="text-muted">08/24/2024</small>
             </div>
             <span class="badge bg-secondary rounded-pill">3.10 DT</span>
           </li>
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            <div>
+              <fa-icon icon="shopping-cart" class="me-1"> </fa-icon> <strong class="fw-bold">Product : 3</strong>
+              <br />
+              <small class="text-muted">09/24/2024</small>
+            </div>
+            <span class="badge bg-secondary rounded-pill">7.38 DT</span>
+          </li>
         </ul>
-        <a href="#" class="btn btn-info mt-3">View Coupons</a>
+        <a [routerLink]="['purchases']" class="btn btn-info mt-3">View Purchases</a>
       </div>
     </div>
   </div>

@@ -16,12 +16,13 @@ import SharedModule from '../../../shared/shared.module';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { NgbProgressbarModule } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   standalone: true,
   selector: 'navbar-cmp',
   templateUrl: 'navbar.component.html',
-  imports: [RouterModule, SharedModule, NgbModule, MatProgressSpinnerModule, MatProgressBarModule],
+  imports: [RouterModule, SharedModule, NgbModule, MatProgressSpinnerModule, MatProgressBarModule, NgbProgressbarModule],
   styleUrls: ['../../layouts/user-layout/user-layout-styles.scss'],
 })
 export class NavbarComponent implements OnInit {
@@ -104,8 +105,7 @@ export class NavbarComponent implements OnInit {
     if (!totalBalance || !this.userLoyaltyLevel) {
       return 0;
     }
-    console.log('Total balance:', totalBalance - this.userLoyaltyLevel.minBalance);
-    return 50;
+    return (totalBalance / this.userLoyaltyLevel.maxBalance) * 100;
   }
 
   getLoyaltyLevelImage(loyaltyLevel: ILoyaltyLevel): string {
