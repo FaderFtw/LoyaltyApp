@@ -17,8 +17,8 @@ export const ROUTES: RouteInfo[] = [
   { path: 'home', title: 'Home', icon: 'home', class: '' }, // Changed '/' to 'home'
   { path: 'home/offers', title: 'Offers', icon: 'dollar', class: '' },
   { path: 'home/rewards', title: 'Rewards', icon: 'gifts', class: '' },
-  { path: 'home/purchases', title: 'My Purchases', icon: 'shopping-cart', class: '' },
   { path: 'home/history', title: 'My History', icon: 'history', class: '' },
+  { path: 'home/purchases', title: 'My Purchases', icon: 'shopping-cart', class: '' },
 ];
 
 @Component({

@@ -18,7 +18,9 @@
           <dt><span>Title</span></dt>
           <dd>
             <span>{{
-              { null: '', DISCOUNT: 'DISCOUNT', DONATION: 'DONATION', PHONETOPUP: 'PHONETOPUP' }[rewardConfig()!.title ?? 'null']
+              { null: '', CASHBACK: 'CASHBACK', DISCOUNT: 'DISCOUNT', DONATION: 'DONATION', PHONETOPUP: 'PHONETOPUP' }[
+                rewardConfig()!.title ?? 'null'
+              ]
             }}</span>
           </dd>
           <dt><span>Description</span></dt>

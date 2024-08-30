@@ -7,7 +7,7 @@ import { FormsModule } from '@angular/forms';
 import { SortByDirective, SortDirective, SortService, SortState, sortStateSignal, SortOrder } from '../../../shared/sort';
 import { DurationPipe, FormatMediumDatePipe, FormatMediumDatetimePipe } from '../../../shared/date';
 import { ITEMS_PER_PAGE, PAGE_HEADER, TOTAL_COUNT_RESPONSE_HEADER } from '../../../config/pagination.constants';
-import { combineLatest, filter, Observable, Subscription, tap } from 'rxjs';
+import { combineLatest, filter, map, Observable, of, Subscription, switchMap, tap } from 'rxjs';
 import { EntityArrayResponseType, OfferService } from '../../../entities/offer/service/offer.service';
 import { DataUtils } from '../../../core/util/data-util.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -15,6 +15,9 @@ import { DEFAULT_SORT_DATA, ITEM_DELETED_EVENT, SORT } from '../../../config/nav
 import { OfferDeleteDialogComponent } from '../../../entities/offer/delete/offer-delete-dialog.component';
 import { HttpHeaders } from '@angular/common/http';
 import dayjs from 'dayjs/esm';
+import { AccountService } from '../../../core/auth/account.service';
+import { UserService } from '../../../entities/user/service/user.service';
+import { ILoyaltyLevel } from '../../../entities/loyalty-level/loyalty-level.model';
 
 @Component({
   selector: 'jhi-user-offers',
@@ -41,6 +44,7 @@ export class UserOffersComponent implements OnInit {
   // Initialize sortState as a WritableSignal<SortState> using sortStateSignal
   sortState = sortStateSignal({ predicate: '', order: 'desc' }); // You can set a default order here if needed
   currentFilterType: 'grandTotal' | 'product' | null = null;
+  userLoyaltyLevel: ILoyaltyLevel | null | undefined = null;
 
   itemsPerPage = 4;
   totalItems = 0;
@@ -48,6 +52,8 @@ export class UserOffersComponent implements OnInit {
 
   public router = inject(Router);
   protected offerService = inject(OfferService);
+  protected accountService = inject(AccountService);
+  protected userService = inject(UserService);
   protected activatedRoute = inject(ActivatedRoute);
   protected sortService = inject(SortService);
   protected dataUtils = inject(DataUtils);
@@ -60,9 +66,29 @@ export class UserOffersComponent implements OnInit {
     this.subscription = combineLatest([this.activatedRoute.queryParamMap, this.activatedRoute.data])
       .pipe(
         tap(([params, data]) => this.fillComponentAttributeFromRoute(params, data)),
+        switchMap(() => this.loadUserLoyaltyLevel()),
         tap(() => this.load()),
       )
       .subscribe();
+  }
+
+  private loadUserLoyaltyLevel(): Observable<void> {
+    return this.accountService.identity().pipe(
+      switchMap(account => {
+        if (account) {
+          return this.userService.find(account.login).pipe(
+            tap(user => {
+              if (user.body) {
+                this.userLoyaltyLevel = user.body.loyaltyLevel;
+              }
+            }),
+            map(() => void 0),
+          );
+        } else {
+          return of(void 0);
+        }
+      }),
+    );
   }
 
   byteSize(base64String: string): string {
@@ -125,6 +151,10 @@ export class UserOffersComponent implements OnInit {
       sort: this.sortService.buildSortParam(this.sortState()),
     };
 
+    if (this.userLoyaltyLevel) {
+      queryObject['loyaltyLevelId'] = this.userLoyaltyLevel.id;
+    }
+
     // Apply filtering based on the selected offer type
     if (this.currentFilterType === 'grandTotal') {
       queryObject['grandTotalNotNull'] = true; // Include only offers with a grand total condition
@@ -156,7 +186,7 @@ export class UserOffersComponent implements OnInit {
   }
 
   getProductImage(itemSku: string): string {
-    return `content/images/product.png`; // Replace with your actual logic if different
+    return `content/images/product.png`;
   }
 
   getSortIcon(predicate: string): string {

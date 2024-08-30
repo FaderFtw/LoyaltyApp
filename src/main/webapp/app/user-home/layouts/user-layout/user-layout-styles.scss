@@ -1,7 +1,7 @@
 @import 'content/scss/paper-dashboard.scss';
 @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@200..1000&display=swap');
 
-p,
+::ng-deep p,
 h1,
 h2,
 h3,
@@ -27,5 +27,20 @@ div {
 
   .dropdown-toggle::after {
     display: none;
+  }
+}
+
+::ng-deep .page-item {
+  .page-link {
+    background-color: white !important;
+    color: #5bc0de !important;
+  }
+}
+
+::ng-deep .active {
+  .page-link {
+    background-color: #5bc0de !important;
+    border-color: #5bc0de !important;
+    color: white !important;
   }
 }

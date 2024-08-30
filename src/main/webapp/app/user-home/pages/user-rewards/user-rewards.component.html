@@ -1,0 +1,159 @@
+<div class="d-flex justify-content-between mb-4 align-items-center">
+  <h4 class="fw-bold m-0">Available Rewards</h4>
+
+  <div class="d-flex">
+    <div class="dropdown me-4">
+      <button
+        class="btn btn-secondary dropdown-toggle"
+        type="button"
+        id="dropdownMenuButton"
+        data-bs-toggle="dropdown"
+        aria-expanded="false"
+      >
+        Filter By
+      </button>
+      <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+        <li>
+          <a class="dropdown-item" (click)="filterRewards(null)">
+            All
+            <fa-icon class="p-1" icon="list"></fa-icon>
+          </a>
+        </li>
+        <li>
+          <a class="dropdown-item" (click)="filterRewards('CASHBACK')">
+            Cashback
+            <fa-icon class="p-1" icon="money-bill-wave"></fa-icon>
+          </a>
+        </li>
+        <li>
+          <a class="dropdown-item" (click)="filterRewards('DISCOUNT')">
+            Discount
+            <fa-icon class="p-1" icon="percent"></fa-icon>
+          </a>
+        </li>
+        <li>
+          <a class="dropdown-item" (click)="filterRewards('DONATION')">
+            Donation
+            <fa-icon class="p-1" icon="dollar-sign"></fa-icon>
+          </a>
+        </li>
+        <li>
+          <a class="dropdown-item" (click)="filterRewards('PHONETOPUP')">
+            Phone Top Up
+            <fa-icon class="p-1" icon="phone"></fa-icon>
+          </a>
+        </li>
+        <!-- Add more filter options as needed -->
+      </ul>
+    </div>
+
+    <div class="dropdown">
+      <button
+        class="btn btn-secondary dropdown-toggle"
+        type="button"
+        id="dropdownSortButton"
+        data-bs-toggle="dropdown"
+        aria-expanded="false"
+      >
+        Sort By
+      </button>
+      <ul class="dropdown-menu" aria-labelledby="dropdownSortButton">
+        <li>
+          <a class="dropdown-item" (click)="navigateToWithComponentValues('balanceValue')">
+            Required points
+            <fa-icon class="p-1" [icon]="getSortIcon('balanceValue')"></fa-icon>
+          </a>
+        </li>
+        <li>
+          <a class="dropdown-item" (click)="navigateToWithComponentValues('convertedValue')">
+            Conversion Value
+            <fa-icon class="p-1" [icon]="getSortIcon('convertedValue')"></fa-icon>
+          </a>
+        </li>
+        <li>
+          <a class="dropdown-item" (click)="navigateToWithComponentValues('daysToExpire')">
+            Days To Expire
+            <fa-icon class="p-1" [icon]="getSortIcon('daysToExpire')"></fa-icon>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="row rewards-container" *ngIf="rewards.length !== 0; else noRewardsMessage">
+  <div class="col-md-4 col-lg-4 mb-4 d-flex justify-content-center" *ngFor="let reward of rewards">
+    <div class="reward-card card shadow-sm">
+      <div class="image-container position-relative">
+        <img [src]="'content/images/' + reward.title + '.png'" alt="" class="card-img-top" />
+        <div class="overlay">
+          <div class="overlay-content">
+            <h5 class="reward-title">
+              <!-- Display an icon based on the reward type -->
+              <fa-icon [icon]="getRewardIcon(reward.title)" class="me-2"></fa-icon>
+              {{ reward.title }}
+            </h5>
+            <span class="daystoExpire">Expires in {{ reward.daysToExpire }} days</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-body text-center">
+        <p class="card-text">{{ reward.description }}</p>
+        <p>
+          <strong>{{ currentUserStats?.actualBalance }} points</strong> out of <strong>{{ reward.balanceValue }} points</strong>
+        </p>
+
+        <!-- Progress Bar -->
+        <ngb-progressbar class="mb-3 w-100" type="success" [max]="reward?.balanceValue ?? 1" [value]="currentUserStats?.actualBalance ?? 0">
+        </ngb-progressbar>
+
+        <!-- Converted Value Display -->
+        <p class="converted-value">
+          TO GET:
+          <!-- Conditionally display the converted value based on reward type -->
+          <ng-container [ngSwitch]="reward.title">
+            <span class="fw-bold" *ngSwitchCase="'DISCOUNT'">{{ reward.convertedValue }} %</span>
+            <span class="fw-bold" *ngSwitchCase="'CASHBACK'">{{ reward.convertedValue }} TND</span>
+            <span class="fw-bold" *ngSwitchCase="'DONATION'">{{ reward.convertedValue }} TND donated</span>
+            <span class="fw-bold" *ngSwitchCase="'PHONETOPUP'">{{ reward.convertedValue }} TND phone top-up</span>
+            <span class="fw-bold" *ngSwitchDefault>{{ reward.convertedValue }}</span>
+          </ng-container>
+        </p>
+
+        <!-- Redeem Button -->
+        <button
+          class="btn"
+          [ngClass]="{
+            'btn-success': (currentUserStats?.actualBalance ?? 0) >= (reward?.balanceValue ?? 0),
+            'btn-secondary': (currentUserStats?.actualBalance ?? 0) < (reward?.balanceValue ?? 0),
+          }"
+          [disabled]="(currentUserStats?.actualBalance ?? 0) < (reward?.balanceValue ?? 0)"
+          (click)="redeemReward(reward)"
+        >
+          Redeem Reward
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #noRewardsMessage>
+  <p class="text-muted text-center">No rewards available at the moment. Please check back later.</p>
+</ng-template>
+
+<div *ngIf="rewards && rewards.length > 0">
+  <div class="d-flex justify-content-center">
+    <jhi-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }"></jhi-item-count>
+  </div>
+
+  <div class="d-flex justify-content-center">
+    <ngb-pagination
+      [collectionSize]="totalItems"
+      [page]="page"
+      [pageSize]="itemsPerPage"
+      [maxSize]="5"
+      [rotate]="true"
+      (pageChange)="navigateToPage($event)"
+    ></ngb-pagination>
+  </div>
+</div>

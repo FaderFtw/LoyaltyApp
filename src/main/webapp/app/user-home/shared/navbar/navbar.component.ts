@@ -1,6 +1,6 @@
 import { Component, OnInit, Renderer2, ElementRef, signal, inject } from '@angular/core';
 import { ROUTES } from '../../layouts/user-layout/user-layout.component';
-import { Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { Location } from '@angular/common';
 import { KeycloakConstants } from '../../../keycloak/KeycloakConstants';
 import { EntityNavbarItems } from '../../../entities/entity-navbar-items';
@@ -17,6 +17,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { NgbProgressbarModule } from '@ng-bootstrap/ng-bootstrap';
+import { combineLatest, map, Observable, of, Subscription, switchMap, tap } from 'rxjs';
 
 @Component({
   standalone: true,
@@ -26,6 +27,7 @@ import { NgbProgressbarModule } from '@ng-bootstrap/ng-bootstrap';
   styleUrls: ['../../layouts/user-layout/user-layout-styles.scss'],
 })
 export class NavbarComponent implements OnInit {
+  subscription: Subscription | null = null;
   private listTitles: any[] = [];
   location = inject(Location); // Inject Location service
   private nativeElement: Node;
@@ -46,6 +48,7 @@ export class NavbarComponent implements OnInit {
   private loginService = inject(LoginService);
   private profileService = inject(ProfileService);
   private router = inject(Router);
+  protected activatedRoute = inject(ActivatedRoute);
 
   userLoyaltyLevel: any;
   userStats: any;
@@ -65,7 +68,6 @@ export class NavbarComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.loadUserStats();
     this.listTitles = ROUTES.filter(listTitle => listTitle);
     var navbar: HTMLElement = this.element.nativeElement;
     this.toggleButton = navbar.getElementsByClassName('navbar-toggle')[0];
@@ -79,25 +81,35 @@ export class NavbarComponent implements OnInit {
       this.inProduction = profileInfo.inProduction;
       this.openAPIEnabled = profileInfo.openAPIEnabled;
     });
+
+    this.subscription = combineLatest([this.activatedRoute.queryParamMap, this.activatedRoute.data])
+      .pipe(switchMap(() => this.loadUserStats()))
+      .subscribe();
   }
 
-  private loadUserStats(): void {
-    this.accountService.identity().subscribe(account => {
-      if (account) {
-        this.userService.find(account.login).subscribe(user => {
-          if (user.body) {
-            this.userLoyaltyLevel = user.body.loyaltyLevel;
-            this.loadUserExtra(user.body.id);
-          }
-        });
-      }
-    });
+  private loadUserStats(): Observable<void> {
+    return this.accountService.identity().pipe(
+      switchMap(account => {
+        if (account) {
+          return this.userExtraService.find(account.id).pipe(
+            tap(user => {
+              if (user.body) {
+                this.userStats = user.body;
+                this.userLoyaltyLevel = user.body.user?.loyaltyLevel;
+              }
+            }),
+            map(() => void 0),
+          );
+        } else {
+          return of(void 0);
+        }
+      }),
+    );
   }
 
   private loadUserExtra(userId: string): void {
     this.userExtraService.find(userId).subscribe(userStats => {
       this.userStats = userStats.body;
-      console.log('User stats:', this.userStats);
     });
   }
 

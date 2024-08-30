@@ -1,6 +1,7 @@
 package com.satoripop.loyalityapp.web.rest;
 
 import com.satoripop.loyalityapp.domain.RewardConfig;
+import com.satoripop.loyalityapp.domain.enumeration.RewardType;
 import com.satoripop.loyalityapp.repository.RewardConfigRepository;
 import com.satoripop.loyalityapp.service.RewardConfigService;
 import com.satoripop.loyalityapp.service.dto.RewardConfigDTO;
@@ -20,6 +21,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import tech.jhipster.web.util.HeaderUtil;
@@ -57,6 +59,7 @@ public class RewardConfigResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public ResponseEntity<RewardConfigDTO> createRewardConfig(@Valid @RequestBody RewardConfigDTO rewardConfigDTO)
         throws URISyntaxException {
         log.debug("REST request to save RewardConfig : {}", rewardConfigDTO);
@@ -80,6 +83,7 @@ public class RewardConfigResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public ResponseEntity<RewardConfigDTO> updateRewardConfig(
         @PathVariable(value = "id", required = false) final Long id,
         @Valid @RequestBody RewardConfigDTO rewardConfigDTO
@@ -114,6 +118,7 @@ public class RewardConfigResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public ResponseEntity<RewardConfigDTO> partialUpdateRewardConfig(
         @PathVariable(value = "id", required = false) final Long id,
         @NotNull @RequestBody RewardConfigDTO rewardConfigDTO
@@ -148,15 +153,21 @@ public class RewardConfigResource {
     @GetMapping("")
     public ResponseEntity<List<RewardConfigDTO>> getAllRewardConfigs(
         @org.springdoc.core.annotations.ParameterObject Pageable pageable,
-        @RequestParam(name = "eagerload", required = false, defaultValue = "true") boolean eagerload
+        @RequestParam(name = "eagerload", required = false, defaultValue = "true") boolean eagerload,
+        @RequestParam(name = "title.equals", required = false) RewardType titleEquals,
+        @RequestParam(name = "loyaltyLevelId", required = false) Long loyaltyLevelId
     ) {
         log.debug("REST request to get a page of RewardConfigs");
+
         Page<RewardConfigDTO> page;
-        if (eagerload) {
+        if (loyaltyLevelId != null) {
+            page = rewardConfigService.findAllByLoyaltyLevelId(loyaltyLevelId, pageable, titleEquals);
+        } else if (eagerload) {
             page = rewardConfigService.findAllWithEagerRelationships(pageable);
         } else {
             page = rewardConfigService.findAll(pageable);
         }
+
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
@@ -181,6 +192,7 @@ public class RewardConfigResource {
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public ResponseEntity<Void> deleteRewardConfig(@PathVariable("id") Long id) {
         log.debug("REST request to delete RewardConfig : {}", id);
         try {

@@ -1,4 +1,6 @@
 export enum RewardType {
+  CASHBACK = 'CASHBACK',
+
   DISCOUNT = 'DISCOUNT',
 
   DONATION = 'DONATION',

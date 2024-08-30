@@ -19,6 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import tech.jhipster.web.util.HeaderUtil;
@@ -56,6 +57,7 @@ public class OfferResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public ResponseEntity<OfferDTO> createOffer(@Valid @RequestBody OfferDTO offerDTO) throws URISyntaxException {
         log.debug("REST request to save Offer : {}", offerDTO);
         if (offerDTO.getId() != null) {
@@ -78,6 +80,7 @@ public class OfferResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public ResponseEntity<OfferDTO> updateOffer(
         @PathVariable(value = "id", required = false) final Long id,
         @Valid @RequestBody OfferDTO offerDTO
@@ -112,6 +115,7 @@ public class OfferResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public ResponseEntity<OfferDTO> partialUpdateOffer(
         @PathVariable(value = "id", required = false) final Long id,
         @NotNull @RequestBody OfferDTO offerDTO
@@ -143,22 +147,22 @@ public class OfferResource {
      * @param eagerload flag to eager load entities from relationships (This is applicable for many-to-many).
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of offers in body.
      */
+
     @GetMapping("")
     public ResponseEntity<List<OfferDTO>> getAllOffers(
         @org.springdoc.core.annotations.ParameterObject Pageable pageable,
         @RequestParam(name = "eagerload", required = false, defaultValue = "true") boolean eagerload,
-        @RequestParam(name = "grandTotalNotNull", required = false) Boolean grandTotalNotNull,
-        @RequestParam(name = "itemQteNotNull", required = false) Boolean itemQteNotNull,
-        @RequestParam(name = "itemSkuNotNull", required = false) Boolean itemSkuNotNull
+        @RequestParam(name = "grandTotalNotNull", required = false, defaultValue = "false") boolean grandTotalNotNull,
+        @RequestParam(name = "itemQteNotNull", required = false, defaultValue = "false") boolean itemQteNotNull,
+        @RequestParam(name = "itemSkuNotNull", required = false, defaultValue = "false") boolean itemSkuNotNull,
+        @RequestParam(name = "loyaltyLevelId", required = false) Long loyaltyLevelId
     ) {
-        log.debug("REST request to get a page of Offers");
+        log.debug("REST request to get a page of Offers with loyaltyLevelId: {}", loyaltyLevelId);
 
         Page<OfferDTO> page;
 
-        if (Boolean.TRUE.equals(grandTotalNotNull)) {
-            page = offerService.findAllWithGrandTotalNotNull(pageable, eagerload);
-        } else if (Boolean.TRUE.equals(itemQteNotNull) && Boolean.TRUE.equals(itemSkuNotNull)) {
-            page = offerService.findAllWithItemQteAndItemSkuNotNull(pageable, eagerload);
+        if (loyaltyLevelId != null) {
+            page = offerService.findAllByLoyaltyLevelId(loyaltyLevelId, pageable, grandTotalNotNull, itemQteNotNull, itemSkuNotNull);
         } else if (eagerload) {
             page = offerService.findAllWithEagerRelationships(pageable);
         } else {
@@ -189,6 +193,7 @@ public class OfferResource {
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public ResponseEntity<Void> deleteOffer(@PathVariable("id") Long id) {
         log.debug("REST request to delete Offer : {}", id);
         offerService.delete(id);

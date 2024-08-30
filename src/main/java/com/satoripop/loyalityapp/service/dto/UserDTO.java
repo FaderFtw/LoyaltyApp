@@ -23,6 +23,8 @@ public class UserDTO implements Serializable {
 
     private String lastName;
 
+    private String cardNumber;
+
     private Instant createdDate;
 
     private LoyaltyLevel loyaltyLevel;
@@ -41,6 +43,7 @@ public class UserDTO implements Serializable {
         this.createdDate = user.getCreatedDate();
         this.loyaltyLevel = user.getLoyaltyLevel();
         this.authorities = user.getAuthorities();
+        this.cardNumber = user.getCardNumber();
     }
 
     public String getId() {
@@ -133,5 +136,13 @@ public class UserDTO implements Serializable {
 
     public void setCreatedDate(Instant createdDate) {
         this.createdDate = createdDate;
+    }
+
+    public String getCardNumber() {
+        return cardNumber;
+    }
+
+    public void setCardNumber(String cardNumber) {
+        this.cardNumber = cardNumber;
     }
 }

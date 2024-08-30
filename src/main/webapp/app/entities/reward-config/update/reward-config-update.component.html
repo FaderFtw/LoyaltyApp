@@ -19,7 +19,7 @@
             <option [ngValue]="null"></option>
             @for (rewardType of rewardTypeValues; track $index) {
               <option [value]="rewardType">
-                {{ { null: '', DISCOUNT: 'DISCOUNT', DONATION: 'DONATION', PHONETOPUP: 'PHONETOPUP' }[rewardType] }}
+                {{ { null: '', CASHBACK: 'CASHBACK', DISCOUNT: 'DISCOUNT', DONATION: 'DONATION', PHONETOPUP: 'PHONETOPUP' }[rewardType] }}
               </option>
             }
           </select>
@@ -65,7 +65,7 @@
           </div>
 
           <div class="mb-3 w-50">
-            <label class="form-label" for="field_convertedValue">Converted Value (TND)</label>
+            <label class="form-label" for="field_convertedValue">Converted Value</label>
             <input
               type="number"
               class="form-control"
@@ -74,6 +74,25 @@
               data-cy="convertedValue"
               formControlName="convertedValue"
             />
+            <small class="form-text">
+              <ng-container
+                *ngIf="editForm.get('title')?.value === 'CASHBACK' || editForm.get('title')?.value === 'DONATION'; else otherTypes"
+              >
+                The value should be entered in TND.
+              </ng-container>
+              <ng-template #otherTypes>
+                <ng-container *ngIf="editForm.get('title')?.value === 'DISCOUNT'">
+                  The value should be entered as a percentage.
+                </ng-container>
+                <ng-container *ngIf="editForm.get('title')?.value === 'PHONETOPUP'">
+                  Enter the value based on the phone top-up amount.
+                </ng-container>
+                <ng-container *ngIf="editForm.get('title')?.value === null">
+                  Please specify the converted value according to the selected reward type.
+                </ng-container>
+              </ng-template>
+            </small>
+
             @if (
               editForm.get('convertedValue')!.invalid && (editForm.get('convertedValue')!.dirty || editForm.get('convertedValue')!.touched)
             ) {

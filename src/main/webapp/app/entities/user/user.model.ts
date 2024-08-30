@@ -6,6 +6,7 @@ export interface IUser {
   login?: string | null;
   firstName?: string | null;
   lastName?: string | null;
+  cardNumber?: string | null;
   authorities?: IAuthority[] | null;
   loyaltyLevel?: ILoyaltyLevel | null;
   createdDate?: string | null;

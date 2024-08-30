@@ -93,7 +93,6 @@ public class UserExtraResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public ResponseEntity<UserExtra> updateUserExtra(
         @PathVariable(value = "id", required = false) final String id,
         @Valid @RequestBody UserExtra userExtra
@@ -143,7 +142,6 @@ public class UserExtraResource {
      */
 
     @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public ResponseEntity<UserExtra> partialUpdateUserExtra(
         @PathVariable(value = "id", required = false) final String id,
         @NotNull @RequestBody UserExtra userExtra

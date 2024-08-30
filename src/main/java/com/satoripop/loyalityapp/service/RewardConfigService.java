@@ -1,6 +1,7 @@
 package com.satoripop.loyalityapp.service;
 
 import com.satoripop.loyalityapp.domain.RewardConfig;
+import com.satoripop.loyalityapp.domain.enumeration.RewardType;
 import com.satoripop.loyalityapp.repository.RewardConfigRepository;
 import com.satoripop.loyalityapp.service.dto.RewardConfigDTO;
 import com.satoripop.loyalityapp.service.mapper.RewardConfigMapper;
@@ -88,6 +89,23 @@ public class RewardConfigService {
         return rewardConfigRepository.findAll(pageable).map(rewardConfigMapper::toDto);
     }
 
+    @Transactional(readOnly = true)
+    public Page<RewardConfigDTO> findAllByLoyaltyLevelId(Long loyaltyLevelId, Pageable pageable, RewardType titleEquals) {
+        Page<RewardConfig> rewardConfigs;
+        if (titleEquals != null) {
+            rewardConfigs = rewardConfigRepository.findAllByLoyaltyLevelIdAndTitleEquals(loyaltyLevelId, titleEquals, pageable);
+        } else {
+            rewardConfigs = rewardConfigRepository.findAllByLoyaltyLevelId(loyaltyLevelId, pageable);
+        }
+        return rewardConfigs.map(rewardConfigMapper::toDto);
+    }
+
+    // Method for fetching all with filter
+    @Transactional(readOnly = true)
+    public Page<RewardConfigDTO> findAllAndFilter(Pageable pageable, RewardType titleEquals) {
+        return rewardConfigRepository.findAllByTitle(titleEquals, pageable).map(rewardConfigMapper::toDto);
+    }
+
     /**
      * Get all the rewardConfigs with eager load of many-to-many relationships.
      *
@@ -95,6 +113,11 @@ public class RewardConfigService {
      */
     public Page<RewardConfigDTO> findAllWithEagerRelationships(Pageable pageable) {
         return rewardConfigRepository.findAllWithEagerRelationships(pageable).map(rewardConfigMapper::toDto);
+    }
+
+    // Method for fetching all with eager relationships and filter
+    public Page<RewardConfigDTO> findAllWithEagerRelationshipsAndFilter(Pageable pageable, RewardType titleEquals) {
+        return rewardConfigRepository.findAllByTitleWithEagerRelationships(titleEquals, pageable).map(rewardConfigMapper::toDto);
     }
 
     /**

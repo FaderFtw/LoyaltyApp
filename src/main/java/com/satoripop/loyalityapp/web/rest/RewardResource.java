@@ -19,6 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import tech.jhipster.web.util.HeaderUtil;
@@ -78,6 +79,7 @@ public class RewardResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public ResponseEntity<RewardDTO> updateReward(
         @PathVariable(value = "id", required = false) final Long id,
         @Valid @RequestBody RewardDTO rewardDTO
@@ -112,6 +114,7 @@ public class RewardResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public ResponseEntity<RewardDTO> partialUpdateReward(
         @PathVariable(value = "id", required = false) final Long id,
         @NotNull @RequestBody RewardDTO rewardDTO
@@ -143,6 +146,7 @@ public class RewardResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of rewards in body.
      */
     @GetMapping("")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public ResponseEntity<List<Reward>> getAllRewards(@org.springdoc.core.annotations.ParameterObject Pageable pageable) {
         log.debug("REST request to get a page of Rewards");
         Page<Reward> page = rewardService.findAll(pageable);
@@ -170,6 +174,7 @@ public class RewardResource {
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public ResponseEntity<Void> deleteReward(@PathVariable("id") Long id) {
         log.debug("REST request to delete Reward : {}", id);
         rewardService.delete(id);

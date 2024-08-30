@@ -18,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import tech.jhipster.web.util.HeaderUtil;
@@ -55,6 +56,7 @@ public class LoyaltyLevelResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public ResponseEntity<LoyaltyLevelDTO> createLoyaltyLevel(@Valid @RequestBody LoyaltyLevelDTO loyaltyLevelDTO)
         throws URISyntaxException {
         log.debug("REST request to save LoyaltyLevel : {}", loyaltyLevelDTO);
@@ -78,6 +80,7 @@ public class LoyaltyLevelResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public ResponseEntity<LoyaltyLevelDTO> updateLoyaltyLevel(
         @PathVariable(value = "id", required = false) final Long id,
         @Valid @RequestBody LoyaltyLevelDTO loyaltyLevelDTO
@@ -112,6 +115,7 @@ public class LoyaltyLevelResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public ResponseEntity<LoyaltyLevelDTO> partialUpdateLoyaltyLevel(
         @PathVariable(value = "id", required = false) final Long id,
         @NotNull @RequestBody LoyaltyLevelDTO loyaltyLevelDTO
@@ -170,6 +174,7 @@ public class LoyaltyLevelResource {
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public ResponseEntity<Void> deleteLoyaltyLevel(@PathVariable("id") Long id) {
         log.debug("REST request to delete LoyaltyLevel : {}", id);
         loyaltyLevelService.delete(id);

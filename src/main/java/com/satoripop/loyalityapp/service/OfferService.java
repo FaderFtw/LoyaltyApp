@@ -1,14 +1,17 @@
 package com.satoripop.loyalityapp.service;
 
+import com.satoripop.loyalityapp.domain.LoyaltyLevel;
 import com.satoripop.loyalityapp.domain.Offer;
 import com.satoripop.loyalityapp.repository.OfferRepository;
 import com.satoripop.loyalityapp.service.dto.OfferDTO;
 import com.satoripop.loyalityapp.service.mapper.OfferMapper;
+import jakarta.persistence.criteria.Join;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -88,6 +91,39 @@ public class OfferService {
         return offerRepository.findAll(pageable).map(offerMapper::toDto);
     }
 
+    @Transactional(readOnly = true)
+    public Page<OfferDTO> findAllByLoyaltyLevelId(
+        Long loyaltyLevelId,
+        Pageable pageable,
+        Boolean grandTotalNotNull,
+        Boolean itemQteNotNull,
+        Boolean itemSkuNotNull
+    ) {
+        // Construct a query based on the parameters
+        Specification<Offer> spec = Specification.where(null);
+
+        if (loyaltyLevelId != null) {
+            spec = spec.and((root, query, criteriaBuilder) -> {
+                Join<Offer, LoyaltyLevel> loyaltyLevelsJoin = root.join("loyaltyLevels");
+                return criteriaBuilder.equal(loyaltyLevelsJoin.get("id"), loyaltyLevelId);
+            });
+        }
+
+        if (Boolean.TRUE.equals(grandTotalNotNull)) {
+            spec = spec.and((root, query, criteriaBuilder) -> criteriaBuilder.isNotNull(root.get("grandTotal")));
+        }
+
+        if (Boolean.TRUE.equals(itemQteNotNull)) {
+            spec = spec.and((root, query, criteriaBuilder) -> criteriaBuilder.isNotNull(root.get("itemQty")));
+        }
+
+        if (Boolean.TRUE.equals(itemSkuNotNull)) {
+            spec = spec.and((root, query, criteriaBuilder) -> criteriaBuilder.isNotNull(root.get("itemSku")));
+        }
+
+        return offerRepository.findAll(spec, pageable).map(offerMapper::toDto);
+    }
+
     /**
      * Get all the offers with eager load of many-to-many relationships.
      *
@@ -95,24 +131,6 @@ public class OfferService {
      */
     public Page<OfferDTO> findAllWithEagerRelationships(Pageable pageable) {
         return offerRepository.findAllWithEagerRelationships(pageable).map(offerMapper::toDto);
-    }
-
-    public Page<OfferDTO> findAllWithGrandTotalNotNull(Pageable pageable, boolean eagerload) {
-        log.debug("Request to get all Offers where grandTotal is not null");
-        if (eagerload) {
-            return offerRepository.findAllWithEagerRelationshipsWhereGrandTotalIsNotNull(pageable).map(offerMapper::toDto);
-        } else {
-            return offerRepository.findAllWhereGrandTotalIsNotNull(pageable).map(offerMapper::toDto);
-        }
-    }
-
-    public Page<OfferDTO> findAllWithItemQteAndItemSkuNotNull(Pageable pageable, boolean eagerload) {
-        log.debug("Request to get all Offers where itemQte and itemSku are not null");
-        if (eagerload) {
-            return offerRepository.findAllWithEagerRelationshipsWhereItemQtyAndItemSkuIsNotNull(pageable).map(offerMapper::toDto);
-        } else {
-            return offerRepository.findAllWhereItemQtyAndItemSkuIsNotNull(pageable).map(offerMapper::toDto);
-        }
     }
 
     /**

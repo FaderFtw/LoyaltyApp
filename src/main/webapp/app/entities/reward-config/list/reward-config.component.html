@@ -87,7 +87,11 @@
                 <a [routerLink]="['/reward-config', rewardConfig.id, 'view']">{{ rewardConfig.id }}</a>
               </td>
               <td>
-                {{ { null: '', DISCOUNT: 'DISCOUNT', DONATION: 'DONATION', PHONETOPUP: 'PHONETOPUP' }[rewardConfig.title ?? 'null'] }}
+                {{
+                  { null: '', CASHBACK: 'CASHBACK', DISCOUNT: 'DISCOUNT', DONATION: 'DONATION', PHONETOPUP: 'PHONETOPUP' }[
+                    rewardConfig.title ?? 'null'
+                  ]
+                }}
               </td>
               <td>{{ rewardConfig.description }}</td>
               <td>{{ rewardConfig.balanceValue }}</td>

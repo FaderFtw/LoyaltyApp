@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.*;
 import org.springframework.stereotype.Repository;
 
@@ -16,6 +17,8 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface OfferRepository extends OfferRepositoryWithBagRelationships, JpaRepository<Offer, Long> {
+    Page<Offer> findAll(Specification<Offer> spec, Pageable pageable);
+
     default Optional<Offer> findOneWithEagerRelationships(Long id) {
         return this.fetchBagRelationships(this.findById(id));
     }
@@ -31,14 +34,6 @@ public interface OfferRepository extends OfferRepositoryWithBagRelationships, Jp
     @Query("SELECT o FROM Offer o WHERE o.grandTotal IS NOT NULL")
     Page<Offer> findAllWhereGrandTotalIsNotNull(Pageable pageable);
 
-    default Page<Offer> findAllWithEagerRelationshipsWhereGrandTotalIsNotNull(Pageable pageable) {
-        return this.fetchBagRelationships(this.findAllWhereGrandTotalIsNotNull(pageable));
-    }
-
     @Query("SELECT o FROM Offer o WHERE o.itemQty IS NOT NULL AND o.itemSku IS NOT NULL")
     Page<Offer> findAllWhereItemQtyAndItemSkuIsNotNull(Pageable pageable);
-
-    default Page<Offer> findAllWithEagerRelationshipsWhereItemQtyAndItemSkuIsNotNull(Pageable pageable) {
-        return this.fetchBagRelationships(this.findAllWhereItemQtyAndItemSkuIsNotNull(pageable));
-    }
 }

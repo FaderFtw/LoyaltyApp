@@ -55,15 +55,15 @@
                 class="mb-3 w-100"
                 type="info"
                 [value]="calculateProgressValue(userStats?.totalBalance)"
-                ><b>{{ userStats?.totalBalance }} of {{ userLoyaltyLevel?.maxBalance }}</b></ngb-progressbar
+                ><b>{{ userStats?.totalBalance }} of {{ userLoyaltyLevel?.maxBalance }} to reach the next level</b></ngb-progressbar
               >
               <!-- User Stats under Spinner -->
-              <div class="mt-1 text-center">
-                <div>
-                  <p><strong>Current Balance:</strong> {{ userStats?.actualBalance | number: '1.0-2' }} <fa-icon icon="coins"></fa-icon></p>
+              <div class="mt-1 text-center d-flex justify-content-between">
+                <div class="me-3">
+                  <p><strong>Current Points:</strong> {{ userStats?.actualBalance | number: '1.0-2' }} <fa-icon icon="coins"></fa-icon></p>
                 </div>
                 <div>
-                  <p><strong>Total Balance:</strong> {{ userStats?.totalBalance | number: '1.0-2' }} <fa-icon icon="coins"></fa-icon></p>
+                  <p><strong>Total Points:</strong> {{ userStats?.totalBalance | number: '1.0-2' }} <fa-icon icon="coins"></fa-icon></p>
                 </div>
               </div>
             </div>

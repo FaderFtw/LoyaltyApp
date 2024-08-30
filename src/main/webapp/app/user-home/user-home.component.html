@@ -26,7 +26,7 @@
       <span class="badge"><fa-icon icon="coins" class="me-2"></fa-icon> {{ offer.rewardPoints }} pts</span>
 
       <div class="carousel-caption d-md-block">
-        <div class="offer-details text-white">
+        <div class="offer-details text-white aos-animate" data-aos="fade-up" data-aos-delay="100">
           <h5>{{ offer.title }}</h5>
           <p class="d-none d-md-block" *ngIf="offer.itemQty && offer.itemSku">
             Buy {{ offer.itemQty }} of this product {{ offer.itemSku }}
@@ -57,6 +57,7 @@
         <ul *ngIf="rewardConfigs.length !== 0; else EmptyMessage" class="list-group list-group-flush">
           <li *ngFor="let reward of rewardConfigs" class="list-group-item d-flex justify-content-between align-items-center">
             <div [ngSwitch]="reward.title">
+              <fa-icon *ngSwitchCase="'CASHBACK'" icon="money-bills" class="me-1"></fa-icon>
               <fa-icon *ngSwitchCase="'DISCOUNT'" icon="gift" class="me-1"></fa-icon>
               <fa-icon *ngSwitchCase="'DONATION'" icon="dollar-sign" class="me-1"></fa-icon>
               <fa-icon *ngSwitchCase="'PHONETOPUP'" icon="phone" class="me-1"></fa-icon>
@@ -82,32 +83,22 @@
     <div class="card">
       <div class="card-body">
         <h5 class="card-title">MY LATEST PURCHASES</h5>
-        <ul class="list-group list-group-flush">
-          <li class="list-group-item d-flex justify-content-between align-items-center">
+        <ul *ngIf="purchases.length !== 0; else noPurchasesMessage" class="list-group list-group-flush">
+          <li *ngFor="let purchase of purchases" class="list-group-item d-flex justify-content-between align-items-center">
             <div>
-              <fa-icon icon="shopping-cart" class="me-1"> </fa-icon> <strong class="fw-bold">Product : 2</strong>
+              <fa-icon icon="shopping-cart" class="me-1"> </fa-icon>
+              <strong class="fw-bold">{{ purchase.title }}: {{ purchase.productQty }}</strong>
               <br />
-              <small class="text-muted">08/24/2024</small>
+              <small class="text-muted">{{ purchase.date | formatMediumDate }}</small>
             </div>
-            <span class="badge bg-secondary rounded-pill">5.15 DT</span>
-          </li>
-          <li class="list-group-item d-flex justify-content-between align-items-center">
-            <div>
-              <fa-icon icon="shopping-cart" class="me-1"> </fa-icon> <strong class="fw-bold">Product : 5</strong>
-              <br />
-              <small class="text-muted">08/24/2024</small>
-            </div>
-            <span class="badge bg-secondary rounded-pill">3.10 DT</span>
-          </li>
-          <li class="list-group-item d-flex justify-content-between align-items-center">
-            <div>
-              <fa-icon icon="shopping-cart" class="me-1"> </fa-icon> <strong class="fw-bold">Product : 3</strong>
-              <br />
-              <small class="text-muted">09/24/2024</small>
-            </div>
-            <span class="badge bg-secondary rounded-pill">7.38 DT</span>
+            <span class="badge bg-secondary rounded-pill">{{ purchase.totalCost }} DT</span>
           </li>
         </ul>
+        <ng-template #noPurchasesMessage>
+          <p class="text-muted text-center">
+            You dont have purchases. Let's go shopping! <fa-icon icon="shopping-cart" size="lg" class="m-1"></fa-icon>
+          </p>
+        </ng-template>
         <a [routerLink]="['purchases']" class="btn btn-info mt-3">View Purchases</a>
       </div>
     </div>

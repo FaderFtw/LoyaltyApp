@@ -10,24 +10,30 @@ import { RewardConfigService } from '../entities/reward-config/service/reward-co
 import { IRewardConfig } from '../entities/reward-config/reward-config.model';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatProgressBar } from '@angular/material/progress-bar';
+import { PurchaseService } from '../entities/purchase/service/purchase.service';
+import { IPurchase } from '../entities/purchase/purchase.model';
+import { FormatMediumDatePipe, FormatMediumDatetimePipe } from '../shared/date';
+import { IUser } from '../entities/user/user.model';
 
 @Component({
   selector: 'jhi-user-home',
   standalone: true,
-  imports: [SharedModule, RouterLink, MatProgressSpinner, MatProgressBar],
+  imports: [SharedModule, RouterLink, MatProgressSpinner, MatProgressBar, FormatMediumDatetimePipe, FormatMediumDatePipe],
   templateUrl: './user-home.component.html',
   styleUrls: ['./user-home.component.scss'],
 })
 export class UserHomeComponent implements OnInit {
   offers: IOffer[] = [];
   userLoyaltyLevel: ILoyaltyLevel | null | undefined = null;
-  rewardConfigs: IRewardConfig[] = []; // Array to store the latest 3 reward configs
+  rewardConfigs: IRewardConfig[] = [];
+  purchases: IPurchase[] = [];
 
   constructor(
     private offerService: OfferService,
     private accountService: AccountService,
     private userService: UserService,
-    private rewardConfigService: RewardConfigService, // Inject the RewardConfigService
+    private rewardConfigService: RewardConfigService,
+    private purchaseService: PurchaseService,
   ) {}
 
   ngOnInit(): void {
@@ -41,7 +47,8 @@ export class UserHomeComponent implements OnInit {
           if (user.body) {
             this.userLoyaltyLevel = user.body.loyaltyLevel;
             this.loadLatestOffers();
-            this.loadLatestRewardConfigs(); // Load reward configs after setting the user's loyalty level
+            this.loadLatestRewardConfigs();
+            this.loadLatestPurchases(account.cardNumber);
           }
         });
       }
@@ -49,26 +56,46 @@ export class UserHomeComponent implements OnInit {
   }
 
   private loadLatestOffers(): void {
-    this.offerService.query({ sort: ['fromDate,desc'], size: 5 }).subscribe(response => {
+    const queryParams: any = {
+      sort: ['fromDate,desc'],
+      size: 5,
+    };
+
+    if (this.userLoyaltyLevel) {
+      queryParams['loyaltyLevelId'] = this.userLoyaltyLevel.id;
+    }
+
+    this.offerService.query(queryParams).subscribe(response => {
       if (response.body) {
-        // Filter offers based on the user's loyalty level
-        this.offers = response.body.filter(offer => offer.loyaltyLevels?.some(level => level.id === this.userLoyaltyLevel?.id));
+        this.offers = response.body;
       }
     });
   }
 
   private loadLatestRewardConfigs(): void {
-    if (!this.userLoyaltyLevel) {
-      return;
+    const queryParams: any = {
+      sort: ['daysToExpire,desc'],
+      size: 3,
+    };
+
+    if (this.userLoyaltyLevel) {
+      queryParams['loyaltyLevelId'] = this.userLoyaltyLevel.id;
     }
 
     // Query the latest 3 reward configs for the user's loyalty level
-    this.rewardConfigService.query({ sort: ['id,desc'], size: 3 }).subscribe(response => {
+    this.rewardConfigService.query(queryParams).subscribe(response => {
       if (response.body) {
-        // Filter reward configs based on the user's loyalty level
-        this.rewardConfigs = response.body.filter(rewardConfig =>
-          rewardConfig.loyaltyLevels?.some(level => level.id === this.userLoyaltyLevel?.id),
-        );
+        this.rewardConfigs = response.body;
+      }
+    });
+  }
+
+  private loadLatestPurchases(currentUserCardNumber: string | null): void {
+    this.purchaseService.query({}).subscribe(response => {
+      if (response.body) {
+        this.purchases = response.body
+          .filter(purchase => purchase.userCardNumber === currentUserCardNumber) // Ensure implicit return in filter
+          .slice(0, 3);
       }
     });
   }
