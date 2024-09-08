@@ -283,7 +283,7 @@ export class UserOffersComponent implements OnInit {
       next: userExtraResponse => {
         console.log('User balance updated successfully:', userExtraResponse.body);
         this.currentUserStats = userExtraResponse.body;
-        window.location.reload();
+        /* window.location.reload(); */
       },
       error: err => {
         console.error('Error updating user balance:', err);
