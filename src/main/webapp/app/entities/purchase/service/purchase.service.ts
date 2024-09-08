@@ -17,10 +17,6 @@ type RestOf<T extends IPurchase | NewPurchase> = Omit<T, 'date'> & {
 
 export type RestPurchase = RestOf<IPurchase>;
 
-export type NewRestPurchase = RestOf<NewPurchase>;
-
-export type PartialUpdateRestPurchase = RestOf<PartialUpdatePurchase>;
-
 export type EntityResponseType = HttpResponse<IPurchase>;
 export type EntityArrayResponseType = HttpResponse<IPurchase[]>;
 

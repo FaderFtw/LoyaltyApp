@@ -1,6 +1,9 @@
 package com.satoripop.loyalityapp.web.rest;
 
+import com.nimbusds.oauth2.sdk.Response;
 import com.satoripop.loyalityapp.domain.Reward;
+import com.satoripop.loyalityapp.domain.enumeration.RewardStatus;
+import com.satoripop.loyalityapp.domain.enumeration.RewardType;
 import com.satoripop.loyalityapp.repository.RewardRepository;
 import com.satoripop.loyalityapp.service.RewardService;
 import com.satoripop.loyalityapp.service.dto.RewardDTO;
@@ -20,6 +23,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import tech.jhipster.web.util.HeaderUtil;
@@ -165,6 +171,26 @@ public class RewardResource {
         log.debug("REST request to get Reward : {}", id);
         Optional<Reward> reward = rewardService.findOne(id);
         return ResponseUtil.wrapOrNotFound(reward);
+    }
+
+    /**
+     * {@code GET  /rewards/user/:userId} : get all the rewards by userId.
+     *
+     * @param pageable the pagination information.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of rewards in body.
+     */
+
+    @GetMapping("/user")
+    public ResponseEntity<List<Reward>> getRewardsByCurrentUser(
+        @org.springdoc.core.annotations.ParameterObject Pageable pageable,
+        @RequestParam(name = "eagerload", required = false, defaultValue = "true") boolean eagerload,
+        @RequestParam(name = "title.equals", required = false) RewardType titleEquals,
+        @RequestParam(name = "status.equals", required = false) RewardStatus statusEquals
+    ) {
+        log.debug("Request to get all Rewards by user login : {}", SecurityContextHolder.getContext().getAuthentication().getName());
+        Page<Reward> page = rewardService.findAllByCurrentUser(pageable, titleEquals, statusEquals);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
     /**

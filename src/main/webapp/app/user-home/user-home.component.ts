@@ -13,7 +13,6 @@ import { MatProgressBar } from '@angular/material/progress-bar';
 import { PurchaseService } from '../entities/purchase/service/purchase.service';
 import { IPurchase } from '../entities/purchase/purchase.model';
 import { FormatMediumDatePipe, FormatMediumDatetimePipe } from '../shared/date';
-import { IUser } from '../entities/user/user.model';
 
 @Component({
   selector: 'jhi-user-home',
@@ -27,6 +26,7 @@ export class UserHomeComponent implements OnInit {
   userLoyaltyLevel: ILoyaltyLevel | null | undefined = null;
   rewardConfigs: IRewardConfig[] = [];
   purchases: IPurchase[] = [];
+  isProductsVisible: boolean[] = []; // Track visibility for each purchase
 
   constructor(
     private offerService: OfferService,
@@ -96,7 +96,12 @@ export class UserHomeComponent implements OnInit {
         this.purchases = response.body
           .filter(purchase => purchase.userCardNumber === currentUserCardNumber) // Ensure implicit return in filter
           .slice(0, 3);
+        this.isProductsVisible = new Array(3).fill(false);
       }
     });
+  }
+
+  toggleProducts(index: number): void {
+    this.isProductsVisible[index] = !this.isProductsVisible[index];
   }
 }

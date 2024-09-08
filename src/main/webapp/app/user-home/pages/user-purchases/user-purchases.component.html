@@ -24,20 +24,37 @@
 
 <div class="card">
   <div class="card-body">
-    <ul *ngIf="purchases.length !== 0; else noPurchasesMessage" class="list-group list-group-flush">
-      <li *ngFor="let purchase of purchases" class="list-group-item d-flex justify-content-between align-items-center">
-        <div>
-          <fa-icon icon="shopping-cart" class="me-1"></fa-icon>
-          <strong class="fw-bold">{{ purchase.title }} : {{ purchase.productQty }}</strong>
-          <br />
-          <small class="text-muted">{{ purchase.date | formatMediumDate }}</small>
+    <div *ngIf="purchases.length !== 0; else noPurchasesMessage">
+      <ul *ngFor="let purchase of purchases; let i = index" class="list-group list-group-flush">
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          <div>
+            <fa-icon icon="shopping-cart" class="me-1"></fa-icon>
+            <strong class="fw-bold"> {{ purchase.products.length }} product(s) </strong>
+            <fa-icon [icon]="isProductsVisible[i] ? 'chevron-up' : 'chevron-down'" class="ms-2" (click)="toggleProducts(i)"> </fa-icon>
+            <br />
+            <small class="text-muted">{{ purchase.date | formatMediumDate }}</small>
+          </div>
+          <span class="badge bg-secondary rounded-pill">{{ purchase.totalCost }} DT</span>
+        </li>
+        <div *ngIf="isProductsVisible[i]" class="list-group-flush ps-4">
+          <ul>
+            <li
+              *ngFor="let product of purchase.products"
+              class="list-group-item d-flex justify-content-between align-items-center"
+              style="border: 0; border-bottom: 1px solid #dee2e6"
+            >
+              <div>
+                <strong>{{ product.name }}:</strong> <span class="fw-bold">{{ product.quantity }}</span>
+              </div>
+              <span class="badge bg-secondary rounded-pill">{{ product.unitPrice * product.quantity }} DT</span>
+            </li>
+          </ul>
         </div>
-        <span class="badge bg-secondary rounded-pill">{{ purchase.totalCost }} DT</span>
-      </li>
-    </ul>
+      </ul>
+    </div>
     <ng-template #noPurchasesMessage>
       <p class="text-muted text-center">
-        You don't have any purchases. Let's go shopping! <fa-icon icon="shopping-cart" size="lg" class="m-1"></fa-icon>
+        You don’t have purchases. Let’s go shopping! <fa-icon icon="shopping-cart" size="lg" class="m-1"></fa-icon>
       </p>
     </ng-template>
   </div>

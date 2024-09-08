@@ -38,6 +38,7 @@ import { ILoyaltyLevel } from '../../../entities/loyalty-level/loyalty-level.mod
 export class UserPurchasesComponent implements OnInit {
   subscription: Subscription | null = null;
   purchases: IPurchase[] = [];
+  isProductsVisible: boolean[] = []; // Track visibility for each purchase
   isLoading = false;
 
   sortState = sortStateSignal({ predicate: '', order: 'desc' }); // Set default sort state
@@ -110,6 +111,11 @@ export class UserPurchasesComponent implements OnInit {
     this.fillComponentAttributesFromResponseHeader(response.headers);
     const dataFromBody = this.fillComponentAttributesFromResponseBody(response.body);
     this.purchases = dataFromBody.filter(purchase => purchase.userCardNumber === this.currentUserCardNumber);
+    this.isProductsVisible = new Array(this.purchases.length).fill(false);
+  }
+
+  toggleProducts(index: number): void {
+    this.isProductsVisible[index] = !this.isProductsVisible[index];
   }
 
   protected fillComponentAttributesFromResponseBody(data: IPurchase[] | null): IPurchase[] {

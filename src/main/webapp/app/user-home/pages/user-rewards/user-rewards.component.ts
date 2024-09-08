@@ -1,27 +1,28 @@
 import { Component, inject, NgZone, OnInit, signal } from '@angular/core';
-import { IRewardConfig } from '../../../entities/reward-config/reward-config.model';
 import SharedModule from '../../../shared/shared.module';
-import { ItemCountComponent } from '../../../shared/pagination';
 import { ActivatedRoute, Data, ParamMap, Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { SortByDirective, SortDirective, SortService, SortState, sortStateSignal, SortOrder } from '../../../shared/sort';
 import { DurationPipe, FormatMediumDatePipe, FormatMediumDatetimePipe } from '../../../shared/date';
-import { ITEMS_PER_PAGE, PAGE_HEADER, TOTAL_COUNT_RESPONSE_HEADER } from '../../../config/pagination.constants';
-import { combineLatest, filter, map, Observable, of, Subscription, switchMap, tap } from 'rxjs';
+import { combineLatest, map, Observable, of, Subscription, switchMap, tap } from 'rxjs';
 import { EntityArrayResponseType, RewardConfigService } from '../../../entities/reward-config/service/reward-config.service';
-import { DEFAULT_SORT_DATA, ITEM_DELETED_EVENT, SORT } from '../../../config/navigation.constants';
+import { DEFAULT_SORT_DATA, SORT } from '../../../config/navigation.constants';
 import { HttpHeaders } from '@angular/common/http';
-import { RewardType } from '../../../entities/enumerations/reward-type.model';
 import { MatSlider, MatSliderThumb } from '@angular/material/slider';
-import { ILoyaltyLevel } from '../../../entities/loyalty-level/loyalty-level.model';
-import { AccountService } from '../../../core/auth/account.service';
-import { UserService } from '../../../entities/user/service/user.service';
 import { IconDefinition, faMoneyBillWave, faPercent, faDollarSign, faPhone } from '@fortawesome/free-solid-svg-icons';
+import dayjs from 'dayjs/esm';
+import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap'; // Import NgbModal and NgbModalRef
+import { ToastrService } from 'ngx-toastr';
+
+import { AccountService } from '../../../core/auth/account.service';
 import { IUserExtra } from '../../../entities/user-extra/user-extra.model';
 import { UserExtraService } from '../../../entities/user-extra/service/user-extra.service';
-import { IReward, NewReward } from '../../../entities/reward/reward.model';
-import dayjs from 'dayjs/esm';
+import { IRewardConfig } from '../../../entities/reward-config/reward-config.model';
+import { RewardType } from '../../../entities/enumerations/reward-type.model';
+import { NewReward } from '../../../entities/reward/reward.model';
 import { RewardService } from '../../../entities/reward/service/reward.service';
+import { PAGE_HEADER, TOTAL_COUNT_RESPONSE_HEADER } from '../../../config/pagination.constants';
+import { ItemCountComponent } from '../../../shared/pagination';
+import { SortByDirective, SortDirective, SortService, SortState, sortStateSignal, SortOrder } from '../../../shared/sort';
 
 @Component({
   selector: 'jhi-user-rewards',
@@ -69,10 +70,16 @@ export class UserRewardsComponent implements OnInit {
   protected activatedRoute = inject(ActivatedRoute);
   protected sortService = inject(SortService);
   protected ngZone = inject(NgZone);
+  protected modalService = inject(NgbModal);
+  protected toastrService = inject(ToastrService);
+
+  selectedReward: any;
+  private modalRef: NgbModalRef | null = null;
 
   trackId = (_index: number, item: IRewardConfig): number => item.id;
 
   ngOnInit(): void {
+    this.checkForRewardRedemption();
     this.subscription = combineLatest([this.activatedRoute.queryParamMap, this.activatedRoute.data])
       .pipe(
         tap(([params, data]) => this.fillComponentAttributeFromRoute(params, data)),
@@ -80,6 +87,23 @@ export class UserRewardsComponent implements OnInit {
         tap(() => this.load()),
       )
       .subscribe();
+  }
+
+  checkForRewardRedemption(): void {
+    const rewardRedeemed = localStorage.getItem('rewardRedeemed');
+    if (rewardRedeemed === 'true') {
+      this.toastrService.success('<span> The reward has been redeemed successfully.</span>', '', {
+        timeOut: 5000,
+        closeButton: true,
+        enableHtml: true,
+        positionClass: 'toast-bottom-right',
+        progressBar: true,
+        progressAnimation: 'decreasing',
+      });
+
+      // Clear the flag after showing the toast
+      localStorage.removeItem('rewardRedeemed');
+    }
   }
 
   private loadUserStats(): Observable<void> {
@@ -184,20 +208,6 @@ export class UserRewardsComponent implements OnInit {
     this.load();
   }
 
-  convertPoints(reward: IRewardConfig, value: number): void {
-    console.log(`Converting ${value} points for reward: ${reward.title}`);
-    const convertedValue = this.calculateConvertedValue(reward, value);
-  }
-
-  getCurrency(title: string | undefined): string {
-    return title === 'DISCOUNT' ? '%' : 'TND';
-  }
-
-  calculateConvertedValue(reward: IRewardConfig, points: number): number {
-    // @ts-ignore
-    return (points / reward.balanceValue) * reward.convertedValue;
-  }
-
   getSortIcon(predicate: string): any {
     const sortState = this.sortState();
     if (sortState.predicate === predicate) {
@@ -219,6 +229,22 @@ export class UserRewardsComponent implements OnInit {
       default:
         return this.faDollarSign; // Default icon if type is unrecognized
     }
+  }
+
+  openRedeemModal(content: any, reward: any): void {
+    this.selectedReward = reward;
+    this.modalRef = this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title' }); // Open the modal
+  }
+
+  confirmRedeem(): void {
+    console.log('Redeeming reward:', this.selectedReward);
+
+    if (this.modalRef) {
+      this.modalRef.close();
+      this.modalRef = null;
+    }
+
+    this.redeemReward(this.selectedReward);
   }
 
   redeemReward(rewardConfig: IRewardConfig): void {
@@ -243,7 +269,6 @@ export class UserRewardsComponent implements OnInit {
       next: response => {
         console.log('Reward successfully created:', response.body);
 
-        // Calculate the new actualBalance
         const updatedBalance = (this.currentUserStats?.actualBalance ?? 0) - (rewardConfig.balanceValue ?? 0);
 
         const updatedUserExtra: IUserExtra = {
@@ -256,8 +281,11 @@ export class UserRewardsComponent implements OnInit {
         this.userExtraService.update(updatedUserExtra).subscribe({
           next: userExtraResponse => {
             console.log('User balance updated successfully:', userExtraResponse.body);
-            // Update the local currentUserStats with the new balance
             this.currentUserStats = userExtraResponse.body;
+
+            // Set a flag in localStorage before reloading
+            localStorage.setItem('rewardRedeemed', 'true');
+            window.location.reload();
           },
           error: err => {
             console.error('Error updating user balance:', err);
@@ -270,7 +298,6 @@ export class UserRewardsComponent implements OnInit {
     });
   }
 
-  // Method to generate a random alphanumeric code
   private generateRewardCode(length: number = 8): string {
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
     let result = '';

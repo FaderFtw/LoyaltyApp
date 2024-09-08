@@ -60,6 +60,13 @@ export class RewardService {
       .pipe(map(res => this.convertResponseFromServer(res)));
   }
 
+  findByCurrentUser(req?: any): Observable<EntityArrayResponseType> {
+    const options = createRequestOption(req);
+    return this.http
+      .get<RestReward[]>(`${this.resourceUrl}/user`, { params: options, observe: 'response' })
+      .pipe(map(res => this.convertResponseArrayFromServer(res)));
+  }
+
   query(req?: any): Observable<EntityArrayResponseType> {
     const options = createRequestOption(req);
     return this.http

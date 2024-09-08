@@ -1,53 +1,52 @@
-<div class="d-flex justify-content-between mb-4 align-items-center">
-  <h4 class="fw-bold m-0">Available Rewards</h4>
+<div class="d-flex justify-content-between mb-4 align-items-center flex-column flex-md-row">
+  <h4 class="fw-bold mb-4 mb-md-0">Available rewards</h4>
 
-  <div class="d-flex">
-    <div class="dropdown me-4">
+  <div class="d-flex flex-column flex-sm-row">
+    <div class="dropdown mb-2 me-sm-4">
       <button
         class="btn btn-secondary dropdown-toggle"
         type="button"
-        id="dropdownMenuButton"
+        id="dropdownMenuButton1"
         data-bs-toggle="dropdown"
         aria-expanded="false"
       >
-        Filter By
+        Filter By Reward Type
       </button>
-      <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+      <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
         <li>
           <a class="dropdown-item" (click)="filterRewards(null)">
+            <fa-icon icon="list" class="me-2"></fa-icon>
             All
-            <fa-icon class="p-1" icon="list"></fa-icon>
           </a>
         </li>
         <li>
           <a class="dropdown-item" (click)="filterRewards('CASHBACK')">
+            <fa-icon [icon]="getRewardIcon('CASHBACK')" class="me-2"></fa-icon>
             Cashback
-            <fa-icon class="p-1" icon="money-bill-wave"></fa-icon>
           </a>
         </li>
         <li>
           <a class="dropdown-item" (click)="filterRewards('DISCOUNT')">
+            <fa-icon [icon]="getRewardIcon('DISCOUNT')" class="me-2"></fa-icon>
             Discount
-            <fa-icon class="p-1" icon="percent"></fa-icon>
           </a>
         </li>
         <li>
           <a class="dropdown-item" (click)="filterRewards('DONATION')">
+            <fa-icon [icon]="getRewardIcon('DONATION')" class="me-2"></fa-icon>
             Donation
-            <fa-icon class="p-1" icon="dollar-sign"></fa-icon>
           </a>
         </li>
         <li>
           <a class="dropdown-item" (click)="filterRewards('PHONETOPUP')">
+            <fa-icon [icon]="getRewardIcon('PHONETOPUP')" class="me-2"></fa-icon>
             Phone Top Up
-            <fa-icon class="p-1" icon="phone"></fa-icon>
           </a>
         </li>
-        <!-- Add more filter options as needed -->
       </ul>
     </div>
 
-    <div class="dropdown">
+    <div class="dropdown mb-2 me-sm-4">
       <button
         class="btn btn-secondary dropdown-toggle"
         type="button"
@@ -66,7 +65,7 @@
         </li>
         <li>
           <a class="dropdown-item" (click)="navigateToWithComponentValues('convertedValue')">
-            Conversion Value
+            Reward Value
             <fa-icon class="p-1" [icon]="getSortIcon('convertedValue')"></fa-icon>
           </a>
         </li>
@@ -115,22 +114,22 @@
             <span class="fw-bold" *ngSwitchCase="'DISCOUNT'">{{ reward.convertedValue }} %</span>
             <span class="fw-bold" *ngSwitchCase="'CASHBACK'">{{ reward.convertedValue }} TND</span>
             <span class="fw-bold" *ngSwitchCase="'DONATION'">{{ reward.convertedValue }} TND donated</span>
-            <span class="fw-bold" *ngSwitchCase="'PHONETOPUP'">{{ reward.convertedValue }} TND phone top-up</span>
+            <span class="fw-bold" *ngSwitchCase="'PHONETOPUP'">{{ reward.convertedValue }} TND phone</span>
             <span class="fw-bold" *ngSwitchDefault>{{ reward.convertedValue }}</span>
           </ng-container>
         </p>
 
         <!-- Redeem Button -->
         <button
-          class="btn"
+          class="btn redeem-button"
           [ngClass]="{
             'btn-success': (currentUserStats?.actualBalance ?? 0) >= (reward?.balanceValue ?? 0),
             'btn-secondary': (currentUserStats?.actualBalance ?? 0) < (reward?.balanceValue ?? 0),
           }"
           [disabled]="(currentUserStats?.actualBalance ?? 0) < (reward?.balanceValue ?? 0)"
-          (click)="redeemReward(reward)"
+          (click)="openRedeemModal(confirmRedeemModal, reward)"
         >
-          Redeem Reward
+          <span> Redeem Reward </span>
         </button>
       </div>
     </div>
@@ -157,3 +156,22 @@
     ></ngb-pagination>
   </div>
 </div>
+
+<ng-template #confirmRedeemModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Confirm Redemption</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body d-flex flex-column align-items-center justify-content-center">
+    <p class="m-0">Are you sure you want to redeem the reward</p>
+    <p class="m-0">
+      {{ selectedReward?.title }}
+      ( {{ selectedReward?.balanceValue }} Pts <fa-icon icon="arrow-right" class="mx-2"></fa-icon> {{ selectedReward?.convertedValue }} TND
+      ) ?
+    </p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="modal.close('Cancel click')">Cancel</button>
+    <button type="button" class="btn btn-success" (click)="confirmRedeem()">Confirm</button>
+  </div>
+</ng-template>

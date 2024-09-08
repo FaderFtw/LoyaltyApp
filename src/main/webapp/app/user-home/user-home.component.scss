@@ -66,11 +66,18 @@
     }
 
     .offers-btn {
+      background-color: #5bc0de;
       position: absolute;
       padding: 10px 15px;
       top: 15px;
       right: 15px;
       z-index: 2; // Ensure the badge is on top of the overlay
+    }
+
+    .offers-btn:hover {
+      background-color: #258284 !important;
+      // remove the transition delay in and out
+      transition: background-color 0s;
     }
 
     .badge {

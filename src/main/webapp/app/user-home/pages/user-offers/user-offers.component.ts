@@ -13,11 +13,16 @@ import { DataUtils } from '../../../core/util/data-util.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DEFAULT_SORT_DATA, ITEM_DELETED_EVENT, SORT } from '../../../config/navigation.constants';
 import { OfferDeleteDialogComponent } from '../../../entities/offer/delete/offer-delete-dialog.component';
-import { HttpHeaders } from '@angular/common/http';
+import { HttpHeaders, HttpResponse } from '@angular/common/http';
 import dayjs from 'dayjs/esm';
 import { AccountService } from '../../../core/auth/account.service';
 import { UserService } from '../../../entities/user/service/user.service';
 import { ILoyaltyLevel } from '../../../entities/loyalty-level/loyalty-level.model';
+import { IUserExtra } from '../../../entities/user-extra/user-extra.model';
+import { UserExtraService } from '../../../entities/user-extra/service/user-extra.service';
+import { IPurchase } from '../../../entities/purchase/purchase.model';
+import { PurchaseService } from '../../../entities/purchase/service/purchase.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'jhi-user-offers',
@@ -39,12 +44,13 @@ import { ILoyaltyLevel } from '../../../entities/loyalty-level/loyalty-level.mod
 export class UserOffersComponent implements OnInit {
   subscription: Subscription | null = null;
   offers: IOffer[] = [];
+  purchases: IPurchase[] = [];
   isLoading = false;
 
   // Initialize sortState as a WritableSignal<SortState> using sortStateSignal
   sortState = sortStateSignal({ predicate: '', order: 'desc' }); // You can set a default order here if needed
   currentFilterType: 'grandTotal' | 'product' | null = null;
-  userLoyaltyLevel: ILoyaltyLevel | null | undefined = null;
+  currentUserStats: IUserExtra | null | undefined = null;
 
   itemsPerPage = 4;
   totalItems = 0;
@@ -54,6 +60,9 @@ export class UserOffersComponent implements OnInit {
   protected offerService = inject(OfferService);
   protected accountService = inject(AccountService);
   protected userService = inject(UserService);
+  protected userExtraService = inject(UserExtraService);
+  protected purchaseService = inject(PurchaseService);
+  protected toastrService = inject(ToastrService);
   protected activatedRoute = inject(ActivatedRoute);
   protected sortService = inject(SortService);
   protected dataUtils = inject(DataUtils);
@@ -66,20 +75,21 @@ export class UserOffersComponent implements OnInit {
     this.subscription = combineLatest([this.activatedRoute.queryParamMap, this.activatedRoute.data])
       .pipe(
         tap(([params, data]) => this.fillComponentAttributeFromRoute(params, data)),
-        switchMap(() => this.loadUserLoyaltyLevel()),
-        tap(() => this.load()),
+        switchMap(() => this.loadUserStats()),
+        switchMap(() => this.load()),
+        tap(() => this.loadPurchasesAndUpdateBalance()),
       )
       .subscribe();
   }
 
-  private loadUserLoyaltyLevel(): Observable<void> {
+  private loadUserStats(): Observable<void> {
     return this.accountService.identity().pipe(
       switchMap(account => {
         if (account) {
-          return this.userService.find(account.login).pipe(
+          return this.userExtraService.find(account.id).pipe(
             tap(user => {
               if (user.body) {
-                this.userLoyaltyLevel = user.body.loyaltyLevel;
+                this.currentUserStats = user.body;
               }
             }),
             map(() => void 0),
@@ -99,12 +109,8 @@ export class UserOffersComponent implements OnInit {
     return this.dataUtils.openFile(base64String, contentType);
   }
 
-  load(): void {
-    this.queryBackend().subscribe({
-      next: (res: EntityArrayResponseType) => {
-        this.onResponseSuccess(res);
-      },
-    });
+  load(): Observable<HttpResponse<IOffer[]>> {
+    return this.queryBackend().pipe(tap((res: HttpResponse<IOffer[]>) => this.onResponseSuccess(res)));
   }
 
   navigateToWithComponentValues(predicate: string): void {
@@ -151,8 +157,8 @@ export class UserOffersComponent implements OnInit {
       sort: this.sortService.buildSortParam(this.sortState()),
     };
 
-    if (this.userLoyaltyLevel) {
-      queryObject['loyaltyLevelId'] = this.userLoyaltyLevel.id;
+    if (this.currentUserStats?.user?.loyaltyLevel) {
+      queryObject['loyaltyLevelId'] = this.currentUserStats?.user?.loyaltyLevel.id;
     }
 
     // Apply filtering based on the selected offer type
@@ -200,5 +206,88 @@ export class UserOffersComponent implements OnInit {
   filterOffers(filterType: 'grandTotal' | 'product' | null): void {
     this.currentFilterType = filterType;
     this.load();
+  }
+
+  private loadPurchasesAndUpdateBalance(): void {
+    this.purchaseService.query({}).subscribe(response => {
+      if (response.body) {
+        this.purchases = response.body.filter(purchase => purchase.userCardNumber === this.currentUserStats?.user?.cardNumber); // Ensure implicit return in filter;
+        this.checkOffers();
+      }
+    });
+  }
+
+  private checkOffers(): void {
+    const today = new Date().toISOString().split('T')[0];
+    const lastCheckedDate = localStorage.getItem('lastOfferCheckDate');
+
+    if (lastCheckedDate === today) {
+      console.log('Offers have already been checked today.');
+      return;
+    }
+
+    console.log('Checking offers for redemption:', this.offers);
+    if (this.purchases.length === 0) return;
+
+    this.offers.forEach(offer => {
+      if (this.isOfferApplicable(offer)) {
+        this.updateUserBalance(offer.rewardPoints ?? 0);
+        this.toastrService.success(
+          '<span>Congratulations! You completed the ' +
+            offer.title +
+            ' for today.</span> <br> <span>You recieved ' +
+            offer.rewardPoints +
+            ' points</span>',
+          '',
+          {
+            timeOut: 5000,
+            closeButton: true,
+            enableHtml: true,
+            positionClass: 'toast-bottom-right',
+            progressBar: true,
+            progressAnimation: 'decreasing',
+          },
+        );
+      }
+    });
+
+    // Update the last checked date
+    localStorage.setItem('lastOfferCheckDate', today);
+  }
+
+  private isOfferApplicable(offer: IOffer): boolean {
+    console.log('Checking if offer is applicable:', offer);
+    if (offer.itemSku && offer.itemQty) {
+      return this.purchases.some(purchase =>
+        purchase.products.some(product => product.sku === offer.itemSku && (product.quantity ?? '0') >= (offer.itemQty ?? 0)),
+      );
+    } else if (offer.grandTotal) {
+      return this.purchases.some(purchase => (purchase.totalCost ?? 0) >= (offer.grandTotal ?? 0));
+    }
+    return false;
+  }
+
+  private updateUserBalance(rewardPoints: number): void {
+    console.log('Updating user balance with reward points:', rewardPoints);
+    const updatedActualBalance = (this.currentUserStats?.actualBalance ?? 0) + rewardPoints;
+    const updatedTotalBalance = (this.currentUserStats?.totalBalance ?? 0) + rewardPoints;
+
+    const updatedUserExtra: IUserExtra = {
+      id: this.currentUserStats?.id ?? '',
+      totalBalance: updatedTotalBalance,
+      actualBalance: updatedActualBalance,
+      user: this.currentUserStats?.user ? { ...this.currentUserStats.user } : null,
+    };
+
+    this.userExtraService.update(updatedUserExtra).subscribe({
+      next: userExtraResponse => {
+        console.log('User balance updated successfully:', userExtraResponse.body);
+        this.currentUserStats = userExtraResponse.body;
+        window.location.reload();
+      },
+      error: err => {
+        console.error('Error updating user balance:', err);
+      },
+    });
   }
 }

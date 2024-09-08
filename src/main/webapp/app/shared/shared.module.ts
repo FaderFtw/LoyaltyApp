@@ -6,6 +6,7 @@ import { AlertComponent } from './alert/alert.component';
 import { AlertErrorComponent } from './alert/alert-error.component';
 import { FaIconLibrary } from '@fortawesome/angular-fontawesome';
 import { fas } from '@fortawesome/free-solid-svg-icons';
+import AOS from 'aos';
 
 /**
  * Application wide Module
@@ -16,6 +17,7 @@ import { fas } from '@fortawesome/free-solid-svg-icons';
 })
 export default class SharedModule {
   constructor(library: FaIconLibrary) {
+    AOS.init();
     library.addIconPacks(fas);
   }
 }

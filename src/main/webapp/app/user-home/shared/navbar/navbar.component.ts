@@ -90,19 +90,18 @@ export class NavbarComponent implements OnInit {
   private loadUserStats(): Observable<void> {
     return this.accountService.identity().pipe(
       switchMap(account => {
-        if (account) {
-          return this.userExtraService.find(account.id).pipe(
-            tap(user => {
-              if (user.body) {
-                this.userStats = user.body;
-                this.userLoyaltyLevel = user.body.user?.loyaltyLevel;
-              }
-            }),
-            map(() => void 0),
-          );
-        } else {
+        if (!account) {
           return of(void 0);
         }
+        return this.userExtraService.find(account.id).pipe(
+          tap(user => {
+            if (user.body) {
+              this.userStats = user.body;
+              this.userLoyaltyLevel = user.body.user?.loyaltyLevel;
+            }
+          }),
+          map(() => void 0),
+        );
       }),
     );
   }

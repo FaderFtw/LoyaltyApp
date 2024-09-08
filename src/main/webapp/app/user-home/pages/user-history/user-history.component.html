@@ -1,1 +1,201 @@
-<p>user-history works!</p>
+<div class="d-flex justify-content-between mb-4 align-items-center flex-column flex-md-row">
+  <div class="d-flex flex-column">
+    <h4 class="fw-bold mb-4 mb-md-0">Check out your claimed rewards</h4>
+    <p class="text-muted mb-4 mb-md-0">Each reward can be used only once.</p>
+  </div>
+
+  <div class="d-flex flex-column flex-sm-row">
+    <div class="dropdown mb-2 me-sm-4">
+      <button
+        class="btn btn-secondary dropdown-toggle"
+        type="button"
+        id="dropdownMenuButton"
+        data-bs-toggle="dropdown"
+        aria-expanded="false"
+      >
+        Filter By Reward Status
+      </button>
+      <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+        <li>
+          <a class="dropdown-item" [class.active]="currentFilterStatus === null" (click)="filterRewardsByStatus(null)">
+            <fa-icon icon="list" class="me-2"></fa-icon>
+            All
+          </a>
+        </li>
+        <li>
+          <a class="dropdown-item" [class.active]="currentFilterStatus === 'ACTIVE'" (click)="filterRewardsByStatus('ACTIVE')">
+            <fa-icon icon="check-circle" class="me-2"></fa-icon>
+            Active
+          </a>
+        </li>
+        <li>
+          <a class="dropdown-item" [class.active]="currentFilterStatus === 'EXPIRED'" (click)="filterRewardsByStatus('EXPIRED')">
+            <fa-icon icon="times-circle" class="me-2"></fa-icon>
+            Expired
+          </a>
+        </li>
+        <li>
+          <a class="dropdown-item" [class.active]="currentFilterStatus === 'USED'" (click)="filterRewardsByStatus('USED')">
+            <fa-icon icon="check-square" class="me-2"></fa-icon>
+            Used
+          </a>
+        </li>
+      </ul>
+    </div>
+    <div class="dropdown mb-2 me-sm-4">
+      <button
+        class="btn btn-secondary dropdown-toggle"
+        type="button"
+        id="dropdownMenuButton1"
+        data-bs-toggle="dropdown"
+        aria-expanded="false"
+      >
+        Filter By Reward Type
+      </button>
+      <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+        <li>
+          <a class="dropdown-item" [class.active]="currentFilterType === null" (click)="filterRewardsByType(null)">
+            <fa-icon icon="list" class="me-2"></fa-icon>
+            All
+          </a>
+        </li>
+        <li>
+          <a class="dropdown-item" [class.active]="currentFilterType === 'CASHBACK'" (click)="filterRewardsByType('CASHBACK')">
+            <fa-icon [icon]="getRewardIcon('CASHBACK')" class="me-2"></fa-icon>
+            Cashback
+          </a>
+        </li>
+        <li>
+          <a class="dropdown-item" [class.active]="currentFilterType === 'DISCOUNT'" (click)="filterRewardsByType('DISCOUNT')">
+            <fa-icon [icon]="getRewardIcon('DISCOUNT')" class="me-2"></fa-icon>
+            Discount
+          </a>
+        </li>
+        <li>
+          <a class="dropdown-item" [class.active]="currentFilterType === 'DONATION'" (click)="filterRewardsByType('DONATION')">
+            <fa-icon [icon]="getRewardIcon('DONATION')" class="me-2"></fa-icon>
+            Donation
+          </a>
+        </li>
+        <li>
+          <a class="dropdown-item" [class.active]="currentFilterType === 'PHONETOPUP'" (click)="filterRewardsByType('PHONETOPUP')">
+            <fa-icon [icon]="getRewardIcon('PHONETOPUP')" class="me-2"></fa-icon>
+            Phone Top Up
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="dropdown mb-2 me-sm-4">
+      <button
+        class="btn btn-secondary dropdown-toggle"
+        type="button"
+        id="dropdownSortButton"
+        data-bs-toggle="dropdown"
+        aria-expanded="false"
+      >
+        Sort By
+      </button>
+      <ul class="dropdown-menu" aria-labelledby="dropdownSortButton">
+        <li>
+          <a class="dropdown-item" (click)="navigateToWithComponentValues('createdAt')">
+            Redemption Date
+            <fa-icon class="p-1" [icon]="getSortIcon('createdAt')"></fa-icon>
+          </a>
+        </li>
+        <li>
+          <a class="dropdown-item" (click)="navigateToWithComponentValues('rewardConfig.convertedValue')">
+            Reward Value
+            <fa-icon class="p-1" [icon]="getSortIcon('rewardConfig.convertedValue')"></fa-icon>
+          </a>
+        </li>
+        <li>
+          <a class="dropdown-item" (click)="navigateToWithComponentValues('rewardConfig.daysToExpire')">
+            Days To Expire
+            <fa-icon class="p-1" [icon]="getSortIcon('rewardConfig.daysToExpire')"></fa-icon>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="row rewards-container" *ngIf="rewardHistory.length > 0; else noRewardsMessage">
+  <div class="col-md-4 col-lg-4 mb-4 d-flex justify-content-center" *ngFor="let reward of rewardHistory">
+    <div class="reward-card card shadow-sm">
+      <div class="image-container position-relative">
+        <img [src]="'content/images/' + reward.rewardConfig?.title + '.png'" alt="" class="card-img-top" />
+
+        <!-- Status Badge -->
+        <div class="status-badge">
+          <span
+            class="badge"
+            [ngClass]="{
+              'bg-success': reward.status?.toString() === 'ACTIVE',
+              'bg-secondary': reward.status?.toString() === 'USED',
+              'bg-danger': reward.status?.toString() === 'EXPIRED',
+            }"
+            >{{ reward.status }}</span
+          >
+        </div>
+
+        <!-- Points Required -->
+        <div class="points-required bg-danger">
+          <span
+            ><strong>- {{ reward.rewardConfig?.balanceValue }} points</strong></span
+          >
+        </div>
+
+        <!-- Overlay for additional content -->
+        <div class="overlay">
+          <div class="overlay-content">
+            <h5 class="reward-title">
+              <!-- Display an icon based on the reward type -->
+              <fa-icon [icon]="getRewardIcon(reward.rewardConfig?.title)" class="me-2"></fa-icon>
+              {{ reward.rewardConfig?.title }}
+            </h5>
+            <span class="daystoExpire">Expires on {{ reward.toDate | formatMediumDate }}</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-body text-center">
+        <p>Redeemed on {{ reward.createdAt | formatMediumDatetime }}</p>
+        <p>
+          <strong>To get :</strong
+          ><span class="fw-bold"> {{ reward.rewardConfig?.convertedValue }} {{ getCurrency(reward.rewardConfig?.title?.toString()) }}</span>
+        </p>
+
+        <div class="code-container">
+          <button class="code-button fw-bold">
+            <span>Reward Code</span>
+            <span class="code-text">{{ reward.code }}</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #noRewardsMessage>
+  <div class="d-flex flex-column justify-content-center align-items-center mb-3">
+    <p class="text-muted text-center">Come back here for an overview of your rewards redemptions.</p>
+    <a [routerLink]="['/home/rewards']" class="btn btn-info">See what you can get <fa-icon icon="chevron-right" size="xs"></fa-icon></a>
+  </div>
+</ng-template>
+
+<div *ngIf="rewardHistory && rewardHistory.length > 0">
+  <div class="d-flex justify-content-center">
+    <jhi-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }"></jhi-item-count>
+  </div>
+
+  <div class="d-flex justify-content-center">
+    <ngb-pagination
+      [collectionSize]="totalItems"
+      [page]="page"
+      [pageSize]="itemsPerPage"
+      [maxSize]="5"
+      [rotate]="true"
+      (pageChange)="navigateToPage($event)"
+    ></ngb-pagination>
+  </div>
+</div>

@@ -22,17 +22,21 @@
         <img src="content/images/Offer.png" class="d-block w-100 object-fit-cover" alt="Default Offer Image" />
       </ng-template>
       <div class="overlay"></div>
-      <a [routerLink]="['offers']" class="offers-btn btn btn-primary rounded-4 m-0">Go to offers</a>
-      <span class="badge"><fa-icon icon="coins" class="me-2"></fa-icon> {{ offer.rewardPoints }} pts</span>
+      <a data-aos="fade-left" data-aos-delay="400" [routerLink]="['offers']" class="offers-btn btn rounded-4 m-0">Go to offers</a>
+      <span data-aos="fade-right" data-aos-delay="400" class="badge"
+        ><fa-icon icon="coins" class="me-2"></fa-icon> {{ offer.rewardPoints }} pts</span
+      >
 
       <div class="carousel-caption d-md-block">
-        <div class="offer-details text-white aos-animate" data-aos="fade-up" data-aos-delay="100">
-          <h5>{{ offer.title }}</h5>
-          <p class="d-none d-md-block" *ngIf="offer.itemQty && offer.itemSku">
+        <div class="offer-details text-white aos-animate">
+          <h5 data-aos="fade-up" data-aos-delay="200">{{ offer.title }}</h5>
+          <p data-aos="fade-up" data-aos-delay="250" class="d-none d-md-block" *ngIf="offer.itemQty && offer.itemSku">
             Buy {{ offer.itemQty }} of this product {{ offer.itemSku }}
           </p>
-          <p class="d-none d-md-block" *ngIf="offer.grandTotal">Spend {{ offer.grandTotal | currency }} on your next purchase.</p>
-          <p class="availability-text">
+          <p data-aos="fade-up" data-aos-delay="300" class="d-none d-md-block" *ngIf="offer.grandTotal">
+            Spend {{ offer.grandTotal | currency }} on your next purchase.
+          </p>
+          <p data-aos="fade-up" data-aos-delay="350" class="availability-text">
             <fa-icon icon="clock" class="me-2"></fa-icon> Available until {{ offer.toDate?.format('MM/DD/YYYY') }}
           </p>
         </div>
@@ -54,23 +58,30 @@
     <div class="card">
       <div class="card-body">
         <h5 class="card-title">CHECK NEW REWARDS</h5>
-        <ul *ngIf="rewardConfigs.length !== 0; else EmptyMessage" class="list-group list-group-flush">
-          <li *ngFor="let reward of rewardConfigs" class="list-group-item d-flex justify-content-between align-items-center">
-            <div [ngSwitch]="reward.title">
-              <fa-icon *ngSwitchCase="'CASHBACK'" icon="money-bills" class="me-1"></fa-icon>
-              <fa-icon *ngSwitchCase="'DISCOUNT'" icon="gift" class="me-1"></fa-icon>
-              <fa-icon *ngSwitchCase="'DONATION'" icon="dollar-sign" class="me-1"></fa-icon>
-              <fa-icon *ngSwitchCase="'PHONETOPUP'" icon="phone" class="me-1"></fa-icon>
-              <strong class="fw-bold">{{ reward.title }}</strong>
-              <br />
-              <small class="text-muted">{{ reward.description }}</small>
-            </div>
-            <br />
-            <span class="badge bg-primary rounded-pill"
-              >{{ reward.balanceValue }} Pts <fa-icon icon="arrow-right" class="mx-2"></fa-icon> {{ reward.convertedValue }} TND</span
+        <div *ngIf="rewardConfigs.length !== 0; else EmptyMessage">
+          <ul *ngFor="let reward of rewardConfigs; let i = index" class="list-group list-group-flush">
+            <li
+              data-aos-once="true"
+              data-aos="fade-up"
+              [attr.data-aos-delay]="(i + 1) * 100"
+              class="list-group-item d-flex justify-content-between align-items-center"
             >
-          </li>
-        </ul>
+              <div [ngSwitch]="reward.title">
+                <fa-icon *ngSwitchCase="'CASHBACK'" icon="money-bills" class="me-1"></fa-icon>
+                <fa-icon *ngSwitchCase="'DISCOUNT'" icon="gift" class="me-1"></fa-icon>
+                <fa-icon *ngSwitchCase="'DONATION'" icon="dollar-sign" class="me-1"></fa-icon>
+                <fa-icon *ngSwitchCase="'PHONETOPUP'" icon="phone" class="me-1"></fa-icon>
+                <strong class="fw-bold">{{ reward.title }}</strong>
+                <br />
+                <small class="text-muted">{{ reward.description }}</small>
+              </div>
+              <br />
+              <span class="badge bg-primary rounded-pill">
+                {{ reward.balanceValue }} Pts <fa-icon icon="arrow-right" class="mx-2"></fa-icon> {{ reward.convertedValue }} TND
+              </span>
+            </li>
+          </ul>
+        </div>
         <a [routerLink]="['rewards']" class="btn btn-info mt-3">View Rewards</a>
       </div>
       <ng-template #EmptyMessage>
@@ -83,20 +94,36 @@
     <div class="card">
       <div class="card-body">
         <h5 class="card-title">MY LATEST PURCHASES</h5>
-        <ul *ngIf="purchases.length !== 0; else noPurchasesMessage" class="list-group list-group-flush">
-          <li *ngFor="let purchase of purchases" class="list-group-item d-flex justify-content-between align-items-center">
-            <div>
-              <fa-icon icon="shopping-cart" class="me-1"> </fa-icon>
-              <strong class="fw-bold">{{ purchase.title }}: {{ purchase.productQty }}</strong>
-              <br />
-              <small class="text-muted">{{ purchase.date | formatMediumDate }}</small>
+        <div *ngIf="purchases.length !== 0; else noPurchasesMessage">
+          <ul *ngFor="let purchase of purchases; let i = index" class="list-group list-group-flush">
+            <li
+              data-aos-once="true"
+              data-aos="fade-up"
+              [attr.data-aos-delay]="(i + 1) * 100"
+              class="list-group-item d-flex justify-content-between align-items-center"
+            >
+              <div>
+                <fa-icon icon="shopping-cart" class="me-1"></fa-icon>
+                <strong class="fw-bold"> {{ purchase.products.length }} product(s) </strong>
+                <fa-icon [icon]="isProductsVisible[i] ? 'chevron-up' : 'chevron-down'" class="ms-2" (click)="toggleProducts(i)"> </fa-icon>
+                <br />
+                <small class="text-muted">{{ purchase.date | formatMediumDate }}</small>
+              </div>
+              <span class="badge bg-secondary rounded-pill">{{ purchase.totalCost }} DT</span>
+            </li>
+            <div *ngIf="isProductsVisible[i]" class="list-group-flush ps-4">
+              <ul>
+                <li *ngFor="let product of purchase.products" class="list-group-item d-flex justify-content-between align-items-center">
+                  <strong>{{ product.name }}:</strong> {{ product.quantity }}
+                  <span class="badge bg-secondary rounded-pill">{{ product.unitPrice * product.quantity }} DT</span>
+                </li>
+              </ul>
             </div>
-            <span class="badge bg-secondary rounded-pill">{{ purchase.totalCost }} DT</span>
-          </li>
-        </ul>
+          </ul>
+        </div>
         <ng-template #noPurchasesMessage>
           <p class="text-muted text-center">
-            You dont have purchases. Let's go shopping! <fa-icon icon="shopping-cart" size="lg" class="m-1"></fa-icon>
+            You don’t have purchases. Let’s go shopping! <fa-icon icon="shopping-cart" size="lg" class="m-1"></fa-icon>
           </p>
         </ng-template>
         <a [routerLink]="['purchases']" class="btn btn-info mt-3">View Purchases</a>

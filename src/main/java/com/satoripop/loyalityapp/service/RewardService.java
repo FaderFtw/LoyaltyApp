@@ -1,6 +1,8 @@
 package com.satoripop.loyalityapp.service;
 
 import com.satoripop.loyalityapp.domain.Reward;
+import com.satoripop.loyalityapp.domain.enumeration.RewardStatus;
+import com.satoripop.loyalityapp.domain.enumeration.RewardType;
 import com.satoripop.loyalityapp.repository.RewardRepository;
 import com.satoripop.loyalityapp.service.dto.RewardDTO;
 import com.satoripop.loyalityapp.service.mapper.RewardMapper;
@@ -9,6 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -86,6 +90,35 @@ public class RewardService {
     public Page<Reward> findAll(Pageable pageable) {
         log.debug("Request to get all Rewards");
         return rewardRepository.findAll(pageable);
+    }
+
+    /**
+     * Get all the rewards by userId.
+     *
+     * @param pageable the pagination information.
+     * @return the list of entities.
+     */
+    @Transactional(readOnly = true)
+    public Page<Reward> findAllByCurrentUser(Pageable pageable, RewardType titleEquals, RewardStatus statusEquals) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        log.debug("Request to get all Rewards by user login: {}", username);
+
+        if (titleEquals != null && statusEquals != null) {
+            log.debug("Filtering rewards by title: {} and status: {} for user: {}", titleEquals, statusEquals, username);
+            return rewardRepository.findByUserIsCurrentUserAndTitleEqualsAndStatusEquals(titleEquals, statusEquals, pageable);
+        }
+
+        if (titleEquals != null) {
+            log.debug("Filtering rewards by title: {} for user: {}", titleEquals, username);
+            return rewardRepository.findByUserIsCurrentUserAndTitleEquals(titleEquals, pageable);
+        }
+
+        if (statusEquals != null) {
+            log.debug("Filtering rewards by status: {} for user: {}", statusEquals, username);
+            return rewardRepository.findByUserIsCurrentUserAndStatusEquals(statusEquals, pageable);
+        }
+
+        return rewardRepository.findByUserIsCurrentUser(pageable);
     }
 
     /**
