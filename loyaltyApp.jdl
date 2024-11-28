@@ -36,13 +36,13 @@ entity Offer {
     itemSku String,
     grandTotal Float
 }
+
 relationship ManyToOne{
     LoyaltyLevel to User with builtInEntity
 }
 
 relationship OneToMany{
     Reward{rewardConfig} to RewardConfig
-    Reward{user required} to User with builtInEntity
     Reward{user required} to User{rewards} with builtInEntity
 }
 

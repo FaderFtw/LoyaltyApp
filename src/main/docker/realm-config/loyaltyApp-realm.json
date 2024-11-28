@@ -452,17 +452,23 @@
     "ar": {
       "helpText": "أدخل رقم بطاقة الوفاء الخاصة بك.",
       "phone": "رقم الهاتف",
-      "cardNumber": "رقم بطاقة الوفاء"
+      "cardNumber": "رقم بطاقة الوفاء",
+      "error-card-number-not-unique": "رقم البطاقة موجود بالفعل.",
+      "error-not-unique": "هذه القيمة موجودة بالفعل."
     },
     "en": {
       "helpText": "Enter your loyalty Card Number.",
       "phone": "Phone Number",
-      "cardNumber": "Card Number"
+      "cardNumber": "Card Number",
+      "error-card-number-not-unique": "Card Number already exists.",
+      "error-not-unique": "This value already exists."
     },
     "fr": {
       "helpText": "Entrez votre numéro de carte de fidélité.",
       "phone": "Numéro de téléphone",
-      "cardNumber": "Numéro de carte de fidélité"
+      "cardNumber": "Numéro de carte de fidélité",
+      "error-card-number-not-unique": "Le numéro de carte existe déjà.",
+      "error-not-unique": "Cette valeur existe déjà."
     }
   },
   "webAuthnPolicyRpEntityName": "keycloak",
@@ -1656,7 +1662,7 @@
         "subComponents": {},
         "config": {
           "kc.user.profile.config": [
-            "{\"attributes\":[{\"name\":\"firstName\",\"displayName\":\"${firstName}\",\"validations\":{\"length\":{\"max\":255},\"person-name-prohibited-characters\":{}},\"required\":{\"roles\":[\"user\"]},\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\",\"user\"]},\"multivalued\":false},{\"name\":\"lastName\",\"displayName\":\"${lastName}\",\"validations\":{\"length\":{\"max\":255},\"person-name-prohibited-characters\":{}},\"required\":{\"roles\":[\"user\"]},\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\",\"user\"]},\"multivalued\":false},{\"name\":\"username\",\"displayName\":\"${username}\",\"validations\":{\"length\":{\"min\":3,\"max\":255},\"username-prohibited-characters\":{},\"up-username-not-idn-homograph\":{}},\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\",\"user\"]},\"multivalued\":false},{\"name\":\"email\",\"displayName\":\"${email}\",\"validations\":{\"email\":{},\"length\":{\"max\":255}},\"required\":{\"roles\":[\"user\"]},\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\",\"user\"]},\"multivalued\":false},{\"name\":\"phone\",\"displayName\":\"${phone}\",\"validations\":{\"pattern\":{\"pattern\":\"^\\\\d{8}$\",\"error-message\":\"Phone number must be exactly 8 digits.\"}},\"annotations\":{},\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\",\"user\"]},\"multivalued\":false},{\"name\":\"cardNumber\",\"displayName\":\"${cardNumber}\",\"validations\":{\"pattern\":{\"pattern\":\"^\\\\d{9}$\",\"error-message\":\"Card number must be exactly 9 digits.\"}},\"annotations\":{\"inputTypePlaceholder\":\"### ### ###\",\"inputHelperTextAfter\":\"${helpText}\"},\"required\":{\"roles\":[\"user\"]},\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\",\"user\"]},\"multivalued\":false}],\"groups\":[{\"name\":\"user-metadata\",\"displayHeader\":\"User metadata\",\"displayDescription\":\"Attributes, which refer to user metadata\"}]}"
+            "{\"attributes\":[{\"name\":\"firstName\",\"displayName\":\"${firstName}\",\"validations\":{\"length\":{\"max\":255},\"person-name-prohibited-characters\":{}},\"required\":{\"roles\":[\"user\"]},\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\",\"user\"]},\"multivalued\":false},{\"name\":\"lastName\",\"displayName\":\"${lastName}\",\"validations\":{\"length\":{\"max\":255},\"person-name-prohibited-characters\":{}},\"required\":{\"roles\":[\"user\"]},\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\",\"user\"]},\"multivalued\":false},{\"name\":\"username\",\"displayName\":\"${username}\",\"validations\":{\"length\":{\"min\":3,\"max\":255},\"username-prohibited-characters\":{},\"up-username-not-idn-homograph\":{}},\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\",\"user\"]},\"multivalued\":false},{\"name\":\"email\",\"displayName\":\"${email}\",\"validations\":{\"email\":{},\"length\":{\"max\":255}},\"required\":{\"roles\":[\"user\"]},\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\",\"user\"]},\"multivalued\":false},{\"name\":\"phone\",\"displayName\":\"${phone}\",\"validations\":{\"pattern\":{\"pattern\":\"^\\\\d{8}$\",\"error-message\":\"Phone number must be exactly 8 digits.\"},\"unique-validator\":{\"error-message\":\"error-phone-not-unique\"}},\"annotations\":{},\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\",\"user\"]},\"multivalued\":false},{\"name\":\"cardNumber\",\"displayName\":\"${cardNumber}\",\"validations\":{\"pattern\":{\"pattern\":\"^\\\\d{9}$\",\"error-message\":\"Card number must be exactly 9 digits.\"},\"unique-validator\":{\"error-message\":\"error-card-number-not-unique\"}},\"annotations\":{\"inputTypePlaceholder\":\"### ### ###\",\"inputHelperTextAfter\":\"${helpText}\"},\"required\":{\"roles\":[\"user\"]},\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\",\"user\"]},\"multivalued\":false}],\"groups\":[{\"name\":\"user-metadata\",\"displayHeader\":\"User metadata\",\"displayDescription\":\"Attributes, which refer to user metadata\"}]}"
           ]
         }
       }
